@@ -23,9 +23,10 @@ public class Config {
 
     /**
      * Returns a config with default values.
+     *
      * @param guildId the guild id.
      */
-    public Config(final int guildId){
+    public Config(final int guildId) {
         this.prefix = "!#";
         this.modLogChannel = "";
         this.modRole = "";
@@ -36,35 +37,35 @@ public class Config {
         this.guildId = guildId;
     }
 
-    public void setPrefix(String prefix) {
+    public void setPrefix(final String prefix) {
         this.prefix = prefix;
     }
 
-    public void setModLogChannel(String modLogChannel) {
+    public void setModLogChannel(final String modLogChannel) {
         this.modLogChannel = modLogChannel;
     }
 
-    public void setModRole(String modRole) {
+    public void setModRole(final String modRole) {
         this.modRole = modRole;
     }
 
-    public void setAdminRole(String adminRole) {
+    public void setAdminRole(final String adminRole) {
         this.adminRole = adminRole;
     }
 
-    public void setSystemNotice(boolean systemNotice) {
+    public void setSystemNotice(final boolean systemNotice) {
         this.systemNotice = systemNotice;
     }
 
-    public void setGuildId(int guildId) {
+    public void setGuildId(final int guildId) {
         this.guildId = guildId;
     }
 
-    public void setBotNotifyChannel(String botNotifyChannel) {
+    public void setBotNotifyChannel(final String botNotifyChannel) {
         this.botNotifyChannel = botNotifyChannel;
     }
 
-    public void setLastOnlineIgnoreRole(String lastOnlineIgnoreRole) {
+    public void setLastOnlineIgnoreRole(final String lastOnlineIgnoreRole) {
         this.lastOnlineIgnoreRole = lastOnlineIgnoreRole;
     }
 

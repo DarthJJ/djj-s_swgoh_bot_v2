@@ -17,8 +17,8 @@
         <!-- Suppressions -->
         <module name="SuppressWarningsHolder" />
         <module name="SuppressionCommentFilter">
-            <property name="offCommentFormat" value="CHECKSTYLE:OFF"/>
-            <property name="onCommentFormat" value="CHECKSTYLE:ON"/>
+            <property name="offCommentFormat" value="CHECKSTYLE.OFF\: ([\w\|]+)"/>
+            <property name="onCommentFormat" value="CHECKSTYLE.ON\: ([\w\|]+)"/>
         </module>
         <!-- Imports -->
         <module name="IllegalImport" />

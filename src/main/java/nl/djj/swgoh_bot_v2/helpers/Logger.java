@@ -1,62 +1,80 @@
 package nl.djj.swgoh_bot_v2.helpers;
 
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * @author DJJ
+ */
 public class Logger {
     private static final String ANSI_RESET = "\u001B[0m";
-    private static final String ANSI_BLACK = "\u001B[30m";
     private static final String ANSI_RED = "\u001B[31m";
     private static final String ANSI_GREEN = "\u001B[32m";
-    private static final String ANSI_YELLOW = "\u001B[33m";
     private static final String ANSI_BLUE = "\u001B[34m";
-    private static final String ANSI_PURPLE = "\u001B[35m";
-    private static final String ANSI_CYAN = "\u001B[36m";
-    private static final String ANSI_WHITE = "\u001B[37m";
 
-    private final String className = this.getClass().getSimpleName();
+    private final transient String className = this.getClass().getSimpleName();
     private static final String ERROR_PREFIX = "ERROR";
     private static final String DEBUG_PREFIX = "DEBUG";
     private static final String INFO_PREFIX = "INFO";
+    private static final String SEPARATOR = ": ";
+    private final transient boolean betaMode;
 
-    private final boolean betaMode;
-
+    /**
+     * Constructor.
+     *
+     * @param betaMode if true, logs debug statements.
+     */
     public Logger(final boolean betaMode) {
         this.betaMode = betaMode;
-        if (betaMode){
+        if (betaMode) {
             debug(className, "Beta mode active");
         }
     }
 
+    /**
+     * Call to log an error.
+     *
+     * @param className the classname.
+     * @param message   the message.
+     */
     public void error(final String className, final String message) {
-        System.err.println(ANSI_RED + ERROR_PREFIX + ": " + className + ": " + message + ANSI_RESET);
-        appendToFile(ERROR_PREFIX, className + ": " + message);
+        System.err.println(ANSI_RED + ERROR_PREFIX + SEPARATOR + className + SEPARATOR + message + ANSI_RESET);
+        appendToFile(ERROR_PREFIX, className + SEPARATOR + message);
     }
 
+    /**
+     * Call to log an info.
+     *
+     * @param className the classname.
+     * @param message   the message.
+     */
     public void info(final String className, final String message) {
-        System.out.println(ANSI_BLUE + INFO_PREFIX + ": " + className + ": " + message + ANSI_RESET);
-        appendToFile(INFO_PREFIX, className + ": " + message);
+        System.out.println(ANSI_BLUE + INFO_PREFIX + SEPARATOR + className + SEPARATOR + message + ANSI_RESET);
+        appendToFile(INFO_PREFIX, className + SEPARATOR + message);
     }
 
+    /**
+     * Call to log a debug .
+     *
+     * @param className the classname.
+     * @param message   the message.
+     */
     public void debug(final String className, final String message) {
         if (betaMode) {
-            System.out.println(ANSI_GREEN + DEBUG_PREFIX + ": " + className + ": " + message + ANSI_RESET);
+            System.out.println(ANSI_GREEN + DEBUG_PREFIX + SEPARATOR + className + SEPARATOR + message + ANSI_RESET);
         }
     }
 
     private void appendToFile(final String fileType, final String content) {
-        try {
-            File file = new File("log/" + fileType + "_" + getDate(false) + ".log");
-            FileWriter fr = new FileWriter(file, true);
-            BufferedWriter br = new BufferedWriter(fr);
-            br.write(getDate(true) + ": " + content);
+        final String file = "log/" + fileType + "_" + getDate(false) + ".log";
+        try (BufferedWriter br = Files.newBufferedWriter(Paths.get(file), StandardCharsets.UTF_8)) {
+            br.write(getDate(true) + SEPARATOR + content);
             br.newLine();
-            br.close();
-            fr.close();
         } catch (final IOException exception) {
             error(className, exception.getMessage());
         }
@@ -67,7 +85,7 @@ public class Logger {
         if (includeTime) {
             timeFormat += " HH:mm:ss";
         }
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern(timeFormat);
+        final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(timeFormat);
         return dtf.format(LocalDateTime.now());
     }
 }

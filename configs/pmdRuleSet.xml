@@ -14,6 +14,7 @@
         <exclude name="OnlyOneReturn"/>
         <exclude name="AvoidFinalLocalVariable"/>
         <exclude name="DefaultPackage"/>
+        <exclude name="AvoidDuplicateLiterals"/>
     </rule>
     <rule ref="category/java/codestyle.xml/LongVariable">
         <properties>
@@ -53,6 +54,11 @@
         <exclude name="AvoidThrowingRawExceptionTypes"/>
         <exclude name="GodClass"/>
     </rule>
+    <rule ref="category/java/errorprone.xml/CloseResource">
+        <properties>
+            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['.ConfigHandler']"/>
+        </properties>
+    </rule>
     <rule ref="category/java/design.xml/CyclomaticComplexity">
         <properties>
             <property name="methodReportLevel" value="11"/>
@@ -67,6 +73,11 @@
     <rule ref="category/java/design.xml/ExcessiveParameterList">
         <properties>
             <property name="minimum" value="12"/>
+        </properties>
+    </rule>
+    <rule ref="category/java/errorprone.xml/DoNotCallSystemExit">
+        <properties>
+            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['Main']"/>
         </properties>
     </rule>
     <rule ref="category/java/design.xml/ExcessiveImports">
@@ -97,6 +108,7 @@
         <exclude name="MissingSerialVersionUID"/>
         <exclude name="AvoidCatchingNPE"/>
         <exclude name="NonStaticInitializer"/>
+        <exclude name="AvoidDuplicateLiterals"/>
     </rule>
     <rule ref="category/java/errorprone.xml/DataflowAnomalyAnalysis">
         <properties>

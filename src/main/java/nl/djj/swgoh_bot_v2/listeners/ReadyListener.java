@@ -3,17 +3,20 @@ package nl.djj.swgoh_bot_v2.listeners;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.hooks.EventListener;
+import nl.djj.swgoh_bot_v2.helpers.Logger;
 
 /**
  * @author DJJ
  */
 public class ReadyListener implements EventListener {
-
+    private final transient Logger logger;
+    private final transient String className = this.getClass().getSimpleName();
     /**
      * Constructor.
      */
-    public ReadyListener() {
+    public ReadyListener(final Logger logger) {
         super();
+        this.logger = logger;
     }
 
     /**
@@ -23,7 +26,7 @@ public class ReadyListener implements EventListener {
     @Override
     public void onEvent(final GenericEvent event) {
         if (event instanceof ReadyEvent) {
-            System.out.println("API Ready");
+            logger.info(className, "API Ready");
         }
     }
 }
