@@ -14,25 +14,27 @@ public class Ping extends BaseCommand {
     private static final String NAME = "Ping";
     private static final int REQUIRED_LEVEL = 2;
     private static final String DESCRIPTION = "This an example description";
+    private static final String[] ALIASES = new String[]{
+            "pinger"
+    };
     private static final CommandCategory CATEGORY = CommandCategory.BOT;
     private static final Map<String, Flag> FLAGS = new HashMap<>();
     private boolean enabled;
 
     /**
      * Constructor.
-     *
      */
     public Ping() {
         super();
     }
 
     @Override
-    public void handleMessage(final Message message){
+    public void handleMessage(final Message message) {
         message.getChannel().sendMessage("pong!").queue();
     }
 
     @Override
-    public void setEnabled(final boolean enabled){
+    public void setEnabled(final boolean enabled) {
         this.enabled = enabled;
     }
 
@@ -70,5 +72,10 @@ public class Ping extends BaseCommand {
     @Override
     public boolean isEnabled() {
         return enabled;
+    }
+
+    @Override
+    public String[] getAliases() {
+        return ALIASES;
     }
 }

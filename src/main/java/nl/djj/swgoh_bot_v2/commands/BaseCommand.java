@@ -15,6 +15,11 @@ public abstract class BaseCommand {
     public abstract String getName();
 
     /**
+     * @return list of aliases for the command
+     */
+    public abstract String[] getAliases();
+
+    /**
      * @return required level.
      */
     public abstract int getRequiredLevel();
