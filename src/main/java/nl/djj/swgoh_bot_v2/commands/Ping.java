@@ -1,6 +1,7 @@
 package nl.djj.swgoh_bot_v2.commands;
 
 import nl.djj.swgoh_bot_v2.config.CommandCategory;
+import nl.djj.swgoh_bot_v2.config.Permission;
 import nl.djj.swgoh_bot_v2.entities.Flag;
 import nl.djj.swgoh_bot_v2.entities.Message;
 
@@ -12,7 +13,7 @@ import java.util.Map;
  */
 public class Ping extends BaseCommand {
     private static final String NAME = "Ping";
-    private static final int REQUIRED_LEVEL = 2;
+    private static final Permission REQUIRED_LEVEL = Permission.USER;
     private static final String DESCRIPTION = "This an example description";
     private static final String[] ALIASES = new String[]{
             "pinger"
@@ -50,7 +51,7 @@ public class Ping extends BaseCommand {
     }
 
     @Override
-    public int getRequiredLevel() {
+    public Permission getRequiredLevel() {
         return REQUIRED_LEVEL;
     }
 

@@ -2,33 +2,33 @@ package nl.djj.swgoh_bot_v2.helpers;
 
 import nl.djj.swgoh_bot_v2.commands.BaseCommand;
 import nl.djj.swgoh_bot_v2.commands.Ping;
-import nl.djj.swgoh_bot_v2.database.CommandHelper;
+import nl.djj.swgoh_bot_v2.database.CommandHandler;
 
 import java.util.*;
 
 /**
  * @author DJJ
  */
-public class CommandLoader {
+public class CommandHelper {
 
     private final Map<String, BaseCommand> commands;
     private final Map<String, String> aliases;
-    private final CommandHelper commandHelper;
+    private final CommandHandler commandHandler;
 
     /**
      * The Constructor.
      */
-    public CommandLoader(final CommandHelper commandHelper) {
+    public CommandHelper(final CommandHandler commandHandler) {
         super();
         this.commands = new HashMap<>();
         this.aliases = new HashMap<>();
-        this.commandHelper = commandHelper;
+        this.commandHandler = commandHandler;
         initializeCommands(new ArrayList<>(Arrays.asList(new Ping())));
     }
 
     private void initializeCommands(final List<BaseCommand> toLoad) {
         for (final BaseCommand command : toLoad) {
-            if (commandHelper.getCommandEnabledStatus(command.getName())) {
+            if (commandHandler.getCommandEnabledStatus(command.getName())) {
                 command.setEnabled(true);
                 commands.put(command.getName().toLowerCase(), command);
                 aliases.put(command.getName().toLowerCase(), command.getName().toLowerCase());

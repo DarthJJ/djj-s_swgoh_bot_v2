@@ -1,5 +1,6 @@
 package nl.djj.swgoh_bot_v2.commands;
 
+import nl.djj.swgoh_bot_v2.config.Permission;
 import nl.djj.swgoh_bot_v2.entities.Flag;
 import nl.djj.swgoh_bot_v2.entities.Message;
 
@@ -22,7 +23,7 @@ public abstract class BaseCommand {
     /**
      * @return required level.
      */
-    public abstract int getRequiredLevel();
+    public abstract Permission getRequiredLevel();
 
     /**
      * @return command description.

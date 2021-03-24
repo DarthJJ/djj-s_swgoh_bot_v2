@@ -3,8 +3,9 @@ package nl.djj.swgoh_bot_v2;
 import net.dv8tion.jda.api.entities.Activity;
 import nl.djj.swgoh_bot_v2.database.Database;
 import io.github.cdimascio.dotenv.Dotenv;
-import nl.djj.swgoh_bot_v2.helpers.CommandLoader;
+import nl.djj.swgoh_bot_v2.helpers.CommandHelper;
 import nl.djj.swgoh_bot_v2.helpers.Logger;
+import nl.djj.swgoh_bot_v2.helpers.PermissionHelper;
 import nl.djj.swgoh_bot_v2.listeners.MessageListener;
 import nl.djj.swgoh_bot_v2.listeners.ReadyListener;
 import net.dv8tion.jda.api.JDABuilder;
@@ -19,7 +20,8 @@ public final class Main extends ListenerAdapter {
 
     private final transient Database database;
     private final transient Logger logger;
-    private final transient CommandLoader commandLoader;
+    private final transient CommandHelper commandHelper;
+    private final transient PermissionHelper permissionHelper;
     private final transient String className = this.getClass().getSimpleName();
 
     /**
@@ -34,17 +36,19 @@ public final class Main extends ListenerAdapter {
     private Main() {
         super();
         final Dotenv dotenv = Dotenv.load();
-        logger = new Logger(Boolean.parseBoolean(dotenv.get("BETA_MODE")));
+        logger = new Logger(Boolean.parseBoolean(dotenv.get("DEBUG_MODE")));
         database = new Database(logger);
-        commandLoader = new CommandLoader(database.getCommandHelper());
+        commandHelper = new CommandHelper(database.getCommandHelper());
+        permissionHelper = new PermissionHelper(database.getUserHandler());
         initializeDiscord(dotenv.get("BETA_DISCORD_TOKEN"));
+        logger.info(className, "Bot Ready!");
 //        closeBot(); //TODO: remove after fixing codeCheck
     }
 
     private void initializeDiscord(final String token) {
         try {
             final JDABuilder builder = JDABuilder.createDefault(token);
-            builder.addEventListeners(new MessageListener(logger, commandLoader), new ReadyListener(logger));
+            builder.addEventListeners(new MessageListener(logger, commandHelper, permissionHelper), new ReadyListener(logger));
             builder.setActivity(Activity.listening("Being developed"));
             builder.build();
         } catch (final LoginException exception) {
