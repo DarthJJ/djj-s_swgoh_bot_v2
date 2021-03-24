@@ -13,6 +13,7 @@ public class ReadyListener implements EventListener {
     private final transient String className = this.getClass().getSimpleName();
     /**
      * Constructor.
+     * @param logger the logger to use.
      */
     public ReadyListener(final Logger logger) {
         super();

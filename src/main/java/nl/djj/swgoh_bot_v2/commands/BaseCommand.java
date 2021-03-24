@@ -47,6 +47,8 @@ public abstract class BaseCommand {
 
     /**
      * Sets the command enabled or not.
+     *
+     * @param isEnabled boolean value.
      */
     public abstract void setEnabled(final boolean isEnabled);
 
@@ -56,7 +58,9 @@ public abstract class BaseCommand {
     public abstract void createFlags();
 
     /**
-     * Handles the command;
+     * Handles the command.
+     *
+     * @param message the message to handle.
      */
     public abstract void handleMessage(final Message message);
 

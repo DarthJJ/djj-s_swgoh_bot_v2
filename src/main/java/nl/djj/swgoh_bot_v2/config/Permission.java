@@ -19,16 +19,28 @@ public enum Permission {
         this.name = name;
     }
 
-    public static Permission valueOf(int level) {
+    /**
+     *
+     * @param level to get the permission for.
+     * @return the according permission or the default.
+     */
+    public static Permission valueOf(final int level) {
         return Arrays.stream(values())
                 .filter(permission -> permission.level == level)
                 .findFirst().orElse(Permission.USER);
     }
 
+    /**
+     * @return the level of the permission.
+     */
     public int getLevel() {
         return this.level;
     }
 
+    /**
+     *
+     * @return the name of the permission.
+     */
     public String getName() {
         return this.name;
     }

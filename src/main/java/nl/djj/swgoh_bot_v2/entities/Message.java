@@ -2,6 +2,8 @@ package nl.djj.swgoh_bot_v2.entities;
 
 import net.dv8tion.jda.api.entities.MessageChannel;
 
+import java.util.Arrays;
+
 /**
  * @author DJJ
  */
@@ -13,7 +15,7 @@ public class Message {
     private final MessageChannel channel;
 
     /**
-     * Constructor;
+     * Constructor.
      *
      * @param author      the author of the message.
      * @param args        the arguments of the message.
@@ -23,7 +25,7 @@ public class Message {
     public Message(final String author, final String[] args, final int authorLevel, final MessageChannel channel) {
         super();
         this.author = author;
-        this.args = args;
+        this.args = Arrays.copyOf(args, args.length);
         this.authorLevel = authorLevel;
         this.channel = channel;
     }
@@ -33,7 +35,7 @@ public class Message {
     }
 
     public String[] getArgs() {
-        return args;
+        return Arrays.copyOf(args, args.length);
     }
 
     public int getAuthorLevel() {

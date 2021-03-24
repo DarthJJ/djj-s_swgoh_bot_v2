@@ -11,12 +11,14 @@ import java.util.*;
  */
 public class CommandHelper {
 
-    private final Map<String, BaseCommand> commands;
-    private final Map<String, String> aliases;
-    private final CommandHandler commandHandler;
+    private final transient Map<String, BaseCommand> commands;
+    private final transient Map<String, String> aliases;
+    private final transient CommandHandler commandHandler;
 
     /**
      * The Constructor.
+     *
+     * @param commandHandler the command handler to use.
      */
     public CommandHelper(final CommandHandler commandHandler) {
         super();
@@ -30,26 +32,30 @@ public class CommandHelper {
         for (final BaseCommand command : toLoad) {
             if (commandHandler.getCommandEnabledStatus(command.getName())) {
                 command.setEnabled(true);
-                commands.put(command.getName().toLowerCase(), command);
-                aliases.put(command.getName().toLowerCase(), command.getName().toLowerCase());
+                commands.put(command.getName().toLowerCase(Locale.ENGLISH), command);
+                aliases.put(command.getName().toLowerCase(Locale.ENGLISH), command.getName().toLowerCase(Locale.ENGLISH));
                 if (command.getAliases().length > 0) {
                     for (final String alias : command.getAliases()) {
-                        aliases.put(alias.toLowerCase(), command.getName().toLowerCase());
+                        aliases.put(alias.toLowerCase(Locale.ENGLISH), command.getName().toLowerCase(Locale.ENGLISH));
                     }
                 }
             }
         }
     }
 
+    /**
+     * @param name the name to search for.
+     * @return the command found.
+     */
     public BaseCommand getCommand(final String name) {
-        final String commandName = aliases.get(name.toLowerCase());
-        if (commandName == null){
+        final String commandName = aliases.get(name.toLowerCase(Locale.ENGLISH));
+        if (commandName == null) {
             return null;
         }
         final BaseCommand command = commands.get(commandName);
         if (command != null) {
             return command;
         }
-        return commands.get(name.toLowerCase());
+        return commands.get(name.toLowerCase(Locale.ENGLISH));
     }
 }

@@ -16,13 +16,14 @@ public class Logger {
     private static final String ANSI_RED = "\u001B[31m";
     private static final String ANSI_GREEN = "\u001B[32m";
     private static final String ANSI_BLUE = "\u001B[34m";
-    public static final String ANSI_YELLOW = "\u001B[33m";
+    private static final String ANSI_YELLOW = "\u001B[33m";
 
     private final transient String className = this.getClass().getSimpleName();
     private static final String ERROR_PREFIX = "ERROR";
     private static final String DEBUG_PREFIX = "DEBUG";
     private static final String INFO_PREFIX = "INFO";
     private static final String PERMISSION_PREFIX = "PERMISSION";
+    private static final String COMMAND_PREFIX = "COMMAND";
     private static final String SEPARATOR = ": ";
     private final transient boolean debugMode;
 
@@ -76,11 +77,26 @@ public class Logger {
         }
     }
 
+    /**
+     * Call to log a permission violation.
+     *
+     * @param username of the violator.
+     * @param command  executed.
+     */
     public void permission(final String username, final String command) {
         if (debugMode) {
             System.out.println(ANSI_YELLOW + PERMISSION_PREFIX + SEPARATOR + username + SEPARATOR + command + ANSI_RESET);
         }
         appendToFile(PERMISSION_PREFIX, username + SEPARATOR + command);
+    }
+
+    /**
+     * Call to log a command used.
+     * @param username of the issuer.
+     * @param command executed.
+     */
+    public void command(final String username, final String command) {
+        appendToFile(COMMAND_PREFIX, username + SEPARATOR + command);
     }
 
     private void appendToFile(final String fileType, final String content) {

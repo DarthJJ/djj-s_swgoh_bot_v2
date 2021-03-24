@@ -85,7 +85,7 @@
         </module>
         <module name="ModifiedControlVariable" />
         <module name="MultipleStringLiterals" >
-            <property name="allowedDuplicates" value="1"/>
+            <property name="allowedDuplicates" value="2"/>
             <property name="ignoreStringsRegexp" value='^(("")|(","))$'/>
             <!--property name="ignoreOccurrenceContext" value=""/-->
         </module>

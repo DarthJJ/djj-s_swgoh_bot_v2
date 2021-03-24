@@ -5,6 +5,7 @@ import nl.djj.swgoh_bot_v2.config.Permission;
 import nl.djj.swgoh_bot_v2.entities.Flag;
 import nl.djj.swgoh_bot_v2.entities.Message;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,7 +16,7 @@ public class Ping extends BaseCommand {
     private static final String NAME = "Ping";
     private static final Permission REQUIRED_LEVEL = Permission.USER;
     private static final String DESCRIPTION = "This an example description";
-    private static final String[] ALIASES = new String[]{
+    private static final String[] ALIASES = {
             "pinger"
     };
     private static final CommandCategory CATEGORY = CommandCategory.BOT;
@@ -77,6 +78,6 @@ public class Ping extends BaseCommand {
 
     @Override
     public String[] getAliases() {
-        return ALIASES;
+        return Arrays.copyOf(ALIASES, ALIASES.length);
     }
 }

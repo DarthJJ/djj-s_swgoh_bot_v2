@@ -12,10 +12,9 @@ public class User {
     private final String discordId;
 
     /**
-     *
-     * @param allycode the allycode of the user.
+     * @param allycode  the allycode of the user.
      * @param permLevel the permission level associated by the user.
-     * @param username the username of the user.
+     * @param username  the username of the user.
      * @param discordId the discordId of the user.
      */
     public User(final String allycode, final int permLevel, final String username, final String discordId) {
@@ -38,7 +37,7 @@ public class User {
         return username;
     }
 
-    public String getDiscordId(){
+    public String getDiscordId() {
         return discordId;
     }
 }

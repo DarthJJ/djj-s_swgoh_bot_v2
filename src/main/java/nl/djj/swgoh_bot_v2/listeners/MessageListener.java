@@ -8,23 +8,30 @@ import nl.djj.swgoh_bot_v2.helpers.CommandHelper;
 import nl.djj.swgoh_bot_v2.helpers.Logger;
 import nl.djj.swgoh_bot_v2.helpers.PermissionHelper;
 
+import java.util.Arrays;
+
 /**
  * @author DJJ
  */
 public class MessageListener extends ListenerAdapter {
     private final transient Logger logger;
     private final transient String className = this.getClass().getSimpleName();
-    private final CommandHelper commands;
-    private final PermissionHelper permissionHelper;
+    private final transient CommandHelper commands;
+    private final transient PermissionHelper permissionHelper;
 
     /**
      * Constructor.
+     *
+     * @param logger           the logger to use.
+     * @param commands         the helper for the commands.
+     * @param permissionHelper the helper for permissions.
      */
     public MessageListener(final Logger logger, final CommandHelper commands, final PermissionHelper permissionHelper) {
         super();
         this.logger = logger;
         this.commands = commands;
         this.permissionHelper = permissionHelper;
+        logger.debug(className, "MessageListener ready!");
     }
 
     /**
@@ -38,7 +45,7 @@ public class MessageListener extends ListenerAdapter {
             event.getMessage().getChannel().sendMessage("My prefix is '!#'").queue(); //TODO: get prefix for guild
             return;
         }
-        if (event.getAuthor().isBot() || !event.getMessage().getContentDisplay().startsWith("!#")) {//TODO: Get prefix for guild
+        if (event.getAuthor().isBot() || !event.getMessage().getContentDisplay().startsWith("!#")) { //TODO: Get prefix for guild
             return;
         }
         //TODO: make this nicer.
@@ -49,6 +56,7 @@ public class MessageListener extends ListenerAdapter {
         final BaseCommand command = commands.getCommand(flag);
         final Message message = new Message(event.getAuthor().getId(), messageContent.split(" "), 1, event.getChannel());
         if (permissionHelper.isAllowed(message, command.getRequiredLevel())) {
+            logger.command(event.getMessage().getAuthor().getName(), Arrays.toString(message.getArgs()));
             command.handleMessage(message);
         }
     }
