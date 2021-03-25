@@ -1,5 +1,7 @@
 package nl.djj.swgoh_bot_v2.helpers;
 
+import nl.djj.swgoh_bot_v2.entities.Message;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -80,23 +82,22 @@ public class Logger {
     /**
      * Call to log a permission violation.
      *
-     * @param username of the violator.
-     * @param command  executed.
+     * @param message the message.
      */
-    public void permission(final String username, final String command) {
+    public void permission(final Message message) {
         if (debugMode) {
-            System.out.println(ANSI_YELLOW + PERMISSION_PREFIX + SEPARATOR + username + SEPARATOR + command + ANSI_RESET);
+            System.out.println(ANSI_YELLOW + PERMISSION_PREFIX + SEPARATOR + message.getAuthor() + SEPARATOR + message.getCommand() + SEPARATOR + message.getFlag() + SEPARATOR + message.getArgs() + ANSI_RESET);
         }
-        appendToFile(PERMISSION_PREFIX, username + SEPARATOR + command);
+        appendToFile(PERMISSION_PREFIX, message.getAuthor() + SEPARATOR + message.getCommand() + SEPARATOR + message.getFlag() + SEPARATOR + message.getArgs());
     }
 
     /**
      * Call to log a command used.
-     * @param username of the issuer.
-     * @param command executed.
+     *
+     * @param message the message.
      */
-    public void command(final String username, final String command) {
-        appendToFile(COMMAND_PREFIX, username + SEPARATOR + command);
+    public void command(final Message message) {
+        appendToFile(COMMAND_PREFIX, message.getAuthor() + SEPARATOR + message.getCommand() + SEPARATOR + message.getFlag() + SEPARATOR + message.getArgs());
     }
 
     private void appendToFile(final String fileType, final String content) {

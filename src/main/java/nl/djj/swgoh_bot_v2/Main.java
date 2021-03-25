@@ -38,8 +38,9 @@ public final class Main extends ListenerAdapter {
         final Dotenv dotenv = Dotenv.load();
         logger = new Logger(Boolean.parseBoolean(dotenv.get("DEBUG_MODE")));
         database = new Database(logger);
-        commandHelper = new CommandHelper(database.getCommandHelper());
+        commandHelper = new CommandHelper(database.getCommandHelper(), logger, database);
         permissionHelper = new PermissionHelper(database.getUserHandler(), logger);
+//        database.createDatabase();
         initializeDiscord(dotenv.get("BETA_DISCORD_TOKEN"));
         logger.info(className, "Bot Ready!");
         closeBot(); //TODO: remove after fixing codeCheck
@@ -48,7 +49,7 @@ public final class Main extends ListenerAdapter {
     private void initializeDiscord(final String token) {
         try {
             final JDABuilder builder = JDABuilder.createDefault(token);
-            builder.addEventListeners(new MessageListener(logger, commandHelper, permissionHelper), new ReadyListener(logger));
+            builder.addEventListeners(new MessageListener(logger, database, commandHelper, permissionHelper), new ReadyListener(logger));
             builder.setActivity(Activity.listening("Being developed"));
             builder.build();
         } catch (final LoginException exception) {

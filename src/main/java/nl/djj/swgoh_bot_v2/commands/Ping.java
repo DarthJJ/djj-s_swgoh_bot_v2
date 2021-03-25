@@ -2,8 +2,10 @@ package nl.djj.swgoh_bot_v2.commands;
 
 import nl.djj.swgoh_bot_v2.config.CommandCategory;
 import nl.djj.swgoh_bot_v2.config.Permission;
+import nl.djj.swgoh_bot_v2.database.HandlerInterface;
 import nl.djj.swgoh_bot_v2.entities.Flag;
 import nl.djj.swgoh_bot_v2.entities.Message;
+import nl.djj.swgoh_bot_v2.helpers.Logger;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -25,9 +27,11 @@ public class Ping extends BaseCommand {
 
     /**
      * Constructor.
+     * @param logger the logger to use.
+     * @param dbHandler the DB connection.
      */
-    public Ping() {
-        super();
+    public Ping(final Logger logger, final HandlerInterface dbHandler) {
+        super(logger, dbHandler);
     }
 
     @Override
@@ -49,6 +53,11 @@ public class Ping extends BaseCommand {
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Override
+    public boolean isFlagRequired() {
+        return false;
     }
 
     @Override

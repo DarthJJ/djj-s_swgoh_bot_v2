@@ -5,8 +5,6 @@ import nl.djj.swgoh_bot_v2.database.UserHandler;
 import nl.djj.swgoh_bot_v2.entities.Message;
 import nl.djj.swgoh_bot_v2.entities.User;
 
-import java.util.Arrays;
-
 /**
  * @author DJJ
  */
@@ -32,7 +30,7 @@ public class PermissionHelper {
      * @return if it is allowed.
      */
     public boolean isAllowed(final Message message, final Permission requiredLevel) {
-        final User user = userHandler.getByDiscordId(message.getAuthor());
+        final User user = userHandler.getByDiscordId(message.getAuthorId());
         if (user == null) {
             if (requiredLevel == Permission.USER) {
                 return true;
@@ -42,7 +40,7 @@ public class PermissionHelper {
         }
 
         message.getChannel().sendMessage("You are not allowed to execute this command").queue();
-        logger.permission(message.getAuthor(), Arrays.toString(message.getArgs()));
+        logger.permission(message);
         return false;
     }
 }
