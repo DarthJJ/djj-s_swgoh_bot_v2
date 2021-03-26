@@ -22,7 +22,7 @@ import java.util.*;
 public class Update extends BaseCommand {
     private static final String NAME = "Update";
     private static final Permission REQUIRED_LEVEL = Permission.ADMINISTRATOR;
-    private static final String DESCRIPTION = "All the admin commands of the bot, aka the danger-zone";
+    private static final String DESCRIPTION = "All the update commands of the bot, aka the danger-zone";
     private static final String[] ALIASES = {
             "up"
     };
@@ -65,8 +65,8 @@ public class Update extends BaseCommand {
     }
 
     @Override
-    public String getCategory() {
-        return CATEGORY.getName();
+    public CommandCategory getCategory() {
+        return CATEGORY;
     }
 
     @Override
@@ -117,8 +117,8 @@ public class Update extends BaseCommand {
     }
 
     private boolean updateUnits() {
-        final JSONArray characterData = httpHelper.getJson(SwgohGgEndpoint.CHARACTER_ENDPOINT.getUrl());
-        final JSONArray shipData = httpHelper.getJson(SwgohGgEndpoint.SHIP_ENDPOINT.getUrl());
+        final JSONArray characterData = httpHelper.getJsonArray(SwgohGgEndpoint.CHARACTER_ENDPOINT.getUrl());
+        final JSONArray shipData = httpHelper.getJsonArray(SwgohGgEndpoint.SHIP_ENDPOINT.getUrl());
         if (characterData == null || shipData == null) {
             return false;
         }

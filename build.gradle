@@ -45,6 +45,7 @@ shadowJar {
 
 checkstyle {
     configFile = new File("$rootProject.projectDir/configs/checkstyleRuleSet.xml")
+    toolVersion '8.41';
 }
 
 checkstyleMain {

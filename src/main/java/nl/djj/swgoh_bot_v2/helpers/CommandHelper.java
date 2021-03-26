@@ -1,8 +1,9 @@
 package nl.djj.swgoh_bot_v2.helpers;
 
 import nl.djj.swgoh_bot_v2.commands.BaseCommand;
-import nl.djj.swgoh_bot_v2.commands.Ping;
+import nl.djj.swgoh_bot_v2.commands.admin.Control;
 import nl.djj.swgoh_bot_v2.commands.admin.Update;
+import nl.djj.swgoh_bot_v2.commands.bot.Register;
 import nl.djj.swgoh_bot_v2.database.CommandHandler;
 import nl.djj.swgoh_bot_v2.database.Database;
 
@@ -32,20 +33,21 @@ public class CommandHelper {
         this.aliases = new HashMap<>();
         this.commandHandler = commandHandler;
         this.logger = logger;
-        initializeCommands(new ArrayList<>(Arrays.asList(new Ping(logger, null), new Update(logger, database.getUpdateHandler()))));
+        initializeCommands(new ArrayList<>(Arrays.asList(
+                new Update(logger, database.getUpdateHandler()),
+                new Control(logger, database.getControlHandler()),
+                new Register(logger, database.getUserHandler()))));
     }
 
     private void initializeCommands(final List<BaseCommand> toLoad) {
         for (final BaseCommand command : toLoad) {
-            if (commandHandler.getCommandEnabledStatus(command.getName())) {
-                command.setEnabled(true);
-                commands.put(command.getName().toLowerCase(Locale.ENGLISH), command);
-                logger.info(className, "Loaded command: " + command.getName());
-                aliases.put(command.getName().toLowerCase(Locale.ENGLISH), command.getName().toLowerCase(Locale.ENGLISH));
-                if (command.getAliases().length > 0) {
-                    for (final String alias : command.getAliases()) {
-                        aliases.put(alias.toLowerCase(Locale.ENGLISH), command.getName().toLowerCase(Locale.ENGLISH));
-                    }
+            command.setEnabled(commandHandler.getCommandEnabledStatus(command.getName()));
+            commands.put(command.getName().toLowerCase(Locale.ENGLISH), command);
+            logger.info(className, "Loaded command: " + command.getName());
+            aliases.put(command.getName().toLowerCase(Locale.ENGLISH), command.getName().toLowerCase(Locale.ENGLISH));
+            if (command.getAliases().length > 0) {
+                for (final String alias : command.getAliases()) {
+                    aliases.put(alias.toLowerCase(Locale.ENGLISH), command.getName().toLowerCase(Locale.ENGLISH));
                 }
             }
         }
@@ -53,17 +55,18 @@ public class CommandHelper {
 
     /**
      * @param name the name to search for.
+     * @param ownerOverride if the issuer is the botOwner.
      * @return the command found.
      */
-    public BaseCommand getCommand(final String name) {
+    public BaseCommand getCommand(final String name, final boolean ownerOverride) {
         final String commandName = aliases.get(name.toLowerCase(Locale.ENGLISH));
         if (commandName == null) {
             return null;
         }
         final BaseCommand command = commands.get(commandName);
-        if (command != null) {
+        if (command != null && (command.isEnabled() || ownerOverride)) {
             return command;
         }
-        return commands.get(name.toLowerCase(Locale.ENGLISH));
+        return null;
     }
 }

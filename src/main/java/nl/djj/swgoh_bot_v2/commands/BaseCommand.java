@@ -1,5 +1,6 @@
 package nl.djj.swgoh_bot_v2.commands;
 
+import nl.djj.swgoh_bot_v2.config.CommandCategory;
 import nl.djj.swgoh_bot_v2.config.Permission;
 import nl.djj.swgoh_bot_v2.database.HandlerInterface;
 import nl.djj.swgoh_bot_v2.entities.Flag;
@@ -53,7 +54,7 @@ public abstract class BaseCommand {
     /**
      * @return category.
      */
-    public abstract String getCategory();
+    public abstract CommandCategory getCategory();
 
     /**
      * @return flags of the command.

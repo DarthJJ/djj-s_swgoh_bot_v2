@@ -3,6 +3,7 @@ package nl.djj.swgoh_bot_v2.listeners;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import nl.djj.swgoh_bot_v2.commands.BaseCommand;
+import nl.djj.swgoh_bot_v2.config.Config;
 import nl.djj.swgoh_bot_v2.database.Database;
 import nl.djj.swgoh_bot_v2.entities.Message;
 import nl.djj.swgoh_bot_v2.helpers.CommandHelper;
@@ -59,12 +60,12 @@ public class MessageListener extends ListenerAdapter {
         final List<String> args =  new LinkedList<>(Arrays.asList(messageContent.split(" ")));
         final String commandName = args.get(0);
         args.remove(0);
-        final BaseCommand command = commands.getCommand(commandName);
+        final BaseCommand command = commands.getCommand(commandName, event.getAuthor().getId().equals(Config.OWNER_ID));
         if (command == null) {
             event.getChannel().sendMessage("This command doesn't exist").queue();
             return;
         }
-        if (command.isFlagRequired() && args.size() < 1) {
+        if (command.isFlagRequired() && args.isEmpty()) {
             event.getChannel().sendMessage("Missing flags for this command").queue();
             return;
         }

@@ -1,6 +1,7 @@
 package nl.djj.swgoh_bot_v2.helpers;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.*;
 import java.net.URL;
@@ -33,15 +34,31 @@ public class HttpHelper {
     }
 
     /**
-     * Download a JSON file from the given URL.
+     * Download a JSON array from the given URL.
      * @param url the url.
      * @return JSON data.
      */
-    public JSONArray getJson(final String url) {
+    public JSONArray getJsonArray(final String url) {
         try (InputStream is = new URL(url).openStream()) {
             final BufferedReader rd = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
             final String jsonText = readAll(rd);
             return new JSONArray(jsonText);
+        } catch (final IOException exception) {
+            logger.error(className, exception.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Download a JSON Object from the given URL.
+     * @param url the url.
+     * @return JSON data.
+     */
+    public JSONObject getJsonObject(final String url) {
+        try (InputStream is = new URL(url).openStream()) {
+            final BufferedReader rd = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+            final String jsonText = readAll(rd);
+            return new JSONObject(jsonText);
         } catch (final IOException exception) {
             logger.error(className, exception.getMessage());
             return null;

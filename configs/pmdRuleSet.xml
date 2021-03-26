@@ -8,6 +8,7 @@
         <exclude name="GuardLogStatement"/>
         <exclude name="JUnitTestContainsTooManyAsserts"/>
         <exclude name="SystemPrintln"/>
+        <exclude name="PreserveStackTrace"/>
     </rule>
     <rule ref="category/java/codestyle.xml">
         <exclude name="UnnecessaryConstructor"/>
@@ -104,11 +105,17 @@
             <property name="fieldCommentRequirement" value="Ignored"/>
         </properties>
     </rule>
+    <rule ref="category/java/bestpractices.xml/SwitchStmtsShouldHaveDefault">
+        <properties>
+            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['.Control']"/>
+        </properties>
+    </rule>
     <rule ref="category/java/errorprone.xml">
         <exclude name="MissingSerialVersionUID"/>
         <exclude name="AvoidCatchingNPE"/>
         <exclude name="NonStaticInitializer"/>
         <exclude name="AvoidDuplicateLiterals"/>
+        <exclude name="AssignmentInOperand"/>
     </rule>
     <rule ref="category/java/errorprone.xml/DataflowAnomalyAnalysis">
         <properties>

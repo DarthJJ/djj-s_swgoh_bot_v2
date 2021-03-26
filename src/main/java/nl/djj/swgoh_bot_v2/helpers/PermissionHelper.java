@@ -1,5 +1,6 @@
 package nl.djj.swgoh_bot_v2.helpers;
 
+import nl.djj.swgoh_bot_v2.config.Config;
 import nl.djj.swgoh_bot_v2.config.Permission;
 import nl.djj.swgoh_bot_v2.database.UserHandler;
 import nl.djj.swgoh_bot_v2.entities.Message;
@@ -30,6 +31,9 @@ public class PermissionHelper {
      * @return if it is allowed.
      */
     public boolean isAllowed(final Message message, final Permission requiredLevel) {
+        if (message.getAuthorId().equals(Config.OWNER_ID)) {
+            return true;
+        }
         final User user = userHandler.getByDiscordId(message.getAuthorId());
         if (user == null) {
             if (requiredLevel == Permission.USER) {

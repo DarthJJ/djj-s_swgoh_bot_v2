@@ -38,9 +38,10 @@ public final class Main extends ListenerAdapter {
         final Dotenv dotenv = Dotenv.load();
         logger = new Logger(Boolean.parseBoolean(dotenv.get("DEBUG_MODE")));
         database = new Database(logger);
+        database.createDatabase();
         commandHelper = new CommandHelper(database.getCommandHelper(), logger, database);
         permissionHelper = new PermissionHelper(database.getUserHandler(), logger);
-//        database.createDatabase();
+        database.createDatabase();
         initializeDiscord(dotenv.get("BETA_DISCORD_TOKEN"));
         logger.info(className, "Bot Ready!");
         closeBot(); //TODO: remove after fixing codeCheck
