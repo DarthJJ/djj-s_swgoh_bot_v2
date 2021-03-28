@@ -1,11 +1,15 @@
 package nl.djj.swgoh_bot_v2.helpers;
 
+import nl.djj.swgoh_bot_v2.exceptions.HttpRetrieveError;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.*;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author DJJ
@@ -35,6 +39,7 @@ public class HttpHelper {
 
     /**
      * Download a JSON array from the given URL.
+     *
      * @param url the url.
      * @return JSON data.
      */
@@ -51,14 +56,33 @@ public class HttpHelper {
 
     /**
      * Download a JSON Object from the given URL.
+     *
      * @param url the url.
      * @return JSON data.
      */
-    public JSONObject getJsonObject(final String url) {
+    public JSONObject getJsonObject(final String url) throws HttpRetrieveError {
         try (InputStream is = new URL(url).openStream()) {
             final BufferedReader rd = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
             final String jsonText = readAll(rd);
             return new JSONObject(jsonText);
+        } catch (final IOException exception) {
+            throw new HttpRetrieveError(className, exception.getMessage(), logger);
+        }
+    }
+
+    public List<String> getCsv(final String url) {
+        try {
+            URL urlCSV = new URL(url);
+            final List<String> returnValue = new ArrayList<>();
+            URLConnection urlConn = urlCSV.openConnection();
+            InputStreamReader inputCSV = new InputStreamReader(
+                    urlConn.getInputStream());
+            BufferedReader br = new BufferedReader(inputCSV);
+            String line;
+            while ((line = br.readLine()) != null) {
+                returnValue.add(line);
+            }
+            return returnValue;
         } catch (final IOException exception) {
             logger.error(className, exception.getMessage());
             return null;

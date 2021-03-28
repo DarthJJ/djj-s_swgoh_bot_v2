@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -102,7 +103,7 @@ public class Logger {
 
     private void appendToFile(final String fileType, final String content) {
         final String file = "log/" + fileType + "_" + getDate(false) + ".log";
-        try (BufferedWriter br = Files.newBufferedWriter(Paths.get(file), StandardCharsets.UTF_8)) {
+        try (BufferedWriter br = Files.newBufferedWriter(Paths.get(file), StandardCharsets.UTF_8, StandardOpenOption.APPEND)) {
             br.write(getDate(true) + SEPARATOR + content);
             br.newLine();
         } catch (final IOException exception) {

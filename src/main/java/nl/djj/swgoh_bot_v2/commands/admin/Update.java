@@ -1,13 +1,15 @@
 package nl.djj.swgoh_bot_v2.commands.admin;
 
+import nl.djj.swgoh_bot_v2.commandImpl.ImplHelper;
 import nl.djj.swgoh_bot_v2.commands.BaseCommand;
 import nl.djj.swgoh_bot_v2.config.CommandCategory;
+import nl.djj.swgoh_bot_v2.config.Config;
 import nl.djj.swgoh_bot_v2.config.Permission;
 import nl.djj.swgoh_bot_v2.config.SwgohGgEndpoint;
-import nl.djj.swgoh_bot_v2.database.HandlerInterface;
-import nl.djj.swgoh_bot_v2.database.UpdateHandler;
+import nl.djj.swgoh_bot_v2.database.DatabaseHandler;
 import nl.djj.swgoh_bot_v2.entities.Flag;
 import nl.djj.swgoh_bot_v2.entities.Message;
+import nl.djj.swgoh_bot_v2.entities.db.Abbreviation;
 import nl.djj.swgoh_bot_v2.entities.db.UnitInfo;
 import nl.djj.swgoh_bot_v2.helpers.HttpHelper;
 import nl.djj.swgoh_bot_v2.helpers.Logger;
@@ -30,18 +32,17 @@ public class Update extends BaseCommand {
     private static final Map<String, Flag> FLAGS = new HashMap<>();
     private boolean enabled;
     private static final boolean FLAG_REQUIRED = true;
-    private static final transient String FLAG_ALL = "all";
     private static final transient String FLAG_UNITS = "units";
-    private final transient HttpHelper httpHelper;
+    private static final transient String FLAG_ABBREVIATIONS = "abbreviations";
 
     /**
      * The constructor.
-     * @param logger the logger to use.
-     * @param updateHandler the DB connection.
+     *
+     * @param logger        the logger to use.
+     * @param implHelper the DB connection.
      */
-    public Update(final Logger logger, final HandlerInterface updateHandler) {
-        super(logger, updateHandler);
-        httpHelper = new HttpHelper(logger);
+    public Update(final Logger logger, final ImplHelper implHelper) {
+        super(logger, implHelper);
     }
 
     @Override
@@ -91,52 +92,18 @@ public class Update extends BaseCommand {
 
     @Override
     public void createFlags() {
-        final Flag all = new Flag(FLAG_ALL, "Updates all", "use this command to update all");
-        FLAGS.put(all.getName(), all);
         final Flag characters = new Flag(FLAG_UNITS, "Updates the units", "Use this command to only update the units");
         FLAGS.put(characters.getName(), characters);
+        final Flag abbreviations = new Flag(FLAG_ABBREVIATIONS, "Updates the unit abbreviations", "Use this command to only update the abbreviations");
+        FLAGS.put(abbreviations.getName(), abbreviations);
     }
 
     @Override
     public void handleMessage(final Message message) {
         switch (message.getFlag()) {
-            case FLAG_ALL:
-                updateAll();
-                break;
-            case FLAG_UNITS:
-                if (updateUnits()) {
-                    message.getChannel().sendMessage("success").queue();
-                    return;
-                }
-                break;
-            default:
-                message.getChannel().sendMessage("This flag doesn't exist").queue();
-                return;
+            case FLAG_UNITS -> this.implHelper.getUpdateImpl().updateUnits(message, false);
+            case FLAG_ABBREVIATIONS -> this.implHelper.getUpdateImpl().updateAbbreviations(message, false);
+            default -> message.getChannel().sendMessage("This flag doesn't exist").queue();
         }
-        message.getChannel().sendMessage("something went wrong").queue();
-    }
-
-    private boolean updateUnits() {
-        final JSONArray characterData = httpHelper.getJsonArray(SwgohGgEndpoint.CHARACTER_ENDPOINT.getUrl());
-        final JSONArray shipData = httpHelper.getJsonArray(SwgohGgEndpoint.SHIP_ENDPOINT.getUrl());
-        if (characterData == null || shipData == null) {
-            return false;
-        }
-        final List<UnitInfo> characterList = new ArrayList<>();
-        for (int i = 0; i < characterData.length(); i++) {
-            final JSONObject charJson = characterData.getJSONObject(i);
-            final UnitInfo character = new UnitInfo(charJson.getString("base_id"), charJson.getString("name").replace("'", "`"), charJson.getString("alignment"), true);
-            characterList.add(character);
-        }
-        for (int i = 0; i < shipData.length(); i++) {
-            final JSONObject shipJson = shipData.getJSONObject(i);
-            final UnitInfo character = new UnitInfo(shipJson.getString("base_id"), shipJson.getString("name").replace("'", "`"), shipJson.getString("alignment"), false);
-            characterList.add(character);
-        }
-        return ((UpdateHandler) this.dbHandler).updateUnits(characterList);
-    }
-
-    private void updateAll() {
-        updateUnits();
     }
 }

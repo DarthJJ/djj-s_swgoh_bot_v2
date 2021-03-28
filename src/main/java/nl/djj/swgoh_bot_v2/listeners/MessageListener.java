@@ -2,13 +2,13 @@ package nl.djj.swgoh_bot_v2.listeners;
 
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import nl.djj.swgoh_bot_v2.commandImpl.ImplHelper;
 import nl.djj.swgoh_bot_v2.commands.BaseCommand;
 import nl.djj.swgoh_bot_v2.config.Config;
 import nl.djj.swgoh_bot_v2.database.Database;
 import nl.djj.swgoh_bot_v2.entities.Message;
-import nl.djj.swgoh_bot_v2.helpers.CommandHelper;
+import nl.djj.swgoh_bot_v2.helpers.CommandLoader;
 import nl.djj.swgoh_bot_v2.helpers.Logger;
-import nl.djj.swgoh_bot_v2.helpers.PermissionHelper;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -19,23 +19,23 @@ import java.util.List;
  */
 public class MessageListener extends ListenerAdapter {
     private final transient Logger logger;
-    private final transient CommandHelper commands;
-    private final transient PermissionHelper permissionHelper;
+    private final transient CommandLoader commands;
+    private final transient ImplHelper implHelper;
     private final transient Database database;
 
     /**
      * Constructor.
      *
-     * @param logger           the logger to use.
-     * @param commands         the helper for the commands.
-     * @param permissionHelper the helper for permissions.
-     * @param database the DB connection.
+     * @param logger     the logger to use.
+     * @param commands   the helper for the commands.
+     * @param implHelper the helper for command impl.
+     * @param database   the DB connection.
      */
-    public MessageListener(final Logger logger, final Database database, final CommandHelper commands, final PermissionHelper permissionHelper) {
+    public MessageListener(final Logger logger, final Database database, final CommandLoader commands, final ImplHelper implHelper) {
         super();
         this.logger = logger;
         this.commands = commands;
-        this.permissionHelper = permissionHelper;
+        this.implHelper = implHelper;
         this.database = database;
     }
 
@@ -57,7 +57,7 @@ public class MessageListener extends ListenerAdapter {
         //TODO: make this nicer.
         String messageContent = event.getMessage().getContentDisplay();
         messageContent = messageContent.replace("!#", "");
-        final List<String> args =  new LinkedList<>(Arrays.asList(messageContent.split(" ")));
+        final List<String> args = new LinkedList<>(Arrays.asList(messageContent.split(" ")));
         final String commandName = args.get(0);
         args.remove(0);
         final BaseCommand command = commands.getCommand(commandName, event.getAuthor().getId().equals(Config.OWNER_ID));
@@ -72,7 +72,7 @@ public class MessageListener extends ListenerAdapter {
         final String flag = args.get(0);
         args.remove(0);
         final Message message = new Message(event.getAuthor().getId(), event.getAuthor().getName(), command.getName(), flag, args, 1, event.getChannel());
-        if (permissionHelper.isAllowed(message, command.getRequiredLevel())) {
+        if (implHelper.getProfileImpl().isAllowed(message.getAuthorId(), command.getRequiredLevel())) {
             logger.command(message);
             command.handleMessage(message);
         }

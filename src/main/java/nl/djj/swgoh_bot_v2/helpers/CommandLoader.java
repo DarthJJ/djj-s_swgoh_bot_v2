@@ -1,47 +1,48 @@
 package nl.djj.swgoh_bot_v2.helpers;
 
+import nl.djj.swgoh_bot_v2.commandImpl.ImplHelper;
 import nl.djj.swgoh_bot_v2.commands.BaseCommand;
 import nl.djj.swgoh_bot_v2.commands.admin.Control;
 import nl.djj.swgoh_bot_v2.commands.admin.Update;
 import nl.djj.swgoh_bot_v2.commands.bot.Register;
-import nl.djj.swgoh_bot_v2.database.CommandHandler;
-import nl.djj.swgoh_bot_v2.database.Database;
+import nl.djj.swgoh_bot_v2.commands.swgoh.Profile;
 
 import java.util.*;
 
 /**
  * @author DJJ
  */
-public class CommandHelper {
+public class CommandLoader {
 
     private final transient Map<String, BaseCommand> commands;
     private final transient Map<String, String> aliases;
-    private final transient CommandHandler commandHandler;
+    private final transient ImplHelper implHelper;
     private final transient String className = this.getClass().getSimpleName();
     private final transient Logger logger;
 
     /**
      * The Constructor.
      *
-     * @param commandHandler the command handler to use.
+     * @param implHelper the command handler to use.
      * @param logger         the logger to use.
-     * @param database       the DB connection.
      */
-    public CommandHelper(final CommandHandler commandHandler, final Logger logger, final Database database) {
+    public CommandLoader(final ImplHelper implHelper, final Logger logger) {
         super();
         this.commands = new HashMap<>();
         this.aliases = new HashMap<>();
-        this.commandHandler = commandHandler;
+        this.implHelper = implHelper;
         this.logger = logger;
         initializeCommands(new ArrayList<>(Arrays.asList(
-                new Update(logger, database.getUpdateHandler()),
-                new Control(logger, database.getControlHandler()),
-                new Register(logger, database.getUserHandler()))));
+                new Update(logger, implHelper),
+                new Control(logger, implHelper),
+                new Register(logger, implHelper)
+//                new Profile(logger, implHelper)
+        )));
     }
 
     private void initializeCommands(final List<BaseCommand> toLoad) {
         for (final BaseCommand command : toLoad) {
-            command.setEnabled(commandHandler.getCommandEnabledStatus(command.getName()));
+            command.setEnabled(implHelper.getCommandImpl().getCommandEnabledStatus(command.getName()));
             commands.put(command.getName().toLowerCase(Locale.ENGLISH), command);
             logger.info(className, "Loaded command: " + command.getName());
             aliases.put(command.getName().toLowerCase(Locale.ENGLISH), command.getName().toLowerCase(Locale.ENGLISH));

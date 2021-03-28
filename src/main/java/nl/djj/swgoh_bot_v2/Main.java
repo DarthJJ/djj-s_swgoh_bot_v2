@@ -1,11 +1,11 @@
 package nl.djj.swgoh_bot_v2;
 
 import net.dv8tion.jda.api.entities.Activity;
+import nl.djj.swgoh_bot_v2.commandImpl.ImplHelper;
 import nl.djj.swgoh_bot_v2.database.Database;
 import io.github.cdimascio.dotenv.Dotenv;
-import nl.djj.swgoh_bot_v2.helpers.CommandHelper;
+import nl.djj.swgoh_bot_v2.helpers.CommandLoader;
 import nl.djj.swgoh_bot_v2.helpers.Logger;
-import nl.djj.swgoh_bot_v2.helpers.PermissionHelper;
 import nl.djj.swgoh_bot_v2.listeners.MessageListener;
 import nl.djj.swgoh_bot_v2.listeners.ReadyListener;
 import net.dv8tion.jda.api.JDABuilder;
@@ -20,8 +20,8 @@ public final class Main extends ListenerAdapter {
 
     private final transient Database database;
     private final transient Logger logger;
-    private final transient CommandHelper commandHelper;
-    private final transient PermissionHelper permissionHelper;
+    private final transient CommandLoader commandLoader;
+    private final transient ImplHelper implHelper;
     private final transient String className = this.getClass().getSimpleName();
 
     /**
@@ -38,19 +38,18 @@ public final class Main extends ListenerAdapter {
         final Dotenv dotenv = Dotenv.load();
         logger = new Logger(Boolean.parseBoolean(dotenv.get("DEBUG_MODE")));
         database = new Database(logger);
-        database.createDatabase();
-        commandHelper = new CommandHelper(database.getCommandHelper(), logger, database);
-        permissionHelper = new PermissionHelper(database.getUserHandler(), logger);
+        implHelper = new ImplHelper(logger, database.getDatabaseHandler());
+        commandLoader = new CommandLoader(implHelper, logger);
         database.createDatabase();
         initializeDiscord(dotenv.get("BETA_DISCORD_TOKEN"));
         logger.info(className, "Bot Ready!");
-        closeBot(); //TODO: remove after fixing codeCheck
+//        closeBot(); //TODO: remove after fixing codeCheck
     }
 
     private void initializeDiscord(final String token) {
         try {
             final JDABuilder builder = JDABuilder.createDefault(token);
-            builder.addEventListeners(new MessageListener(logger, database, commandHelper, permissionHelper), new ReadyListener(logger));
+            builder.addEventListeners(new MessageListener(logger, database, commandLoader, implHelper), new ReadyListener(logger));
             builder.setActivity(Activity.listening("Being developed"));
             builder.build();
         } catch (final LoginException exception) {

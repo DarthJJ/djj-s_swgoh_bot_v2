@@ -1,13 +1,15 @@
 package nl.djj.swgoh_bot_v2.commands.bot;
 
+import nl.djj.swgoh_bot_v2.commandImpl.ImplHelper;
 import nl.djj.swgoh_bot_v2.commands.BaseCommand;
 import nl.djj.swgoh_bot_v2.config.CommandCategory;
 import nl.djj.swgoh_bot_v2.config.Permission;
-import nl.djj.swgoh_bot_v2.database.HandlerInterface;
-import nl.djj.swgoh_bot_v2.database.UserHandler;
+import nl.djj.swgoh_bot_v2.database.DatabaseHandler;
 import nl.djj.swgoh_bot_v2.entities.Flag;
 import nl.djj.swgoh_bot_v2.entities.Message;
+import nl.djj.swgoh_bot_v2.entities.User;
 import nl.djj.swgoh_bot_v2.exceptions.HttpRetrieveError;
+import nl.djj.swgoh_bot_v2.exceptions.SQLDeletionError;
 import nl.djj.swgoh_bot_v2.exceptions.SQLInsertionError;
 import nl.djj.swgoh_bot_v2.exceptions.ValidationError;
 import nl.djj.swgoh_bot_v2.helpers.Logger;
@@ -36,11 +38,11 @@ public class Register extends BaseCommand {
     /**
      * Constructor.
      *
-     * @param logger          the logger.
-     * @param registerHandler the DB connection.
+     * @param logger     the logger.
+     * @param implHelper the DB connection.
      */
-    public Register(final Logger logger, final HandlerInterface registerHandler) {
-        super(logger, registerHandler);
+    public Register(final Logger logger, final ImplHelper implHelper) {
+        super(logger, implHelper);
     }
 
     @Override
@@ -99,32 +101,9 @@ public class Register extends BaseCommand {
     @Override
     public void handleMessage(final Message message) {
         switch (message.getFlag()) {
-            case FLAG_ADD:
-                registerUser(message);
-                break;
-            case FLAG_REMOVE:
-                break;
-            default:
-                message.getChannel().sendMessage("No valid flag was passed").queue();
-                break;
-        }
-    }
-
-    private void registerUser(final Message message) {
-        if (((UserHandler) this.dbHandler).isRegistered(message.getAuthorId())) {
-            message.getChannel().sendMessage("You are already registered").queue();
-            return;
-        }
-        try {
-            final String allycode = String.join(", ", message.getArgs()).replace("-", "");
-            if ("".equals(allycode)) {
-                message.getChannel().sendMessage("Missing allycode").queue();
-                return;
-            }
-            ((UserHandler) this.dbHandler).registerUser(message.getAuthor(), message.getAuthorId(), allycode);
-            message.getChannel().sendMessage("You are successfully registered").queue();
-        } catch (final ValidationError | HttpRetrieveError | SQLInsertionError error) {
-            message.getChannel().sendMessage(error.getMessage()).queue();
+            case FLAG_ADD -> this.implHelper.getProfileImpl().registerUser(message);
+            case FLAG_REMOVE -> this.implHelper.getProfileImpl().unregisterUser(message);
+            default-> message.getChannel().sendMessage("No valid flag was passed").queue();
         }
     }
 }

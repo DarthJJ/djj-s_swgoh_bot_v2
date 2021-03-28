@@ -1,8 +1,9 @@
 package nl.djj.swgoh_bot_v2.commands;
 
+import nl.djj.swgoh_bot_v2.commandImpl.ImplHelper;
 import nl.djj.swgoh_bot_v2.config.CommandCategory;
 import nl.djj.swgoh_bot_v2.config.Permission;
-import nl.djj.swgoh_bot_v2.database.HandlerInterface;
+import nl.djj.swgoh_bot_v2.database.DatabaseHandler;
 import nl.djj.swgoh_bot_v2.entities.Flag;
 import nl.djj.swgoh_bot_v2.entities.Message;
 import nl.djj.swgoh_bot_v2.helpers.Logger;
@@ -16,19 +17,19 @@ public abstract class BaseCommand {
 
     //CHECKSTYLE.OFF: VisibilityModifierCheck
     protected final transient Logger logger;
-    protected final transient HandlerInterface dbHandler;
+    protected final transient ImplHelper implHelper;
     //CHECKSTYLE.ON: VisibilityModifierCheck
 
     /**
      * Constructor.
      *
      * @param logger   the logger to use;
-     * @param dbHandler the DB to use;
+     * @param implHelper the DB to use;
      */
-    public BaseCommand(final Logger logger, final HandlerInterface dbHandler) {
+    public BaseCommand(final Logger logger, final ImplHelper implHelper) {
         super();
         this.logger = logger;
-        this.dbHandler = dbHandler;
+        this.implHelper = implHelper;
     }
 
     /**
