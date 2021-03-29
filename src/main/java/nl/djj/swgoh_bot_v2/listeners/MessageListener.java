@@ -2,10 +2,9 @@ package nl.djj.swgoh_bot_v2.listeners;
 
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import nl.djj.swgoh_bot_v2.commandImpl.ImplHelper;
+import nl.djj.swgoh_bot_v2.command_impl.ImplHelper;
 import nl.djj.swgoh_bot_v2.commands.BaseCommand;
 import nl.djj.swgoh_bot_v2.config.Config;
-import nl.djj.swgoh_bot_v2.database.Database;
 import nl.djj.swgoh_bot_v2.entities.Message;
 import nl.djj.swgoh_bot_v2.helpers.CommandLoader;
 import nl.djj.swgoh_bot_v2.helpers.Logger;
@@ -21,7 +20,6 @@ public class MessageListener extends ListenerAdapter {
     private final transient Logger logger;
     private final transient CommandLoader commands;
     private final transient ImplHelper implHelper;
-    private final transient Database database;
 
     /**
      * Constructor.
@@ -29,14 +27,12 @@ public class MessageListener extends ListenerAdapter {
      * @param logger     the logger to use.
      * @param commands   the helper for the commands.
      * @param implHelper the helper for command impl.
-     * @param database   the DB connection.
      */
-    public MessageListener(final Logger logger, final Database database, final CommandLoader commands, final ImplHelper implHelper) {
+    public MessageListener(final Logger logger, final CommandLoader commands, final ImplHelper implHelper) {
         super();
         this.logger = logger;
         this.commands = commands;
         this.implHelper = implHelper;
-        this.database = database;
     }
 
     /**

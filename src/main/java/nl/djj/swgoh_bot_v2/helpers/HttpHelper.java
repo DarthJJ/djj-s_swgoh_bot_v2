@@ -43,14 +43,13 @@ public class HttpHelper {
      * @param url the url.
      * @return JSON data.
      */
-    public JSONArray getJsonArray(final String url) {
+    public JSONArray getJsonArray(final String url) throws HttpRetrieveError {
         try (InputStream is = new URL(url).openStream()) {
             final BufferedReader rd = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
             final String jsonText = readAll(rd);
             return new JSONArray(jsonText);
         } catch (final IOException exception) {
-            logger.error(className, exception.getMessage());
-            return null;
+            throw new HttpRetrieveError(className, exception.getMessage(), logger);
         }
     }
 
@@ -70,22 +69,27 @@ public class HttpHelper {
         }
     }
 
-    public List<String> getCsv(final String url) {
+    /**
+     * Get's CSV data.
+     * @param url the url to download from.
+     * @return CSV data.
+     * @throws HttpRetrieveError when something goes wrong.
+     */
+    public List<String> getCsv(final String url) throws HttpRetrieveError {
         try {
-            URL urlCSV = new URL(url);
+            final URL urlCSV = new URL(url);
             final List<String> returnValue = new ArrayList<>();
-            URLConnection urlConn = urlCSV.openConnection();
-            InputStreamReader inputCSV = new InputStreamReader(
+            final URLConnection urlConn = urlCSV.openConnection();
+            final InputStreamReader inputCSV = new InputStreamReader(
                     urlConn.getInputStream());
-            BufferedReader br = new BufferedReader(inputCSV);
+            final BufferedReader br = new BufferedReader(inputCSV);
             String line;
             while ((line = br.readLine()) != null) {
                 returnValue.add(line);
             }
             return returnValue;
         } catch (final IOException exception) {
-            logger.error(className, exception.getMessage());
-            return null;
+            throw new HttpRetrieveError(className, exception.getMessage(), logger);
         }
     }
 }

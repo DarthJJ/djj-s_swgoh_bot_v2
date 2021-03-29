@@ -1,9 +1,8 @@
 package nl.djj.swgoh_bot_v2.commands;
 
-import nl.djj.swgoh_bot_v2.commandImpl.ImplHelper;
+import nl.djj.swgoh_bot_v2.command_impl.ImplHelper;
 import nl.djj.swgoh_bot_v2.config.CommandCategory;
 import nl.djj.swgoh_bot_v2.config.Permission;
-import nl.djj.swgoh_bot_v2.database.DatabaseHandler;
 import nl.djj.swgoh_bot_v2.entities.Flag;
 import nl.djj.swgoh_bot_v2.entities.Message;
 import nl.djj.swgoh_bot_v2.helpers.Logger;

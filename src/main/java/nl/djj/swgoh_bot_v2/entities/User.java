@@ -25,6 +25,20 @@ public class User {
         this.discordId = discordId;
     }
 
+    /**
+     * @param allycode   the allycode of the user.
+     * @param permission the permission associated by the user.
+     * @param username   the username of the user.
+     * @param discordId  the discordId of the user.
+     */
+    public User(final String allycode, final Permission permission, final String username, final String discordId) {
+        super();
+        this.allycode = allycode;
+        this.permission = permission;
+        this.username = username;
+        this.discordId = discordId;
+    }
+
     public String getAllycode() {
         return allycode;
     }

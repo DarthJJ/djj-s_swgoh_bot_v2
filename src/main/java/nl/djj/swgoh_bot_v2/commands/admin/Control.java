@@ -1,6 +1,6 @@
 package nl.djj.swgoh_bot_v2.commands.admin;
 
-import nl.djj.swgoh_bot_v2.commandImpl.ImplHelper;
+import nl.djj.swgoh_bot_v2.command_impl.ImplHelper;
 import nl.djj.swgoh_bot_v2.commands.BaseCommand;
 import nl.djj.swgoh_bot_v2.config.CommandCategory;
 import nl.djj.swgoh_bot_v2.config.Permission;
@@ -87,11 +87,11 @@ public class Control extends BaseCommand {
 
     @Override
     public void createFlags() {
-        final Flag enable = new Flag(FLAG_ENABLE, "Enables a command", "usage: " + NAME + " " + FLAG_ENABLE + " <command name>");
+        final Flag enable = new Flag(FLAG_ENABLE, "Enables a command", NAME, FLAG_ENABLE, " <command name>");
         FLAGS.put(FLAG_ENABLE, enable);
-        final Flag disable = new Flag(FLAG_DISABLE, "Disables a command", "usage: " + NAME + " " + FLAG_DISABLE + " <command name>");
+        final Flag disable = new Flag(FLAG_DISABLE, "Disables a command", NAME, FLAG_DISABLE, " <command name>");
         FLAGS.put(FLAG_DISABLE, disable);
-        final Flag updateDb = new Flag(FLAG_UPDATE_DB, "Updates the DB", "usage: " + NAME + " " + FLAG_UPDATE_DB);
+        final Flag updateDb = new Flag(FLAG_UPDATE_DB, "Updates the DB", NAME, FLAG_UPDATE_DB);
         FLAGS.put(FLAG_UPDATE_DB, updateDb);
     }
 

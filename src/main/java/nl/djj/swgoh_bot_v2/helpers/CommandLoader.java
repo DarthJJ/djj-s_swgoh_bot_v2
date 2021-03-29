@@ -1,11 +1,10 @@
 package nl.djj.swgoh_bot_v2.helpers;
 
-import nl.djj.swgoh_bot_v2.commandImpl.ImplHelper;
+import nl.djj.swgoh_bot_v2.command_impl.ImplHelper;
 import nl.djj.swgoh_bot_v2.commands.BaseCommand;
 import nl.djj.swgoh_bot_v2.commands.admin.Control;
 import nl.djj.swgoh_bot_v2.commands.admin.Update;
 import nl.djj.swgoh_bot_v2.commands.bot.Register;
-import nl.djj.swgoh_bot_v2.commands.swgoh.Profile;
 
 import java.util.*;
 

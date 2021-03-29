@@ -1,7 +1,7 @@
 package nl.djj.swgoh_bot_v2;
 
 import net.dv8tion.jda.api.entities.Activity;
-import nl.djj.swgoh_bot_v2.commandImpl.ImplHelper;
+import nl.djj.swgoh_bot_v2.command_impl.ImplHelper;
 import nl.djj.swgoh_bot_v2.database.Database;
 import io.github.cdimascio.dotenv.Dotenv;
 import nl.djj.swgoh_bot_v2.helpers.CommandLoader;
@@ -43,13 +43,13 @@ public final class Main extends ListenerAdapter {
         database.createDatabase();
         initializeDiscord(dotenv.get("BETA_DISCORD_TOKEN"));
         logger.info(className, "Bot Ready!");
-//        closeBot(); //TODO: remove after fixing codeCheck
+        closeBot(); //TODO: remove after fixing codeCheck
     }
 
     private void initializeDiscord(final String token) {
         try {
             final JDABuilder builder = JDABuilder.createDefault(token);
-            builder.addEventListeners(new MessageListener(logger, database, commandLoader, implHelper), new ReadyListener(logger));
+            builder.addEventListeners(new MessageListener(logger, commandLoader, implHelper), new ReadyListener(logger));
             builder.setActivity(Activity.listening("Being developed"));
             builder.build();
         } catch (final LoginException exception) {

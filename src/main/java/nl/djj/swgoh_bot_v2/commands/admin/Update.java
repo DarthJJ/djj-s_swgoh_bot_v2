@@ -1,22 +1,16 @@
 package nl.djj.swgoh_bot_v2.commands.admin;
 
-import nl.djj.swgoh_bot_v2.commandImpl.ImplHelper;
+import nl.djj.swgoh_bot_v2.command_impl.ImplHelper;
 import nl.djj.swgoh_bot_v2.commands.BaseCommand;
 import nl.djj.swgoh_bot_v2.config.CommandCategory;
-import nl.djj.swgoh_bot_v2.config.Config;
 import nl.djj.swgoh_bot_v2.config.Permission;
-import nl.djj.swgoh_bot_v2.config.SwgohGgEndpoint;
-import nl.djj.swgoh_bot_v2.database.DatabaseHandler;
 import nl.djj.swgoh_bot_v2.entities.Flag;
 import nl.djj.swgoh_bot_v2.entities.Message;
-import nl.djj.swgoh_bot_v2.entities.db.Abbreviation;
-import nl.djj.swgoh_bot_v2.entities.db.UnitInfo;
-import nl.djj.swgoh_bot_v2.helpers.HttpHelper;
 import nl.djj.swgoh_bot_v2.helpers.Logger;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author DJJ
@@ -92,17 +86,17 @@ public class Update extends BaseCommand {
 
     @Override
     public void createFlags() {
-        final Flag characters = new Flag(FLAG_UNITS, "Updates the units", "Use this command to only update the units");
+        final Flag characters = new Flag(FLAG_UNITS, "Updates the units", NAME + FLAG_UNITS);
         FLAGS.put(characters.getName(), characters);
-        final Flag abbreviations = new Flag(FLAG_ABBREVIATIONS, "Updates the unit abbreviations", "Use this command to only update the abbreviations");
+        final Flag abbreviations = new Flag(FLAG_ABBREVIATIONS, "Updates the unit abbreviations", NAME + FLAG_ABBREVIATIONS);
         FLAGS.put(abbreviations.getName(), abbreviations);
     }
 
     @Override
     public void handleMessage(final Message message) {
         switch (message.getFlag()) {
-            case FLAG_UNITS -> this.implHelper.getUpdateImpl().updateUnits(message, false);
-            case FLAG_ABBREVIATIONS -> this.implHelper.getUpdateImpl().updateAbbreviations(message, false);
+            case FLAG_UNITS -> this.implHelper.getUpdateImpl().updateUnits(message);
+            case FLAG_ABBREVIATIONS -> this.implHelper.getUpdateImpl().updateAbbreviations(message);
             default -> message.getChannel().sendMessage("This flag doesn't exist").queue();
         }
     }

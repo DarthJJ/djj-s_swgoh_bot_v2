@@ -16,10 +16,10 @@ public class Flag {
      * @param helpText    text to be shown when asked for help.
      */
 
-    public Flag(final String name, final String description, final String helpText) {
+    public Flag(final String name, final String description, final String... helpText) {
         this.name = name;
         this.description = description;
-        this.helpText = helpText;
+        this.helpText = "usage:: " + String.join(" ", helpText);
     }
 
     public String getName() {

@@ -1,6 +1,6 @@
 package nl.djj.swgoh_bot_v2.commands.swgoh;
 
-import nl.djj.swgoh_bot_v2.commandImpl.ImplHelper;
+import nl.djj.swgoh_bot_v2.command_impl.ImplHelper;
 import nl.djj.swgoh_bot_v2.commands.BaseCommand;
 import nl.djj.swgoh_bot_v2.config.CommandCategory;
 import nl.djj.swgoh_bot_v2.config.Permission;
@@ -8,9 +8,13 @@ import nl.djj.swgoh_bot_v2.entities.Flag;
 import nl.djj.swgoh_bot_v2.entities.Message;
 import nl.djj.swgoh_bot_v2.helpers.Logger;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author DJJ
+ */
 public class Profile extends BaseCommand {
     private static final String NAME = "Profile";
     private static final Permission REQUIRED_LEVEL = Permission.USER;
@@ -24,62 +28,69 @@ public class Profile extends BaseCommand {
     private static final boolean FLAG_REQUIRED = true;
     private static final transient String FLAG_GENERIC = "generic";
 
+    /**
+     * Creates a SWGOH profile object.
+     *
+     * @param logger     the logger.
+     * @param implHelper the implHelper.
+     */
     public Profile(final Logger logger, final ImplHelper implHelper) {
         super(logger, implHelper);
     }
 
     @Override
     public String getName() {
-        return null;
+        return NAME;
     }
 
     @Override
     public String[] getAliases() {
-        return new String[0];
+        return Arrays.copyOf(ALIASES, ALIASES.length);
     }
 
     @Override
     public Permission getRequiredLevel() {
-        return null;
+        return REQUIRED_LEVEL;
     }
 
     @Override
     public String getDescription() {
-        return null;
+        return DESCRIPTION;
     }
 
     @Override
     public CommandCategory getCategory() {
-        return null;
+        return CATEGORY;
     }
 
     @Override
     public Map<String, Flag> getFlags() {
-        return null;
+        return FLAGS;
     }
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return enabled;
     }
 
     @Override
-    public void setEnabled(boolean isEnabled) {
-
+    public void setEnabled(final boolean isEnabled) {
+        this.enabled = isEnabled;
     }
 
     @Override
     public boolean isFlagRequired() {
-        return false;
+        return FLAG_REQUIRED;
     }
 
     @Override
     public void createFlags() {
-
+        final Flag generic = new Flag(FLAG_GENERIC, "Fetches the SWGOH profile for the user", NAME, FLAG_GENERIC);
+        FLAGS.put(generic.getName(), generic);
     }
 
     @Override
-    public void handleMessage(Message message) {
-
+    public void handleMessage(final Message message) {
+        //TODO: implement
     }
 }

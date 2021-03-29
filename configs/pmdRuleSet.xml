@@ -123,6 +123,12 @@
             <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['.JsonConverter']"/>
         </properties>
     </rule>
+    <rule ref="category/java/bestpractices.xml/ConstantsInInterface" >
+        <properties>
+            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['.TableNames']"/>
+        </properties>
+    </rule>
+
     <rule ref="category/java/errorprone.xml/AvoidFieldNameMatchingTypeName">
         <properties>
             <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['.Logger']"/>

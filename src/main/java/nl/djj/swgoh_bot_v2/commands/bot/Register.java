@@ -1,17 +1,11 @@
 package nl.djj.swgoh_bot_v2.commands.bot;
 
-import nl.djj.swgoh_bot_v2.commandImpl.ImplHelper;
+import nl.djj.swgoh_bot_v2.command_impl.ImplHelper;
 import nl.djj.swgoh_bot_v2.commands.BaseCommand;
 import nl.djj.swgoh_bot_v2.config.CommandCategory;
 import nl.djj.swgoh_bot_v2.config.Permission;
-import nl.djj.swgoh_bot_v2.database.DatabaseHandler;
 import nl.djj.swgoh_bot_v2.entities.Flag;
 import nl.djj.swgoh_bot_v2.entities.Message;
-import nl.djj.swgoh_bot_v2.entities.User;
-import nl.djj.swgoh_bot_v2.exceptions.HttpRetrieveError;
-import nl.djj.swgoh_bot_v2.exceptions.SQLDeletionError;
-import nl.djj.swgoh_bot_v2.exceptions.SQLInsertionError;
-import nl.djj.swgoh_bot_v2.exceptions.ValidationError;
 import nl.djj.swgoh_bot_v2.helpers.Logger;
 
 import java.util.Arrays;
@@ -92,9 +86,9 @@ public class Register extends BaseCommand {
 
     @Override
     public void createFlags() {
-        final Flag add = new Flag(FLAG_ADD, "Register to the bot", "usage: " + NAME + " " + FLAG_ADD + " <allycode: xxx-xxx-xxx / xxxxxxxxx>");
+        final Flag add = new Flag(FLAG_ADD, "Register to the bot", "usage: " + NAME, FLAG_ADD, " <allycode: xxx-xxx-xxx / xxxxxxxxx>");
         FLAGS.put(add.getName(), add);
-        final Flag remove = new Flag(FLAG_REMOVE, "Unregister to the bot", "usage: " + NAME + " " + FLAG_REMOVE);
+        final Flag remove = new Flag(FLAG_REMOVE, "Unregister to the bot", "usage: ", NAME, FLAG_REMOVE);
         FLAGS.put(remove.getName(), remove);
     }
 
@@ -103,7 +97,7 @@ public class Register extends BaseCommand {
         switch (message.getFlag()) {
             case FLAG_ADD -> this.implHelper.getProfileImpl().registerUser(message);
             case FLAG_REMOVE -> this.implHelper.getProfileImpl().unregisterUser(message);
-            default-> message.getChannel().sendMessage("No valid flag was passed").queue();
+            default -> message.getChannel().sendMessage("No valid flag was passed").queue();
         }
     }
 }
