@@ -6,6 +6,7 @@ import nl.djj.swgoh_bot_v2.config.SwgohGgEndpoint;
 import nl.djj.swgoh_bot_v2.database.DatabaseHandler;
 import nl.djj.swgoh_bot_v2.entities.Message;
 import nl.djj.swgoh_bot_v2.entities.User;
+import nl.djj.swgoh_bot_v2.entities.db.SwgohProfile;
 import nl.djj.swgoh_bot_v2.exceptions.HttpRetrieveError;
 import nl.djj.swgoh_bot_v2.exceptions.SQLDeletionError;
 import nl.djj.swgoh_bot_v2.exceptions.SQLInsertionError;
@@ -13,6 +14,7 @@ import nl.djj.swgoh_bot_v2.exceptions.SQLRetrieveError;
 import nl.djj.swgoh_bot_v2.helpers.HttpHelper;
 import nl.djj.swgoh_bot_v2.helpers.Logger;
 import nl.djj.swgoh_bot_v2.helpers.StringHelper;
+import org.json.JSONObject;
 
 /**
  * @author DJJ
@@ -37,7 +39,7 @@ public class ProfileImpl {
      * @param message the message.
      */
     public void registerUser(final Message message) {
-        if (isUserRegistered(message.getAuthorId())) {
+        if (dbHandler.isUserRegistered(message.getAuthorId())) {
             message.getChannel().sendMessage("You are already registered").queue();
             return;
         }
@@ -64,7 +66,7 @@ public class ProfileImpl {
      * @param message the message.
      */
     public void unregisterUser(final Message message) {
-        if (isUserRegistered(message.getAuthorId())) {
+        if (dbHandler.isUserRegistered(message.getAuthorId())) {
             try {
                 this.dbHandler.removeUser(message.getAuthorId());
                 message.getChannel().sendMessage("You are now unregistered").queue();
@@ -76,10 +78,6 @@ public class ProfileImpl {
         }
     }
 
-
-    private boolean isUserRegistered(final String discordId) {
-        return this.dbHandler.isUserRegistered(discordId);
-    }
 
     /**
      * @param discordId     the discordId.
@@ -98,6 +96,23 @@ public class ProfileImpl {
             return requiredLevel == Permission.USER;
         } catch (final SQLRetrieveError error) {
             return requiredLevel == Permission.USER;
+        }
+    }
+
+    public void getGenericInfo(final Message message) {
+        User user;
+        try {
+            user = dbHandler.getByDiscordId(message.getAuthorId());
+        } catch (SQLRetrieveError error) {
+            message.getChannel().sendMessage("You aren't registered").queue();
+            return;
+        }
+        try {
+            final JSONObject playerData = httpHelper.getJsonObject(SwgohGgEndpoint.MOD_ENDPOINT.getUrl().replace("%s", user.getAllycode()));
+            final JSONObject playerProfile = playerData.getJSONObject("data");
+//            final SwgohProfile profile = new SwgohProfile()
+        } catch (HttpRetrieveError error) {
+            message.getChannel().sendMessage(error.getMessage()).queue();
         }
     }
 }

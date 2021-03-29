@@ -3,6 +3,7 @@ package nl.djj.swgoh_bot_v2.helpers;
 import nl.djj.swgoh_bot_v2.entities.Message;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -102,8 +103,15 @@ public class Logger {
     }
 
     private void appendToFile(final String fileType, final String content) {
-        final String file = "log/" + fileType + "_" + getDate(false) + ".log";
-        try (BufferedWriter br = Files.newBufferedWriter(Paths.get(file), StandardCharsets.UTF_8, StandardOpenOption.APPEND)) {
+        final File file = new File("log/" + fileType + "_" + getDate(false) + ".log");
+        try {
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+        } catch (final IOException exception) {
+            error(className, exception.getMessage());
+        }
+        try (BufferedWriter br = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8, StandardOpenOption.APPEND)) {
             br.write(getDate(true) + SEPARATOR + content);
             br.newLine();
         } catch (final IOException exception) {

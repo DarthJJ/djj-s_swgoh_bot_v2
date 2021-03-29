@@ -91,6 +91,9 @@ public class Profile extends BaseCommand {
 
     @Override
     public void handleMessage(final Message message) {
-        //TODO: implement
+        switch (message.getFlag()) {
+            case FLAG_GENERIC -> this.implHelper.getProfileImpl().getGenericInfo(message);
+            default -> message.getChannel().sendMessage("No valid flag was passed").queue();
+        }
     }
 }
