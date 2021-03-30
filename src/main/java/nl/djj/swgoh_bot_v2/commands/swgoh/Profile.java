@@ -97,7 +97,7 @@ public class Profile extends BaseCommand {
             case FLAG_GENERIC -> this.implHelper.getProfileImpl().genericInfo(message);
             case FLAG_TOON_ARENA -> this.implHelper.getProfileImpl().toonArena(message);
             case FLAG_SHIP_ARENA -> this.implHelper.getProfileImpl().shipArena(message);
-            default -> message.getChannel().sendMessage("No valid flag was passed").queue();
+            default -> message.error("This is not a valid flag, use '" + message.getGuildPrefix() + " help " + NAME + "'");
         }
     }
 }

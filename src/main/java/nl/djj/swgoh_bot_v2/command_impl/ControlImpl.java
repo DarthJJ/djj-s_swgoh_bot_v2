@@ -29,6 +29,6 @@ public class ControlImpl {
     public void createDatabase(final Message message) {
         dbHandler.createDatabase();
         logger.info(className, "Updating / Creating the DB");
-        message.getChannel().sendMessage("Database updated").queue();
+        message.done("Database has been updated!");
     }
 }

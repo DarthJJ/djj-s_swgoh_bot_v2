@@ -4,8 +4,10 @@ import nl.djj.swgoh_bot_v2.command_impl.ImplHelper;
 import nl.djj.swgoh_bot_v2.commands.BaseCommand;
 import nl.djj.swgoh_bot_v2.commands.admin.Control;
 import nl.djj.swgoh_bot_v2.commands.admin.Update;
+import nl.djj.swgoh_bot_v2.commands.bot.Help;
 import nl.djj.swgoh_bot_v2.commands.bot.Register;
 import nl.djj.swgoh_bot_v2.commands.swgoh.Profile;
+import nl.djj.swgoh_bot_v2.entities.Message;
 
 import java.util.*;
 
@@ -24,7 +26,7 @@ public class CommandLoader {
      * The Constructor.
      *
      * @param implHelper the command handler to use.
-     * @param logger         the logger to use.
+     * @param logger     the logger to use.
      */
     public CommandLoader(final ImplHelper implHelper, final Logger logger) {
         super();
@@ -36,7 +38,13 @@ public class CommandLoader {
                 new Update(logger, implHelper),
                 new Control(logger, implHelper),
                 new Register(logger, implHelper),
-                new Profile(logger, implHelper)
+                new Profile(logger, implHelper),
+                new Help(logger, implHelper) {
+                    @Override
+                    public void handleRequest(final Message message) {
+                        handleHelpRequest(message);
+                    }
+                }
         )));
     }
 
@@ -54,17 +62,49 @@ public class CommandLoader {
         }
     }
 
-    /**
-     * @param name the name to search for.
-     * @param ownerOverride if the issuer is the botOwner.
-     * @return the command found.
-     */
-    public BaseCommand getCommand(final String name, final boolean ownerOverride) {
+    private void handleHelpRequest(final Message message) {
+        final BaseCommand command = getCommand(message.getFlag());
+        if (!message.getFlag().isEmpty() && command == null) {
+            message.error("This command seems invalid, please use '" + message.getGuildPrefix() + " help' for all available commands");
+            return;
+        }
+        if (command != null) {
+            //TODO: Command specific help.
+            return;
+        }
+        final Map<String, List<BaseCommand>> helpText = new HashMap<>();
+        for (final Map.Entry<String, BaseCommand> entry : commands.entrySet()) {
+            if (!this.implHelper.getProfileImpl().isAllowed(message.getAuthorId(), entry.getValue().getRequiredLevel())) {
+                continue;
+            }
+            if (helpText.containsKey(entry.getValue().getCategory().getName())) {
+                final List<BaseCommand> groupedCommands = helpText.get(entry.getValue().getCategory().getName());
+                groupedCommands.add(entry.getValue());
+                helpText.put(entry.getValue().getCategory().getName(), groupedCommands);
+            } else {
+                helpText.put(entry.getValue().getCategory().getName(), new ArrayList<>() {{
+                    add(entry.getValue());
+                }});
+            }
+        }
+        message.done(MessageHelper.formatGenericHelpText(helpText));
+    }
+
+    private BaseCommand getCommand(final String name) {
         final String commandName = aliases.get(name.toLowerCase(Locale.ENGLISH));
         if (commandName == null) {
             return null;
         }
-        final BaseCommand command = commands.get(commandName);
+        return commands.get(commandName);
+    }
+
+    /**
+     * @param name          the name to search for.
+     * @param ownerOverride if the issuer is the botOwner.
+     * @return the command found.
+     */
+    public BaseCommand getCommand(final String name, final boolean ownerOverride) {
+        final BaseCommand command = getCommand(name);
         if (command != null && (command.isEnabled() || ownerOverride)) {
             return command;
         }

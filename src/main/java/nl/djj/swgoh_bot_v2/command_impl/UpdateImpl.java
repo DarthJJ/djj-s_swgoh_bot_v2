@@ -48,7 +48,7 @@ public class UpdateImpl {
             characterData = httpHelper.getJsonArray(SwgohGgEndpoint.CHARACTER_ENDPOINT.getUrl());
             shipData = httpHelper.getJsonArray(SwgohGgEndpoint.SHIP_ENDPOINT.getUrl());
         } catch (final HttpRetrieveError error) {
-            message.getChannel().sendMessage("Something went wrong retrieving the unit data").queue();
+            message.done(error.getMessage());
             return;
         }
 
@@ -65,9 +65,9 @@ public class UpdateImpl {
         }
         try {
             dbHandler.updateUnits(characterList);
-            message.getChannel().sendMessage("Success").queue();
+            message.done("Units updated!");
         } catch (final SQLInsertionError error) {
-            message.getChannel().sendMessage(error.getMessage()).queue();
+            message.error(error.getMessage());
         }
     }
 
@@ -81,7 +81,7 @@ public class UpdateImpl {
         try {
             abbreviationData = httpHelper.getCsv(Config.ABBREVIATIONS_LINK);
         } catch (final HttpRetrieveError error) {
-            message.getChannel().sendMessage("Something went wrong fetching the abbreviation data").queue();
+            message.error(error.getMessage());
             return;
         }
         final List<Abbreviation> abbreviations = new ArrayList<>();
@@ -94,9 +94,9 @@ public class UpdateImpl {
         }
         try {
             dbHandler.updateAbbreviations(abbreviations);
-            message.getChannel().sendMessage("Success").queue();
+            message.done("Abbreviations updated!");
         } catch (final SQLInsertionError error) {
-            message.getChannel().sendMessage(error.getMessage()).queue();
+            message.error(error.getMessage());
         }
     }
 }

@@ -17,6 +17,18 @@
         <exclude name="DefaultPackage"/>
         <exclude name="AvoidDuplicateLiterals"/>
     </rule>
+    <rule ref="category/java/codestyle.xml/EmptyMethodInAbstractClassShouldBeAbstract" >
+        <properties>
+            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['.Help']"/>
+        </properties>
+    </rule>
+    <rule ref="category/java/bestpractices.xml/DoubleBraceInitialization" >
+        <properties>
+            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['.CommandLoader']"/>
+        </properties>
+    </rule>
+
+
     <rule ref="category/java/codestyle.xml/LongVariable">
         <properties>
             <property name="minimum" value="25"/>

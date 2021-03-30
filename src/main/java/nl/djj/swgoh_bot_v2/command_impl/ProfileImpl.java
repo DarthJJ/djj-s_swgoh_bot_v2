@@ -13,7 +13,7 @@ import nl.djj.swgoh_bot_v2.exceptions.SQLInsertionError;
 import nl.djj.swgoh_bot_v2.exceptions.SQLRetrieveError;
 import nl.djj.swgoh_bot_v2.helpers.HttpHelper;
 import nl.djj.swgoh_bot_v2.helpers.Logger;
-import nl.djj.swgoh_bot_v2.helpers.MessageFormatter;
+import nl.djj.swgoh_bot_v2.helpers.MessageHelper;
 import nl.djj.swgoh_bot_v2.helpers.StringHelper;
 import org.json.JSONObject;
 
@@ -110,16 +110,16 @@ public class ProfileImpl {
         try {
             user = dbHandler.getByDiscordId(message.getAuthorId());
         } catch (final SQLRetrieveError error) {
-            message.getChannel().sendMessage("You aren't registered").queue();
+            message.error("You aren't registered");
             return;
         }
         try {
             final JSONObject playerData = httpHelper.getJsonObject(SwgohGgEndpoint.PLAYER_ENDPOINT.getUrl() + user.getAllycode());
             final JSONObject playerProfile = playerData.getJSONObject("data");
             final SwgohProfile profile = SwgohProfile.initFromJson(playerProfile);
-            message.getChannel().sendMessage(MessageFormatter.formatSwgohProfile(profile)).queue();
+            message.done(MessageHelper.formatSwgohProfile(profile));
         } catch (final HttpRetrieveError error) {
-            message.getChannel().sendMessage(error.getMessage()).queue();
+            message.error(error.getMessage());
         }
     }
 

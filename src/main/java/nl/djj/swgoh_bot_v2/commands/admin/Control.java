@@ -101,7 +101,7 @@ public class Control extends BaseCommand {
             case FLAG_ENABLE -> this.implHelper.getCommandImpl().enableCommand(message);
             case FLAG_DISABLE -> this.implHelper.getCommandImpl().disableCommand(message);
             case FLAG_UPDATE_DB -> this.implHelper.getControlImpl().createDatabase(message);
-            default -> message.getChannel().sendMessage("This flag doesn't exist").queue();
+            default -> message.error("This is not a valid flag, use '" + message.getGuildPrefix() + " help " + NAME + "'");
         }
     }
 }

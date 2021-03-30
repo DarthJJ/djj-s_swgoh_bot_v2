@@ -97,7 +97,7 @@ public class Update extends BaseCommand {
         switch (message.getFlag()) {
             case FLAG_UNITS -> this.implHelper.getUpdateImpl().updateUnits(message);
             case FLAG_ABBREVIATIONS -> this.implHelper.getUpdateImpl().updateAbbreviations(message);
-            default -> message.getChannel().sendMessage("This flag doesn't exist").queue();
+            default -> message.error("This is not a valid flag, use '" + message.getGuildPrefix() + " help " + NAME + "'");
         }
     }
 }

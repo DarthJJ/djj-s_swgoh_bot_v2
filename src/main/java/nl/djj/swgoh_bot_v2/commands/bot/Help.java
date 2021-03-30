@@ -15,8 +15,8 @@ import java.util.Map;
 /**
  * @author DJJ
  */
-public class Register extends BaseCommand {
-    private static final String NAME = "Register";
+public abstract class Help extends BaseCommand {
+    private static final String NAME = "Help";
     private static final Permission REQUIRED_LEVEL = Permission.USER;
     private static final String DESCRIPTION = "Register or unregister with the bot.";
     private static final String[] ALIASES = {
@@ -25,17 +25,14 @@ public class Register extends BaseCommand {
     private static final CommandCategory CATEGORY = CommandCategory.BOT;
     private static final Map<String, Flag> FLAGS = new HashMap<>();
     private boolean enabled;
-    private static final boolean FLAG_REQUIRED = true;
-    private static final transient String FLAG_ADD = "add";
-    private static final transient String FLAG_REMOVE = "remove";
+    private static final boolean FLAG_REQUIRED = false;
 
     /**
      * Constructor.
-     *
-     * @param logger     the logger.
-     * @param implHelper the DB connection.
+     * @param logger the logger.
+     * @param implHelper the implHelper.
      */
-    public Register(final Logger logger, final ImplHelper implHelper) {
+    public Help(final Logger logger, final ImplHelper implHelper) {
         super(logger, implHelper);
     }
 
@@ -86,18 +83,17 @@ public class Register extends BaseCommand {
 
     @Override
     public void createFlags() {
-        final Flag add = new Flag(FLAG_ADD, "Register to the bot", "usage: " + NAME, FLAG_ADD, " <allycode: xxx-xxx-xxx / xxxxxxxxx>");
-        FLAGS.put(add.getName(), add);
-        final Flag remove = new Flag(FLAG_REMOVE, "Unregister to the bot", "usage: ", NAME, FLAG_REMOVE);
-        FLAGS.put(remove.getName(), remove);
+        //Not needed for this command
     }
 
     @Override
     public void handleMessage(final Message message) {
-        switch (message.getFlag()) {
-            case FLAG_ADD -> this.implHelper.getProfileImpl().registerUser(message);
-            case FLAG_REMOVE -> this.implHelper.getProfileImpl().unregisterUser(message);
-            default -> message.error("This is not a valid flag, use '" + message.getGuildPrefix() + " help " + NAME + "'");
-        }
+        handleRequest(message);
     }
+
+    /**
+     * Called to handle the help message.
+     * @param message the help message.
+     */
+    public abstract void handleRequest(final Message message);
 }

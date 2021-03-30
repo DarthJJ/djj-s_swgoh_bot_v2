@@ -40,10 +40,10 @@ public class CommandImpl {
         final String enableCommand = String.join(", ", message.getArgs());
         try {
             dbHandler.enableCommand(enableCommand);
-            message.getChannel().sendMessage("Command: " + enableCommand + " enabled!").queue();
+            message.done("Command: " + enableCommand + " enabled!");
         } catch (final SQLInsertionError error) {
             logger.error(className, error.getMessage());
-            message.getChannel().sendMessage(error.getMessage()).queue();
+            message.error(error.getMessage());
         }
     }
 
@@ -55,10 +55,10 @@ public class CommandImpl {
         final String enableCommand = String.join(", ", message.getArgs());
         try {
             dbHandler.disableCommand(enableCommand);
-            message.getChannel().sendMessage("Command: " + enableCommand + " disabled!").queue();
+            message.done("Command: " + enableCommand + " disabled!");
         } catch (final SQLInsertionError error) {
             logger.error(className, error.getMessage());
-            message.getChannel().sendMessage(error.getMessage()).queue();
+            message.error(error.getMessage());
         }
     }
 }

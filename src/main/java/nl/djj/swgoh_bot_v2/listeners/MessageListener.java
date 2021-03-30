@@ -9,10 +9,6 @@ import nl.djj.swgoh_bot_v2.entities.Message;
 import nl.djj.swgoh_bot_v2.helpers.CommandLoader;
 import nl.djj.swgoh_bot_v2.helpers.Logger;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-
 /**
  * @author DJJ
  */
@@ -43,37 +39,33 @@ public class MessageListener extends ListenerAdapter {
     //CHECKSTYLE.OFF: NPathComplexityCheck //TODO: remove this/ simplify this
     @Override
     public void onMessageReceived(final MessageReceivedEvent event) {
+        final String guildPrefix = "!#";//TODO: get prefix for guild
         if (event.getMessage().getMentionedUsers().size() > 0 && event.getMessage().getMentionedUsers().get(0).getId().equals(event.getJDA().getSelfUser().getId())) {
-            event.getMessage().getChannel().sendMessage("My prefix is '!#'").queue(); //TODO: get prefix for guild
+            event.getMessage().getChannel().sendMessage("My prefix is '" + guildPrefix + "'").queue();
             return;
         }
-        if (event.getAuthor().isBot() || !event.getMessage().getContentDisplay().startsWith("!#")) { //TODO: Get prefix for guild
+        if (event.getAuthor().isBot() || !event.getMessage().getContentDisplay().startsWith(guildPrefix)) {
             return;
         }
-        //TODO: make this nicer.
-        String messageContent = event.getMessage().getContentDisplay();
-        messageContent = messageContent.replace("!#", "");
-        final List<String> args = new LinkedList<>(Arrays.asList(messageContent.split(" ")));
-        final String commandName = args.get(0);
-        args.remove(0);
-        final BaseCommand command = commands.getCommand(commandName, event.getAuthor().getId().equals(Config.OWNER_ID));
+
+        final Message message = Message.initFromEvent(event, guildPrefix);
+        message.working();
+        final BaseCommand command = commands.getCommand(message.getCommand(), event.getAuthor().getId().equals(Config.OWNER_ID));
         if (command == null) {
-            event.getChannel().sendMessage("This command doesn't exist").queue();
+            message.error("This command doesn't exist, please use: '" + guildPrefix + " help" );
             return;
         }
-        if (command.isFlagRequired() && args.isEmpty()) {
-            event.getChannel().sendMessage("Missing flags for this command").queue();
+        if (command.isFlagRequired() && message.getFlag().isEmpty()) {
+            message.error("Missing flags for this command, use the help function: " + guildPrefix + "help " + command.getName());
             return;
         }
-        final String flag = args.get(0);
-        args.remove(0);
-        final Message message = new Message(event.getAuthor().getId(), event.getAuthor().getName(), command.getName(), flag, args, 1, event.getChannel());
+
         if (implHelper.getProfileImpl().isAllowed(message.getAuthorId(), command.getRequiredLevel())) {
             logger.command(message);
             command.handleMessage(message);
-        }else {
+        } else {
             logger.permission(message);
-            message.getChannel().sendMessage("You are not allowed to do this. naughty boy").queue();
+            message.error("You are not allowed to do this. naughty boy");
         }
         //CHECKSTYLE.ON: NPathComplexityCheck
     }
