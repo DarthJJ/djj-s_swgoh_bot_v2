@@ -5,6 +5,7 @@ import nl.djj.swgoh_bot_v2.commands.BaseCommand;
 import nl.djj.swgoh_bot_v2.commands.admin.Control;
 import nl.djj.swgoh_bot_v2.commands.admin.Update;
 import nl.djj.swgoh_bot_v2.commands.bot.Register;
+import nl.djj.swgoh_bot_v2.commands.swgoh.Profile;
 
 import java.util.*;
 
@@ -34,8 +35,8 @@ public class CommandLoader {
         initializeCommands(new ArrayList<>(Arrays.asList(
                 new Update(logger, implHelper),
                 new Control(logger, implHelper),
-                new Register(logger, implHelper)
-//                new Profile(logger, implHelper)
+                new Register(logger, implHelper),
+                new Profile(logger, implHelper)
         )));
     }
 

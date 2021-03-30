@@ -5,14 +5,15 @@ import nl.djj.swgoh_bot_v2.config.Permission;
 import nl.djj.swgoh_bot_v2.config.SwgohGgEndpoint;
 import nl.djj.swgoh_bot_v2.database.DatabaseHandler;
 import nl.djj.swgoh_bot_v2.entities.Message;
+import nl.djj.swgoh_bot_v2.entities.SwgohProfile;
 import nl.djj.swgoh_bot_v2.entities.User;
-import nl.djj.swgoh_bot_v2.entities.db.SwgohProfile;
 import nl.djj.swgoh_bot_v2.exceptions.HttpRetrieveError;
 import nl.djj.swgoh_bot_v2.exceptions.SQLDeletionError;
 import nl.djj.swgoh_bot_v2.exceptions.SQLInsertionError;
 import nl.djj.swgoh_bot_v2.exceptions.SQLRetrieveError;
 import nl.djj.swgoh_bot_v2.helpers.HttpHelper;
 import nl.djj.swgoh_bot_v2.helpers.Logger;
+import nl.djj.swgoh_bot_v2.helpers.MessageFormatter;
 import nl.djj.swgoh_bot_v2.helpers.StringHelper;
 import org.json.JSONObject;
 
@@ -99,20 +100,44 @@ public class ProfileImpl {
         }
     }
 
-    public void getGenericInfo(final Message message) {
-        User user;
+    /**
+     * gets the generic info profile.
+     *
+     * @param message the message.
+     */
+    public void genericInfo(final Message message) {
+        final User user;
         try {
             user = dbHandler.getByDiscordId(message.getAuthorId());
-        } catch (SQLRetrieveError error) {
+        } catch (final SQLRetrieveError error) {
             message.getChannel().sendMessage("You aren't registered").queue();
             return;
         }
         try {
-            final JSONObject playerData = httpHelper.getJsonObject(SwgohGgEndpoint.MOD_ENDPOINT.getUrl().replace("%s", user.getAllycode()));
+            final JSONObject playerData = httpHelper.getJsonObject(SwgohGgEndpoint.PLAYER_ENDPOINT.getUrl() + user.getAllycode());
             final JSONObject playerProfile = playerData.getJSONObject("data");
-//            final SwgohProfile profile = new SwgohProfile()
-        } catch (HttpRetrieveError error) {
+            final SwgohProfile profile = SwgohProfile.initFromJson(playerProfile);
+            message.getChannel().sendMessage(MessageFormatter.formatSwgohProfile(profile)).queue();
+        } catch (final HttpRetrieveError error) {
             message.getChannel().sendMessage(error.getMessage()).queue();
         }
+    }
+
+    /**
+     * Gets the ship arena info.
+     *
+     * @param message the message.
+     */
+    public void shipArena(final Message message) {
+        //TODO: implement
+    }
+
+    /**
+     * Gets the toon arena info.
+     *
+     * @param message the message.
+     */
+    public void toonArena(final Message message) {
+        //TODO: implement
     }
 }

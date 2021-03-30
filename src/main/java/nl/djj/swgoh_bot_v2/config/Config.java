@@ -14,6 +14,10 @@ public final class Config {
      */
     public static final String FILE_STORAGE_PATH = "output/";
     /**
+     * The bot colour for embeds.
+     */
+    public static final int BOT_COLOUR = (int) Long.parseLong("00FF00", 16);
+    /**
      * Name of the bot.
      */
     public static final String BOT_NAME = "DJJ SWGOH bot";

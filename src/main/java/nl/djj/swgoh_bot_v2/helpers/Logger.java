@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -99,14 +98,17 @@ public class Logger {
      * @param message the message.
      */
     public void command(final Message message) {
+        if (debugMode) {
+            System.out.println(ANSI_GREEN + COMMAND_PREFIX + SEPARATOR + message.getAuthor() + SEPARATOR + message.getCommand() + SEPARATOR + message.getFlag() + SEPARATOR + message.getArgs() + ANSI_RESET);
+        }
         appendToFile(COMMAND_PREFIX, message.getAuthor() + SEPARATOR + message.getCommand() + SEPARATOR + message.getFlag() + SEPARATOR + message.getArgs());
     }
 
     private void appendToFile(final String fileType, final String content) {
         final File file = new File("log/" + fileType + "_" + getDate(false) + ".log");
         try {
-            if (!file.exists()) {
-                file.createNewFile();
+            if (!file.exists() && !file.createNewFile()) {
+                throw new IOException("Couldn't create log file");
             }
         } catch (final IOException exception) {
             error(className, exception.getMessage());
@@ -114,6 +116,7 @@ public class Logger {
         try (BufferedWriter br = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8, StandardOpenOption.APPEND)) {
             br.write(getDate(true) + SEPARATOR + content);
             br.newLine();
+            br.flush();
         } catch (final IOException exception) {
             error(className, exception.getMessage());
         }

@@ -43,7 +43,7 @@ public final class Main extends ListenerAdapter {
         database.createDatabase();
         initializeDiscord(dotenv.get("BETA_DISCORD_TOKEN"));
         logger.info(className, "Bot Ready!");
-//        closeBot(); //TODO: remove after fixing codeCheck
+        closeBot(); //TODO: remove after fixing codeCheck
     }
 
     private void initializeDiscord(final String token) {

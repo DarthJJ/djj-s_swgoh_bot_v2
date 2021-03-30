@@ -71,6 +71,9 @@ public class MessageListener extends ListenerAdapter {
         if (implHelper.getProfileImpl().isAllowed(message.getAuthorId(), command.getRequiredLevel())) {
             logger.command(message);
             command.handleMessage(message);
+        }else {
+            logger.permission(message);
+            message.getChannel().sendMessage("You are not allowed to do this. naughty boy").queue();
         }
         //CHECKSTYLE.ON: NPathComplexityCheck
     }

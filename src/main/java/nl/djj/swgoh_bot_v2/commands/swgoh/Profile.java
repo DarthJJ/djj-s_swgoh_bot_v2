@@ -27,6 +27,8 @@ public class Profile extends BaseCommand {
     private boolean enabled;
     private static final boolean FLAG_REQUIRED = true;
     private static final transient String FLAG_GENERIC = "generic";
+    private static final transient String FLAG_TOON_ARENA = "toonArena";
+    private static final transient String FLAG_SHIP_ARENA = "shipArena";
 
     /**
      * Creates a SWGOH profile object.
@@ -92,7 +94,9 @@ public class Profile extends BaseCommand {
     @Override
     public void handleMessage(final Message message) {
         switch (message.getFlag()) {
-            case FLAG_GENERIC -> this.implHelper.getProfileImpl().getGenericInfo(message);
+            case FLAG_GENERIC -> this.implHelper.getProfileImpl().genericInfo(message);
+            case FLAG_TOON_ARENA -> this.implHelper.getProfileImpl().toonArena(message);
+            case FLAG_SHIP_ARENA -> this.implHelper.getProfileImpl().shipArena(message);
             default -> message.getChannel().sendMessage("No valid flag was passed").queue();
         }
     }
