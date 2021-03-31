@@ -19,7 +19,7 @@ public class Flag {
     public Flag(final String name, final String description, final String... helpText) {
         this.name = name;
         this.description = description;
-        this.helpText = "usage:: " + String.join(" ", helpText);
+        this.helpText = String.join(" ", helpText);
     }
 
     public String getName() {

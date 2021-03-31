@@ -1,10 +1,14 @@
 package nl.djj.swgoh_bot_v2.entities;
 
+import nl.djj.swgoh_bot_v2.command_impl.UnitImpl;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -21,6 +25,10 @@ public class SwgohProfile {
     private transient int gpShips;
     private transient String profileUrl;
     private transient Date lastUpdated;
+    private transient List<String> toonArenaTeam;
+    private transient List<String> shipArenaTeam;
+    private transient int toonArenaRank;
+    private transient int shipArenaRank;
 
     /**
      * Constructor.
@@ -109,12 +117,47 @@ public class SwgohProfile {
         this.lastUpdated = lastUpdated;
     }
 
+    public List<String> getToonArenaTeam() {
+        return toonArenaTeam;
+    }
+
+    public void setToonArenaTeam(final List<String> toonArenaTeam) {
+        this.toonArenaTeam = toonArenaTeam;
+    }
+
+    public List<String> getShipArenaTeam() {
+        return shipArenaTeam;
+    }
+
+    public void setShipArenaTeam(final List<String> shipArenaTeam) {
+        this.shipArenaTeam = shipArenaTeam;
+    }
+
+    public int getToonArenaRank() {
+        return toonArenaRank;
+    }
+
+    public void setToonArenaRank(final int toonArenaRank) {
+        this.toonArenaRank = toonArenaRank;
+    }
+
+    public int getShipArenaRank() {
+        return shipArenaRank;
+    }
+
+    public void setShipArenaRank(final int shipArenaRank) {
+        this.shipArenaRank = shipArenaRank;
+    }
+
     /**
      * Creates an user object based on JSON.
+     *
      * @param userData the JSON data.
+     * @param unitImpl used for converting the ID to name.
      * @return the user object.
      */
-    public static SwgohProfile initFromJson(final JSONObject userData) {
+    //CHECKSTYLE.OFF: StringLiteralCheck
+    public static SwgohProfile initFromJson(final JSONObject userData, final UnitImpl unitImpl) {
         final SwgohProfile profile = new SwgohProfile();
         profile.setName(userData.getString("name"));
         profile.setLevel(userData.getInt("level"));
@@ -125,6 +168,24 @@ public class SwgohProfile {
         profile.setGpToons(userData.getInt("character_galactic_power"));
         profile.setGpShips(userData.getInt("ship_galactic_power"));
         profile.setProfileUrl("https://swgoh.gg/p/" + userData.getInt("ally_code"));
+        profile.setToonArenaRank(userData.getJSONObject("arena").getInt("rank"));
+        profile.setShipArenaRank(userData.getJSONObject("fleet_arena").getInt("rank"));
+        final JSONArray arenaTeam = userData.getJSONObject("arena").getJSONArray("members");
+        final List<String> arenaTeamToons = new ArrayList<>();
+        for (int i = 0; i < arenaTeam.length(); i++) {
+            arenaTeamToons.add(unitImpl.getUnitNameForId(arenaTeam.getString(i)));
+        }
+        profile.setToonArenaTeam(arenaTeamToons);
+        JSONArray shipTeam = userData.getJSONObject("fleet_arena").getJSONArray("members");
+        final List<String> arenaTeamShips = new ArrayList<>();
+        for (int i = 0; i < shipTeam.length(); i++) {
+            arenaTeamShips.add(unitImpl.getUnitNameForId(shipTeam.getString(i)));
+        }
+        shipTeam = userData.getJSONObject("fleet_arena").getJSONArray("reinforcements");
+        for (int i = 0; i < shipTeam.length(); i++) {
+            arenaTeamShips.add(unitImpl.getUnitNameForId(shipTeam.getString(i)));
+        }
+        profile.setShipArenaTeam(arenaTeamShips);
         try {
             profile.setLastUpdated(new SimpleDateFormat("yyyy-MM-dd'T'kk:mm:ss", Locale.ENGLISH).parse(userData.getString("last_updated")));
         } catch (final ParseException e) {
@@ -132,4 +193,5 @@ public class SwgohProfile {
         }
         return profile;
     }
+    //CHECKSTYLE.ON: StringLiteralCheck
 }

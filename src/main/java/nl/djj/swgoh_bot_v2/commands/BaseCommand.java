@@ -29,6 +29,7 @@ public abstract class BaseCommand {
         super();
         this.logger = logger;
         this.implHelper = implHelper;
+        createFlags();
     }
 
     /**

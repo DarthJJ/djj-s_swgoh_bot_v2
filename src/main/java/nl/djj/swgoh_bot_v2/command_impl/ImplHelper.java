@@ -6,24 +6,38 @@ import nl.djj.swgoh_bot_v2.helpers.Logger;
 /**
  * @author DJJ
  */
-public class ImplHelper {
+public abstract class ImplHelper {
 
     private final transient ProfileImpl profileImpl;
     private final transient CommandImpl commandImpl;
     private final transient UpdateImpl updateImpl;
     private final transient ControlImpl controlImpl;
+    private final transient UnitImpl unitImpl;
+    private final transient ConfigImpl configImpl;
 
     /**
-     * @param logger the logger.
+     * @param logger    the logger.
      * @param dbHandler the DB handler.
      */
     public ImplHelper(final Logger logger, final DatabaseHandler dbHandler) {
         super();
-        this.profileImpl = new ProfileImpl(logger, dbHandler);
+        this.profileImpl = new ProfileImpl(logger, dbHandler, this);
         this.commandImpl = new CommandImpl(logger, dbHandler);
         this.updateImpl = new UpdateImpl(logger, dbHandler);
-        this.controlImpl = new ControlImpl(logger, dbHandler);
+        this.controlImpl = new ControlImpl(logger, dbHandler) {
+            @Override
+            public void closeBot() {
+                ImplHelper.this.closeBot();
+            }
+        };
+        this.unitImpl = new UnitImpl(dbHandler);
+        this.configImpl = new ConfigImpl(dbHandler);
     }
+
+    /**
+     * Overridden to close the bot.
+     */
+    public abstract void closeBot();
 
     public ProfileImpl getProfileImpl() {
         return this.profileImpl;
@@ -39,5 +53,13 @@ public class ImplHelper {
 
     public ControlImpl getControlImpl() {
         return this.controlImpl;
+    }
+
+    public UnitImpl getUnitImpl() {
+        return this.unitImpl;
+    }
+
+    public ConfigImpl getConfigImpl() {
+        return this.configImpl;
     }
 }

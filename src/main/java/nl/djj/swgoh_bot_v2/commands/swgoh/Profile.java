@@ -16,7 +16,7 @@ import java.util.Map;
  * @author DJJ
  */
 public class Profile extends BaseCommand {
-    private static final String NAME = "Profile";
+    private static final String NAME = "profile";
     private static final Permission REQUIRED_LEVEL = Permission.USER;
     private static final String DESCRIPTION = "All swgoh profile related commands";
     private static final String[] ALIASES = {
@@ -27,8 +27,7 @@ public class Profile extends BaseCommand {
     private boolean enabled;
     private static final boolean FLAG_REQUIRED = true;
     private static final transient String FLAG_GENERIC = "generic";
-    private static final transient String FLAG_TOON_ARENA = "toonArena";
-    private static final transient String FLAG_SHIP_ARENA = "shipArena";
+    private static final transient String FLAG_ARENA = "arena";
 
     /**
      * Creates a SWGOH profile object.
@@ -87,16 +86,15 @@ public class Profile extends BaseCommand {
 
     @Override
     public void createFlags() {
-        final Flag generic = new Flag(FLAG_GENERIC, "Fetches the SWGOH profile for the user", NAME, FLAG_GENERIC);
-        FLAGS.put(generic.getName(), generic);
+        FLAGS.put(FLAG_GENERIC, new Flag(FLAG_GENERIC, "Fetches the SWGOH profile for the user", NAME, FLAG_GENERIC));
+        FLAGS.put(FLAG_ARENA, new Flag(FLAG_ARENA, "Fetches the SWGOH Arena information for the user", NAME, FLAG_ARENA));
     }
 
     @Override
     public void handleMessage(final Message message) {
         switch (message.getFlag()) {
             case FLAG_GENERIC -> this.implHelper.getProfileImpl().genericInfo(message);
-            case FLAG_TOON_ARENA -> this.implHelper.getProfileImpl().toonArena(message);
-            case FLAG_SHIP_ARENA -> this.implHelper.getProfileImpl().shipArena(message);
+            case FLAG_ARENA -> this.implHelper.getProfileImpl().toonArena(message);
             default -> message.error("This is not a valid flag, use '" + message.getGuildPrefix() + " help " + NAME + "'");
         }
     }

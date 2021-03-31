@@ -16,11 +16,11 @@ import java.util.Map;
  * @author DJJ
  */
 public class Control extends BaseCommand {
-    private static final String NAME = "Control";
+    private static final String NAME = "control";
     private static final Permission REQUIRED_LEVEL = Permission.ADMINISTRATOR;
     private static final String DESCRIPTION = "All the admin control commands of the bot, aka the danger-zone";
     private static final String[] ALIASES = {
-            "up"
+            "ctrl"
     };
     private static final CommandCategory CATEGORY = CommandCategory.ADMIN;
     private static final Map<String, Flag> FLAGS = new HashMap<>();
@@ -29,6 +29,7 @@ public class Control extends BaseCommand {
     private static final transient String FLAG_ENABLE = "enable";
     private static final transient String FLAG_DISABLE = "disable";
     private static final transient String FLAG_UPDATE_DB = "updateDb";
+    private static final transient String FLAG_SHUTDOWN = "shutdown";
 
     /**
      * Constructor.
@@ -87,12 +88,10 @@ public class Control extends BaseCommand {
 
     @Override
     public void createFlags() {
-        final Flag enable = new Flag(FLAG_ENABLE, "Enables a command", NAME, FLAG_ENABLE, " <command name>");
-        FLAGS.put(FLAG_ENABLE, enable);
-        final Flag disable = new Flag(FLAG_DISABLE, "Disables a command", NAME, FLAG_DISABLE, " <command name>");
-        FLAGS.put(FLAG_DISABLE, disable);
-        final Flag updateDb = new Flag(FLAG_UPDATE_DB, "Updates the DB", NAME, FLAG_UPDATE_DB);
-        FLAGS.put(FLAG_UPDATE_DB, updateDb);
+        FLAGS.put(FLAG_ENABLE, new Flag(FLAG_ENABLE, "Enables a command", NAME, FLAG_ENABLE, " <command name>"));
+        FLAGS.put(FLAG_DISABLE, new Flag(FLAG_DISABLE, "Disables a command", NAME, FLAG_DISABLE, " <command name>"));
+        FLAGS.put(FLAG_UPDATE_DB, new Flag(FLAG_UPDATE_DB, "Updates the DB", NAME, FLAG_UPDATE_DB));
+        FLAGS.put(FLAG_SHUTDOWN, new Flag(FLAG_SHUTDOWN, "Shuts down the bot, be careful, you can't restart via Discord", NAME, FLAG_SHUTDOWN));
     }
 
     @Override
@@ -101,6 +100,7 @@ public class Control extends BaseCommand {
             case FLAG_ENABLE -> this.implHelper.getCommandImpl().enableCommand(message);
             case FLAG_DISABLE -> this.implHelper.getCommandImpl().disableCommand(message);
             case FLAG_UPDATE_DB -> this.implHelper.getControlImpl().createDatabase(message);
+            case FLAG_SHUTDOWN -> this.implHelper.getControlImpl().closeBot();
             default -> message.error("This is not a valid flag, use '" + message.getGuildPrefix() + " help " + NAME + "'");
         }
     }

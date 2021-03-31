@@ -5,6 +5,7 @@ import nl.djj.swgoh_bot_v2.config.SwgohGgEndpoint;
 import nl.djj.swgoh_bot_v2.database.DatabaseHandler;
 import nl.djj.swgoh_bot_v2.entities.Message;
 import nl.djj.swgoh_bot_v2.entities.db.Abbreviation;
+import nl.djj.swgoh_bot_v2.entities.db.GlRequirement;
 import nl.djj.swgoh_bot_v2.entities.db.UnitInfo;
 import nl.djj.swgoh_bot_v2.exceptions.HttpRetrieveError;
 import nl.djj.swgoh_bot_v2.exceptions.SQLInsertionError;
@@ -38,6 +39,7 @@ public class UpdateImpl {
 
     /**
      * Updates the unit data.
+     *
      * @param message message.
      */
     public void updateUnits(final Message message) {
@@ -48,7 +50,7 @@ public class UpdateImpl {
             characterData = httpHelper.getJsonArray(SwgohGgEndpoint.CHARACTER_ENDPOINT.getUrl());
             shipData = httpHelper.getJsonArray(SwgohGgEndpoint.SHIP_ENDPOINT.getUrl());
         } catch (final HttpRetrieveError error) {
-            message.done(error.getMessage());
+            message.error(error.getMessage());
             return;
         }
 
@@ -72,7 +74,40 @@ public class UpdateImpl {
     }
 
     /**
+     * Updates the GL Requirements.
+     *
+     * @param message message.
+     */
+    public void updateGlRequirements(final Message message) {
+        logger.info(className, "Updating the GL Requirements");
+        final JSONObject requirementData;
+        try {
+            requirementData = httpHelper.getJsonObject(SwgohGgEndpoint.GL_CHECKLIST_ENDPOINT.getUrl());
+        } catch (final HttpRetrieveError error) {
+            message.error(error.getMessage());
+            return;
+        }
+        final JSONArray unitRequirementsData = requirementData.getJSONArray("units");
+        final List<GlRequirement> requirements = new ArrayList<>();
+        for (int i = 0; i < unitRequirementsData.length(); i++) {
+            final JSONObject glData = unitRequirementsData.getJSONObject(i);
+            final String glName = glData.getString("unitName");
+            final JSONArray units = glData.getJSONArray("requiredUnits");
+            for (int j = 0; j < units.length(); j++) {
+                requirements.add(GlRequirement.initFromJson(units.getJSONObject(j), glName));
+            }
+        }
+        try {
+            dbHandler.updateGlRequirements(requirements);
+            message.done("GL Requirements updated");
+        } catch (final SQLInsertionError error) {
+            message.error(error.getMessage());
+        }
+    }
+
+    /**
      * Updates the abbreviations data.
+     *
      * @param message message.
      */
     public void updateAbbreviations(final Message message) {

@@ -16,7 +16,7 @@ import java.util.Map;
  * @author DJJ
  */
 public class Register extends BaseCommand {
-    private static final String NAME = "Register";
+    private static final String NAME = "register";
     private static final Permission REQUIRED_LEVEL = Permission.USER;
     private static final String DESCRIPTION = "Register or unregister with the bot.";
     private static final String[] ALIASES = {
@@ -86,10 +86,8 @@ public class Register extends BaseCommand {
 
     @Override
     public void createFlags() {
-        final Flag add = new Flag(FLAG_ADD, "Register to the bot", "usage: " + NAME, FLAG_ADD, " <allycode: xxx-xxx-xxx / xxxxxxxxx>");
-        FLAGS.put(add.getName(), add);
-        final Flag remove = new Flag(FLAG_REMOVE, "Unregister to the bot", "usage: ", NAME, FLAG_REMOVE);
-        FLAGS.put(remove.getName(), remove);
+        FLAGS.put(FLAG_ADD, new Flag(FLAG_ADD, "Register to the bot", "usage: " + NAME, FLAG_ADD, " <allycode: xxx-xxx-xxx / xxxxxxxxx>"));
+        FLAGS.put(FLAG_REMOVE, new Flag(FLAG_REMOVE, "Unregister to the bot", "usage: ", NAME, FLAG_REMOVE));
     }
 
     @Override

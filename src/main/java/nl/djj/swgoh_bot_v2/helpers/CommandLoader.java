@@ -69,7 +69,7 @@ public class CommandLoader {
             return;
         }
         if (command != null) {
-            //TODO: Command specific help.
+            message.done(MessageHelper.formatSpecificHelpText(command.getName(), command.getDescription(), command.getFlags(), message.getGuildPrefix()));
             return;
         }
         final Map<String, List<BaseCommand>> helpText = new HashMap<>();

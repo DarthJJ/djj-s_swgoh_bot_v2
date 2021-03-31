@@ -7,7 +7,7 @@ import nl.djj.swgoh_bot_v2.helpers.Logger;
 /**
  * @author DJJ
  */
-public class ControlImpl {
+public abstract class ControlImpl {
     private final transient String className = this.getClass().getSimpleName();
     private final transient Logger logger;
     private final transient DatabaseHandler dbHandler;
@@ -31,4 +31,9 @@ public class ControlImpl {
         logger.info(className, "Updating / Creating the DB");
         message.done("Database has been updated!");
     }
+
+    /**
+     * overridden for bot closure.
+     */
+    public abstract void closeBot();
 }

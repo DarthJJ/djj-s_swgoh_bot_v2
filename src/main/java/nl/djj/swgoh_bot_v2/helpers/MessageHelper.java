@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import nl.djj.swgoh_bot_v2.commands.BaseCommand;
 import nl.djj.swgoh_bot_v2.config.Config;
+import nl.djj.swgoh_bot_v2.entities.Flag;
 import nl.djj.swgoh_bot_v2.entities.Message;
 import nl.djj.swgoh_bot_v2.entities.SwgohProfile;
 
@@ -21,6 +22,7 @@ public final class MessageHelper {
     private static final String REACTION_POSITIVE = "U+1F44D";
     private static final String REACTION_ERROR = "U+274C";
     private static final String REACTION_DONE = "U+2705";
+    private static final String TABLE_FORMAT = "%-15s%-3s%-15s%n";
 
     /**
      * Constructor.
@@ -78,7 +80,7 @@ public final class MessageHelper {
         for (final Map.Entry<String, List<BaseCommand>> entry : helpText.entrySet()) {
             final StringBuilder helpString = new StringBuilder();
             for (final BaseCommand command : entry.getValue()) {
-                helpString.append(String.format("%-15s%-15s%n", command.getName() + " = ", command.getDescription()));
+                helpString.append(String.format(TABLE_FORMAT, command.getName(), " = ", command.getDescription()));
             }
             helpString.append("\n");
             builder.addField(new MessageEmbed.Field(entry.getKey(), helpString.toString(), false));
@@ -100,18 +102,66 @@ public final class MessageHelper {
     public static MessageEmbed formatSwgohProfile(final SwgohProfile profile) {
         final EmbedBuilder builder = new EmbedBuilder(baseEmbed());
         builder.appendDescription("Generic Profile info for: " + profile.getName());
-        final String generic = String.format("%-15s%-15s%n", "Level = ", profile.getLevel()) +
-                String.format("%-15s%-15s%n", "Guild = ", profile.getGuild());
-        builder.addField(new MessageEmbed.Field("generic", "```" + generic + "```", false));
-        final String gp = String.format("%-15s%-15s%n", "GP_total = ", profile.getGpTotal()) +
-                String.format("%-15s%-15s%n", "GP_toons = ", profile.getGpToons()) +
-                String.format("%-15s%-15s%n", "GP_ships = ", profile.getGpShips());
+        final String generic = String.format(TABLE_FORMAT, "Level", "=", profile.getLevel()) +
+                String.format(TABLE_FORMAT, "Guild", "=", profile.getGuild());
+        builder.addField(new MessageEmbed.Field("Generic", "```" + generic + "```", false));
+        final String gp = String.format(TABLE_FORMAT, "GP_total", "=", profile.getGpTotal()) +
+                String.format(TABLE_FORMAT, "GP toons", "=", profile.getGpToons()) +
+                String.format(TABLE_FORMAT, "GP ships", "=", profile.getGpShips());
         builder.addField(new MessageEmbed.Field("GP", "```" + gp + "```", false));
-        final String arena = String.format("%-15s%-15s%n", "Toon Arena = ", profile.getToonRank()) +
-                String.format("%-15s%-15s%n", "Ship Arena = ", profile.getShipRank());
+        final String arena = String.format(TABLE_FORMAT, "Toon Arena", "=", profile.getToonRank()) +
+                String.format(TABLE_FORMAT, "Ship Arena", "=", profile.getShipRank());
         builder.addField(new MessageEmbed.Field("Arena", "```" + arena + "```", false));
-        final String profileLink = String.format("%-15s%-15s%n", "SWGOH ", "[Profile](" + profile.getProfileUrl() + ")");
+        final String profileLink = String.format(TABLE_FORMAT, "SWGOH profile", "", "[Link](" + profile.getProfileUrl() + ")");
         builder.addField(new MessageEmbed.Field("SWGOH", profileLink, false));
+        builder.addField(new MessageEmbed.Field("Updated:", profile.getLastUpdated().toString(), false));
+        return builder.build();
+    }
+
+    /**
+     * Generates a specific help text.
+     *
+     * @param name        the command.
+     * @param description the description.
+     * @param flags       the flags.
+     * @return an embed.
+     */
+    public static MessageEmbed formatSpecificHelpText(final String name, final String description, final Map<String, Flag> flags, final String prefix) {
+        final EmbedBuilder builder = new EmbedBuilder(baseEmbed());
+        builder.appendDescription("Info for command: " + name);
+        builder.addField("Description", description, false);
+        if (!flags.isEmpty()) {
+            for (final Map.Entry<String, Flag> entry : flags.entrySet()) {
+                final String flagText = String.format(TABLE_FORMAT, "Description", "=", entry.getValue().getDescription()) +
+                        String.format(TABLE_FORMAT, "Usage", "=", prefix + entry.getValue().getHelpText());
+                builder.addField(entry.getValue().getName(), "```" + flagText + "```", false);
+            }
+        }
+        return builder.build();
+    }
+
+    /**
+     * Creates an embed for the Arena profile.
+     *
+     * @param profile the profile.
+     * @return the embed.
+     */
+    public static MessageEmbed formatArenaProfile(final SwgohProfile profile) {
+        final EmbedBuilder builder = new EmbedBuilder(baseEmbed());
+        builder.appendDescription("Arena info for: " + profile.getName());
+        final StringBuilder toonArena = new StringBuilder();
+        for (final String s : profile.getToonArenaTeam()) {
+            toonArena.append(s).append("\n");
+        }
+        builder.addField(new MessageEmbed.Field("Toon Arena Rank: ", Integer.toString(profile.getToonArenaRank()), false));
+        builder.addField(new MessageEmbed.Field("Toon Arena Team", "```" + toonArena + "```", false));
+        final StringBuilder shipArena = new StringBuilder();
+        for (final String s : profile.getShipArenaTeam()) {
+            shipArena.append(s).append("\n");
+        }
+        builder.addField(new MessageEmbed.Field("Toon Arena Rank: ", Integer.toString(profile.getShipArenaRank()), false));
+        builder.addField(new MessageEmbed.Field("Toon Arena Team", "```" + shipArena + "```", false));
+        builder.addField(new MessageEmbed.Field("Updated at: ", profile.getLastUpdated().toString(), false));
         return builder.build();
     }
     //CHECKSTYLE.ON: MultipleStringLiteralsCheck

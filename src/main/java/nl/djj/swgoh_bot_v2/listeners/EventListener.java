@@ -1,6 +1,8 @@
 package nl.djj.swgoh_bot_v2.listeners;
 
+import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.user.update.UserUpdateOnlineStatusEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import nl.djj.swgoh_bot_v2.command_impl.ImplHelper;
 import nl.djj.swgoh_bot_v2.commands.BaseCommand;
@@ -8,11 +10,12 @@ import nl.djj.swgoh_bot_v2.config.Config;
 import nl.djj.swgoh_bot_v2.entities.Message;
 import nl.djj.swgoh_bot_v2.helpers.CommandLoader;
 import nl.djj.swgoh_bot_v2.helpers.Logger;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author DJJ
  */
-public class MessageListener extends ListenerAdapter {
+public class EventListener extends ListenerAdapter {
     private final transient Logger logger;
     private final transient CommandLoader commands;
     private final transient ImplHelper implHelper;
@@ -24,7 +27,7 @@ public class MessageListener extends ListenerAdapter {
      * @param commands   the helper for the commands.
      * @param implHelper the helper for command impl.
      */
-    public MessageListener(final Logger logger, final CommandLoader commands, final ImplHelper implHelper) {
+    public EventListener(final Logger logger, final CommandLoader commands, final ImplHelper implHelper) {
         super();
         this.logger = logger;
         this.commands = commands;
@@ -52,7 +55,7 @@ public class MessageListener extends ListenerAdapter {
         message.working();
         final BaseCommand command = commands.getCommand(message.getCommand(), event.getAuthor().getId().equals(Config.OWNER_ID));
         if (command == null) {
-            message.error("This command doesn't exist, please use: '" + guildPrefix + " help" );
+            message.error("This command doesn't exist, please use: '" + guildPrefix + " help");
             return;
         }
         if (command.isFlagRequired() && message.getFlag().isEmpty()) {
@@ -68,5 +71,14 @@ public class MessageListener extends ListenerAdapter {
             message.error("You are not allowed to do this. naughty boy");
         }
         //CHECKSTYLE.ON: NPathComplexityCheck
+    }
+
+    @Override
+    public void onUserUpdateOnlineStatus(final @NotNull UserUpdateOnlineStatusEvent event) {
+        super.onUserUpdateOnlineStatus(event);
+        if (event.getNewOnlineStatus() == OnlineStatus.OFFLINE || event.getNewOnlineStatus() == OnlineStatus.IDLE) {
+            return;
+        }
+        implHelper.getProfileImpl().updatePresence(event.getGuild().getId(), event.getMember().getId(), event.getMember().getEffectiveName(), event.getMember().getRoles());
     }
 }

@@ -16,7 +16,7 @@ import java.util.Map;
  * @author DJJ
  */
 public class Update extends BaseCommand {
-    private static final String NAME = "Update";
+    private static final String NAME = "update";
     private static final Permission REQUIRED_LEVEL = Permission.ADMINISTRATOR;
     private static final String DESCRIPTION = "All the update commands of the bot, aka the danger-zone";
     private static final String[] ALIASES = {
@@ -28,11 +28,12 @@ public class Update extends BaseCommand {
     private static final boolean FLAG_REQUIRED = true;
     private static final transient String FLAG_UNITS = "units";
     private static final transient String FLAG_ABBREVIATIONS = "abbreviations";
+    private static final transient String FLAG_GL_REQUIREMENTS = "glRequirements";
 
     /**
      * The constructor.
      *
-     * @param logger        the logger to use.
+     * @param logger     the logger to use.
      * @param implHelper the DB connection.
      */
     public Update(final Logger logger, final ImplHelper implHelper) {
@@ -86,10 +87,9 @@ public class Update extends BaseCommand {
 
     @Override
     public void createFlags() {
-        final Flag characters = new Flag(FLAG_UNITS, "Updates the units", NAME + FLAG_UNITS);
-        FLAGS.put(characters.getName(), characters);
-        final Flag abbreviations = new Flag(FLAG_ABBREVIATIONS, "Updates the unit abbreviations", NAME + FLAG_ABBREVIATIONS);
-        FLAGS.put(abbreviations.getName(), abbreviations);
+        FLAGS.put(FLAG_UNITS, new Flag(FLAG_UNITS, "Updates the units", NAME, FLAG_UNITS));
+        FLAGS.put(FLAG_ABBREVIATIONS, new Flag(FLAG_ABBREVIATIONS, "Updates the unit abbreviations", NAME, FLAG_ABBREVIATIONS));
+        FLAGS.put(FLAG_GL_REQUIREMENTS, new Flag(FLAG_GL_REQUIREMENTS, "Updates the GL Requirements", NAME, FLAG_GL_REQUIREMENTS));
     }
 
     @Override
@@ -97,6 +97,7 @@ public class Update extends BaseCommand {
         switch (message.getFlag()) {
             case FLAG_UNITS -> this.implHelper.getUpdateImpl().updateUnits(message);
             case FLAG_ABBREVIATIONS -> this.implHelper.getUpdateImpl().updateAbbreviations(message);
+            case FLAG_GL_REQUIREMENTS -> this.implHelper.getUpdateImpl().updateGlRequirements(message);
             default -> message.error("This is not a valid flag, use '" + message.getGuildPrefix() + " help " + NAME + "'");
         }
     }
