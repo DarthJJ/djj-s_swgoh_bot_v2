@@ -28,6 +28,7 @@ public class Profile extends BaseCommand {
     private static final boolean FLAG_REQUIRED = true;
     private static final transient String FLAG_GENERIC = "generic";
     private static final transient String FLAG_ARENA = "arena";
+    private static final transient String FLAG_RELIC = "relic";
 
     /**
      * Creates a SWGOH profile object.
@@ -88,6 +89,7 @@ public class Profile extends BaseCommand {
     public void createFlags() {
         FLAGS.put(FLAG_GENERIC, new Flag(FLAG_GENERIC, "Fetches the SWGOH profile for the user", NAME, FLAG_GENERIC));
         FLAGS.put(FLAG_ARENA, new Flag(FLAG_ARENA, "Fetches the SWGOH Arena information for the user", NAME, FLAG_ARENA));
+        FLAGS.put(FLAG_RELIC, new Flag(FLAG_RELIC, "Get's relic information about the users roster. optional parameter for level select", NAME, FLAG_RELIC, "-f <level> (inclusive)"));
     }
 
     @Override
@@ -95,6 +97,7 @@ public class Profile extends BaseCommand {
         switch (message.getFlag()) {
             case FLAG_GENERIC -> this.implHelper.getProfileImpl().genericInfo(message);
             case FLAG_ARENA -> this.implHelper.getProfileImpl().toonArena(message);
+            case FLAG_RELIC ->  this.implHelper.getProfileImpl().relic(message);
             default -> message.error("This is not a valid flag, use '" + message.getGuildPrefix() + " help " + NAME + "'");
         }
     }

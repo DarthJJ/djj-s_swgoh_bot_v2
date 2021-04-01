@@ -23,6 +23,7 @@ public final class MessageHelper {
     private static final String REACTION_ERROR = "U+274C";
     private static final String REACTION_DONE = "U+2705";
     private static final String TABLE_FORMAT = "%-15s%-3s%-15s%n";
+    private static final String UNIT_TABLE_FORMAT = "%-30s%-3s%-15s%n";
 
     /**
      * Constructor.
@@ -154,15 +155,53 @@ public final class MessageHelper {
             toonArena.append(s).append("\n");
         }
         builder.addField(new MessageEmbed.Field("Toon Arena Rank: ", Integer.toString(profile.getToonArenaRank()), false));
-        builder.addField(new MessageEmbed.Field("Toon Arena Team", "```" + toonArena + "```", false));
+        builder.addField(new MessageEmbed.Field("Toon Arena Team", "```" + toonArena.toString() + "```", false));
         final StringBuilder shipArena = new StringBuilder();
         for (final String s : profile.getShipArenaTeam()) {
             shipArena.append(s).append("\n");
         }
         builder.addField(new MessageEmbed.Field("Toon Arena Rank: ", Integer.toString(profile.getShipArenaRank()), false));
-        builder.addField(new MessageEmbed.Field("Toon Arena Team", "```" + shipArena + "```", false));
+        builder.addField(new MessageEmbed.Field("Toon Arena Team", "``` " + shipArena.toString() + " ```", false));
         builder.addField(new MessageEmbed.Field("Updated at: ", profile.getLastUpdated().toString(), false));
         return builder.build();
     }
-    //CHECKSTYLE.ON: MultipleStringLiteralsCheck
+
+    /**
+     * Formats the relic information.
+     * @param units the unit list.
+     * @param relicLevel the relic level checked.
+     * @param username the username of the user.
+     * @return a list with embeds.
+     */
+    public static List<MessageEmbed> formatProfileRelic(final Map<String, Integer> units, final int relicLevel, final String username) {
+        final int maxCounter = 5;
+        final List<MessageEmbed> returnValue = new ArrayList<>();
+        EmbedBuilder builder = new EmbedBuilder(baseEmbed());
+        builder.appendDescription("Relic'd toons below: **" + relicLevel + "** for: **" + username + "**");
+        final StringBuilder helpString = new StringBuilder();
+        int counter = 0;
+        for (final Map.Entry<String, Integer> entry : units.entrySet()) {
+            helpString.append(String.format(UNIT_TABLE_FORMAT, entry.getKey(), ":", entry.getValue()));
+            counter++;
+            if (counter == maxCounter) {
+                if (helpString.isEmpty()) {
+                    continue;
+                }
+                builder.addField(new MessageEmbed.Field(Integer.toString(builder.getFields().size()), "```" + helpString.toString() + "```", false));
+                helpString.setLength(0);
+                counter = 0;
+                if (builder.length() >= MessageEmbed.EMBED_MAX_LENGTH_BOT - 500) {
+                    returnValue.add(builder.build());
+                    builder = new EmbedBuilder(baseEmbed());
+                }
+            }
+        }
+        if (!helpString.isEmpty()) {
+            builder.addField(new MessageEmbed.Field(Integer.toString(builder.getFields().size()), "```" + helpString.toString() + "```", false));
+        }
+        returnValue.add(builder.build());
+        return returnValue;
+    }
+
+//CHECKSTYLE.ON: MultipleStringLiteralsCheck
 }
