@@ -14,6 +14,7 @@ public abstract class ImplHelper {
     private final transient ControlImpl controlImpl;
     private final transient UnitImpl unitImpl;
     private final transient ConfigImpl configImpl;
+    private final transient GuildImpl guildImpl;
 
     /**
      * @param logger    the logger.
@@ -31,7 +32,8 @@ public abstract class ImplHelper {
             }
         };
         this.unitImpl = new UnitImpl(dbHandler);
-        this.configImpl = new ConfigImpl(dbHandler);
+        this.configImpl = new ConfigImpl(dbHandler, logger);
+        this.guildImpl = new GuildImpl(logger, dbHandler, this);
     }
 
     /**
@@ -61,5 +63,9 @@ public abstract class ImplHelper {
 
     public ConfigImpl getConfigImpl() {
         return this.configImpl;
+    }
+
+    public GuildImpl getGuildImpl() {
+        return this.guildImpl;
     }
 }

@@ -18,6 +18,7 @@ public final class Message {
     private final String authorId;
     private final String author;
     private final String guildPrefix;
+    private final String guildId;
     private final String command;
     private final String flag;
     private final List<String> args;
@@ -26,18 +27,22 @@ public final class Message {
     /**
      * Constructor.
      *
-     * @param authorId the authorId of the message.
-     * @param author   the author name.
-     * @param args     the arguments of the message.
-     * @param flag     the flag of the message.
-     * @param channel  the channel to answer to.
-     * @param command  the command of the message.
+     * @param messageId   the message.
+     * @param guildPrefix the guild Prefix.
+     * @param authorId    the authorId of the message.
+     * @param author      the author name.
+     * @param guildId     the id of the guild.
+     * @param args        the arguments of the message.
+     * @param flag        the flag of the message.
+     * @param channel     the channel to answer to.
+     * @param command     the command of the message.
      */
-    private Message(final String messageId, final String authorId, final String author, final String guildPrefix, final String command, final String flag, final List<String> args, final MessageChannel channel) {
+    private Message(final String messageId, final String authorId, final String author, final String guildId, final String guildPrefix, final String command, final String flag, final List<String> args, final MessageChannel channel) {
         super();
         this.messageId = messageId;
         this.authorId = authorId;
         this.author = author;
+        this.guildId = guildId;
         this.guildPrefix = guildPrefix;
         this.flag = flag;
         this.args = args;
@@ -54,6 +59,7 @@ public final class Message {
 
     /**
      * Adds the error status to a message and sends the error message.
+     *
      * @param message the error message.
      */
     public void error(final String message) {
@@ -63,6 +69,7 @@ public final class Message {
 
     /**
      * Adds the done status to a message and sends the error message.
+     *
      * @param message the done message.
      */
     public void done(final String message) {
@@ -72,6 +79,7 @@ public final class Message {
 
     /**
      * Adds the done status to a message and sends the error message.
+     *
      * @param message the done embed.
      */
     public void done(final MessageEmbed message) {
@@ -81,6 +89,7 @@ public final class Message {
 
     /**
      * Adds the done status to a message and sends the error message.
+     *
      * @param messages A list of embeds..
      */
     public void done(final List<MessageEmbed> messages) {
@@ -130,9 +139,14 @@ public final class Message {
         return this.channel;
     }
 
+    public String getGuildId() {
+        return this.guildId;
+    }
+
     /**
      * Inits a message from the messageEvent.
-     * @param event the event.
+     *
+     * @param event       the event.
      * @param guildPrefix the guild prefix.
      * @return a message object.
      */
@@ -140,6 +154,7 @@ public final class Message {
         final String authorId = event.getAuthor().getId();
         final String author = event.getAuthor().getName();
         final String messageID = event.getMessageId();
+        final String guildId = event.getGuild().getId();
         final String messageContent = event.getMessage().getContentDisplay().replace(guildPrefix, "");
 
         final List<String> args = new LinkedList<>(Arrays.asList(messageContent.split(" ")));
@@ -157,6 +172,6 @@ public final class Message {
             flag = args.get(0);
             args.remove(flag);
         }
-        return new Message(messageID, authorId, author, guildPrefix, commandName, flag, args, event.getChannel());
+        return new Message(messageID, authorId, author, guildId, guildPrefix, commandName, flag, args, event.getChannel());
     }
 }

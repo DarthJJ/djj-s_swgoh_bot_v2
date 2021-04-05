@@ -7,6 +7,8 @@ import nl.djj.swgoh_bot_v2.entities.Flag;
 import nl.djj.swgoh_bot_v2.entities.Message;
 import nl.djj.swgoh_bot_v2.helpers.Logger;
 
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -17,67 +19,93 @@ public abstract class BaseCommand {
     //CHECKSTYLE.OFF: VisibilityModifierCheck
     protected final transient Logger logger;
     protected final transient ImplHelper implHelper;
+    protected transient String NAME;
+    protected transient Permission REQUIRED_LEVEL;
+    protected transient String DESCRIPTION;
+    protected transient String[] ALIASES;
+    protected transient CommandCategory CATEGORY;
+    protected transient Map<String, Flag> FLAGS;
+    protected boolean enabled;
+    protected boolean FLAG_REQUIRED;
     //CHECKSTYLE.ON: VisibilityModifierCheck
 
     /**
      * Constructor.
      *
-     * @param logger   the logger to use;
+     * @param logger     the logger to use;
      * @param implHelper the DB to use;
      */
     public BaseCommand(final Logger logger, final ImplHelper implHelper) {
         super();
         this.logger = logger;
         this.implHelper = implHelper;
-        createFlags();
+        this.FLAGS = new HashMap<>();
     }
 
     /**
      * @return command name.
      */
-    public abstract String getName();
+    public String getName() {
+        return NAME;
+    }
 
     /**
      * @return list of aliases for the command
      */
-    public abstract String[] getAliases();
+    public String[] getAliases() {
+        return Arrays.copyOf(ALIASES, ALIASES.length);
+    }
 
     /**
      * @return required level.
      */
-    public abstract Permission getRequiredLevel();
+    public Permission getRequiredLevel() {
+        return REQUIRED_LEVEL;
+    }
 
     /**
      * @return command description.
      */
-    public abstract String getDescription();
+    public String getDescription() {
+        return DESCRIPTION;
+    }
 
     /**
      * @return category.
      */
-    public abstract CommandCategory getCategory();
+    public CommandCategory getCategory() {
+        return CATEGORY;
+    }
 
     /**
      * @return flags of the command.
      */
-    public abstract Map<String, Flag> getFlags();
+    public Map<String, Flag> getFlags() {
+        return FLAGS;
+    }
 
     /**
      * @return enabled.
      */
-    public abstract boolean isEnabled();
+    public boolean isEnabled() {
+        return enabled;
+    }
 
     /**
      * Sets the command enabled or not.
      *
      * @param isEnabled boolean value.
      */
-    public abstract void setEnabled(final boolean isEnabled);
+    public void setEnabled(final boolean isEnabled) {
+        this.enabled = isEnabled;
+    }
 
     /**
      * @return required.
      */
-    public abstract boolean isFlagRequired();
+    public boolean isFlagRequired() {
+        return FLAG_REQUIRED;
+    }
 
     /**
      * Creates the flags for the command.

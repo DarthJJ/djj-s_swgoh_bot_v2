@@ -6,6 +6,8 @@ import nl.djj.swgoh_bot_v2.commands.admin.Control;
 import nl.djj.swgoh_bot_v2.commands.admin.Update;
 import nl.djj.swgoh_bot_v2.commands.bot.Help;
 import nl.djj.swgoh_bot_v2.commands.bot.Register;
+import nl.djj.swgoh_bot_v2.commands.moderation.Config;
+import nl.djj.swgoh_bot_v2.commands.swgoh.Guild;
 import nl.djj.swgoh_bot_v2.commands.swgoh.Profile;
 import nl.djj.swgoh_bot_v2.entities.Message;
 
@@ -39,6 +41,8 @@ public class CommandLoader {
                 new Control(logger, implHelper),
                 new Register(logger, implHelper),
                 new Profile(logger, implHelper),
+                new Guild(logger, implHelper),
+                new Config(logger, implHelper),
                 new Help(logger, implHelper) {
                     @Override
                     public void handleRequest(final Message message) {

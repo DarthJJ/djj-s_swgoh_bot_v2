@@ -42,7 +42,7 @@ public class EventListener extends ListenerAdapter {
     //CHECKSTYLE.OFF: NPathComplexityCheck //TODO: remove this/ simplify this
     @Override
     public void onMessageReceived(final MessageReceivedEvent event) {
-        final String guildPrefix = "!#";//TODO: get prefix for guild
+        String guildPrefix = implHelper.getConfigImpl().getPrefix(event.getGuild().getId());
         if (event.getMessage().getMentionedUsers().size() > 0 && event.getMessage().getMentionedUsers().get(0).getId().equals(event.getJDA().getSelfUser().getId())) {
             event.getMessage().getChannel().sendMessage("My prefix is '" + guildPrefix + "'").queue();
             return;

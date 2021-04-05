@@ -8,24 +8,12 @@ import nl.djj.swgoh_bot_v2.entities.Flag;
 import nl.djj.swgoh_bot_v2.entities.Message;
 import nl.djj.swgoh_bot_v2.helpers.Logger;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author DJJ
  */
 public class Control extends BaseCommand {
-    private static final String NAME = "control";
-    private static final Permission REQUIRED_LEVEL = Permission.ADMINISTRATOR;
-    private static final String DESCRIPTION = "All the admin control commands of the bot, aka the danger-zone";
-    private static final String[] ALIASES = {
-            "ctrl"
-    };
-    private static final CommandCategory CATEGORY = CommandCategory.ADMIN;
-    private static final Map<String, Flag> FLAGS = new HashMap<>();
-    private boolean enabled;
-    private static final boolean FLAG_REQUIRED = true;
     private static final transient String FLAG_ENABLE = "enable";
     private static final transient String FLAG_DISABLE = "disable";
     private static final transient String FLAG_UPDATE_DB = "updateDb";
@@ -39,51 +27,16 @@ public class Control extends BaseCommand {
      */
     public Control(final Logger logger, final ImplHelper implHelper) {
         super(logger, implHelper);
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
-    }
-
-    @Override
-    public String[] getAliases() {
-        return Arrays.copyOf(ALIASES, ALIASES.length);
-    }
-
-    @Override
-    public Permission getRequiredLevel() {
-        return REQUIRED_LEVEL;
-    }
-
-    @Override
-    public String getDescription() {
-        return DESCRIPTION;
-    }
-
-    @Override
-    public CommandCategory getCategory() {
-        return CATEGORY;
-    }
-
-    @Override
-    public Map<String, Flag> getFlags() {
-        return FLAGS;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    @Override
-    public void setEnabled(final boolean isEnabled) {
-        this.enabled = isEnabled;
-    }
-
-    @Override
-    public boolean isFlagRequired() {
-        return FLAG_REQUIRED;
+        NAME = "control";
+        REQUIRED_LEVEL = Permission.ADMINISTRATOR;
+        DESCRIPTION = "All the admin control commands of the bot, aka the danger-zone";
+        ALIASES = new String[]{
+                "ctrl"
+        };
+        CATEGORY = CommandCategory.ADMIN;
+        FLAGS = new HashMap<>();
+        FLAG_REQUIRED = true;
+        createFlags();
     }
 
     @Override

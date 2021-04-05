@@ -8,24 +8,10 @@ import nl.djj.swgoh_bot_v2.entities.Flag;
 import nl.djj.swgoh_bot_v2.entities.Message;
 import nl.djj.swgoh_bot_v2.helpers.Logger;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * @author DJJ
  */
 public class Profile extends BaseCommand {
-    private static final String NAME = "profile";
-    private static final Permission REQUIRED_LEVEL = Permission.USER;
-    private static final String DESCRIPTION = "All swgoh profile related commands";
-    private static final String[] ALIASES = {
-            "pr"
-    };
-    private static final CommandCategory CATEGORY = CommandCategory.SWGOH;
-    private static final Map<String, Flag> FLAGS = new HashMap<>();
-    private boolean enabled;
-    private static final boolean FLAG_REQUIRED = true;
     private static final transient String FLAG_GENERIC = "generic";
     private static final transient String FLAG_ARENA = "arena";
     private static final transient String FLAG_RELIC = "relic";
@@ -38,46 +24,15 @@ public class Profile extends BaseCommand {
      */
     public Profile(final Logger logger, final ImplHelper implHelper) {
         super(logger, implHelper);
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
-    }
-
-    @Override
-    public String[] getAliases() {
-        return Arrays.copyOf(ALIASES, ALIASES.length);
-    }
-
-    @Override
-    public Permission getRequiredLevel() {
-        return REQUIRED_LEVEL;
-    }
-
-    @Override
-    public String getDescription() {
-        return DESCRIPTION;
-    }
-
-    @Override
-    public CommandCategory getCategory() {
-        return CATEGORY;
-    }
-
-    @Override
-    public Map<String, Flag> getFlags() {
-        return FLAGS;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    @Override
-    public void setEnabled(final boolean isEnabled) {
-        this.enabled = isEnabled;
+        NAME = "profile";
+        REQUIRED_LEVEL = Permission.USER;
+        DESCRIPTION = "All SWGOH profile related commands";
+        ALIASES = new String[]{
+                "pr"
+        };
+        CATEGORY = CommandCategory.SWGOH;
+        FLAG_REQUIRED = true;
+        createFlags();
     }
 
     @Override
@@ -97,7 +52,7 @@ public class Profile extends BaseCommand {
         switch (message.getFlag()) {
             case FLAG_GENERIC -> this.implHelper.getProfileImpl().genericInfo(message);
             case FLAG_ARENA -> this.implHelper.getProfileImpl().toonArena(message);
-            case FLAG_RELIC ->  this.implHelper.getProfileImpl().relic(message);
+            case FLAG_RELIC -> this.implHelper.getProfileImpl().relic(message);
             default -> message.error("This is not a valid flag, use '" + message.getGuildPrefix() + " help " + NAME + "'");
         }
     }

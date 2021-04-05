@@ -45,6 +45,10 @@ public final class Config {
      * Crancor download link.
      */
     public static final String CRANCOR_TOONS_LINK = "https://www.dropbox.com/s/qx7vuy0fw57l1ii/CRancor_requirements.csv?dl=1";
+    /**
+     * Default bot prefix
+     */
+    public static final String DEFAULT_PREFIX = "!#";
 
     /**
      * Constructor.

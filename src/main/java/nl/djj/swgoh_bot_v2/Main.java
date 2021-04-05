@@ -48,7 +48,6 @@ public final class Main extends ListenerAdapter {
             }
         };
         commandLoader = new CommandLoader(implHelper, logger);
-        database.createDatabase();
         if (debug) {
             initializeDiscord(dotenv.get("BETA_DISCORD_TOKEN"));
         } else {

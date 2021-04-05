@@ -25,6 +25,7 @@ dependencies {
     implementation "org.xerial:sqlite-jdbc:3.34.0"
     implementation "ch.qos.logback:logback-classic:1.1.7"
     implementation 'org.json:json:20210307'
+    implementation 'com.healthmarketscience.sqlbuilder:sqlbuilder:3.0.1'
 }
 
 
@@ -45,7 +46,7 @@ shadowJar {
 
 checkstyle {
     configFile = new File("$rootProject.projectDir/configs/checkstyleRuleSet.xml")
-    toolVersion '8.41';
+    toolVersion '8.41'
 }
 
 checkstyleMain {

@@ -6,7 +6,8 @@ package nl.djj.swgoh_bot_v2.config;
 public enum CommandCategory {
     SWGOH("SWGOH"),
     BOT("Bot"),
-    ADMIN("Admin");
+    ADMIN("Admin"),
+    MODERATION("Moderation");
 
     private final String name;
 
