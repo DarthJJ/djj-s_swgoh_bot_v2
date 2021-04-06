@@ -14,6 +14,7 @@ import nl.djj.swgoh_bot_v2.helpers.Logger;
 public class Guild extends BaseCommand {
     private static final transient String FLAG_GENERIC = "generic";
     private static final transient String FLAG_GP = "gp";
+    private static final transient String FLAG_RELIC = "relic";
 
     /**
      * Creates a SWGOH guild object.
@@ -37,6 +38,7 @@ public class Guild extends BaseCommand {
     public void createFlags() {
         flags.put(FLAG_GENERIC, new Flag(FLAG_GENERIC, "Fetches the SWGOH guild for the user", name, FLAG_GENERIC));
         flags.put(FLAG_GP, new Flag(FLAG_GP, "Sorts al the members based on GP", name, FLAG_GP));
+        flags.put(FLAG_RELIC, new Flag(FLAG_RELIC, "Shows all members with the amount of toons below or at the given relic level", name, FLAG_RELIC, " <relicLevel>"));
     }
 
     @Override
@@ -44,6 +46,7 @@ public class Guild extends BaseCommand {
         switch (message.getFlag()) {
             case FLAG_GENERIC -> this.implHelper.getGuildImpl().genericInfo(message);
             case FLAG_GP -> this.implHelper.getGuildImpl().gpOverview(message);
+            case FLAG_RELIC -> this.implHelper.getGuildImpl().relicOverview(message);
             default -> message.error("This is not a valid flag, use '" + message.getGuildPrefix() + " help " + name + "'");
         }
     }

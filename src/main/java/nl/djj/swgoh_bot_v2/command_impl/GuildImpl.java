@@ -9,7 +9,13 @@ import nl.djj.swgoh_bot_v2.exceptions.SQLRetrieveError;
 import nl.djj.swgoh_bot_v2.helpers.HttpHelper;
 import nl.djj.swgoh_bot_v2.helpers.Logger;
 import nl.djj.swgoh_bot_v2.helpers.MessageHelper;
+import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * @author DJJ
@@ -61,18 +67,53 @@ public class GuildImpl {
      * @param message the guild.
      */
     public void gpOverview(final Message message) {
+        final JSONObject guildData = getGuildData(message);
+        if (guildData != null) {
+            message.done(MessageHelper.formatGuildGPOverview(implHelper.getProfileImpl().getGuildGp(guildData.getJSONArray("players"))));
+        }
+
+    }
+
+    /**
+     * creates an Relic overview for the guild.
+     *
+     * @param message the guild info.
+     */
+    public void relicOverview(final Message message) {
+        if (message.getArgs().isEmpty()) {
+            message.error("Please provide a relic level");
+            return;
+        }
+        final JSONObject guildData = getGuildData(message);
+        if (guildData != null) {
+            final JSONArray playersData = guildData.getJSONArray("players");
+            Map<String, Integer> playerResults = new ConcurrentHashMap<>();
+            for (int i = 0; i < playersData.length(); i++) {
+                final JSONObject playerData = playersData.getJSONObject(i);
+                final Map<String, Integer> playerResult = this.implHelper.getUnitImpl().checkRelicLevel(playerData.getJSONArray("units"), Integer.parseInt(message.getArgs().get(0)));
+                playerResults.put(playerData.getJSONObject("data").getString("name"), playerResult.size());
+            }
+            playerResults = playerResults.entrySet()
+                    .stream()
+                    .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+            message.done(MessageHelper.formatGuildRelicOverview(playerResults, message.getArgs().get(0)));
+        }
+    }
+
+    private JSONObject getGuildData(final Message message) {
         final String guildId;
         try {
             guildId = dbHandler.getSwgohIdByGuildId(message.getGuildId());
         } catch (final SQLRetrieveError error) {
             message.error(error.getMessage());
-            return;
+            return null;
         }
         try {
-            final JSONObject guildData = httpHelper.getJsonObject(SwgohGgEndpoint.GUILD_ENDPOINT.getUrl() + guildId);
-            message.done(MessageHelper.formatGuildGPOverview(implHelper.getProfileImpl().getGuildGp(guildData.getJSONArray("players"))));
+            return httpHelper.getJsonObject(SwgohGgEndpoint.GUILD_ENDPOINT.getUrl() + guildId);
         } catch (final HttpRetrieveError error) {
             message.error(error.getMessage());
+            return null;
         }
     }
 }

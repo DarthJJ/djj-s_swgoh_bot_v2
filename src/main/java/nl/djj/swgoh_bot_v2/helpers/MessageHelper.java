@@ -238,12 +238,34 @@ public final class MessageHelper {
 
     /**
      * Formats the guildGPMessage.
+     *
      * @param players the player GP info.
      * @return a message embed.
      */
     public static MessageEmbed formatGuildGPOverview(final Map<String, Integer> players) {
         final EmbedBuilder embed = new EmbedBuilder(baseEmbed());
         embed.setDescription("GP Overview, sorted high -> low");
+        final StringBuilder builder = new StringBuilder();
+        for (final Map.Entry<String, Integer> entry : players.entrySet()) {
+            builder.append(String.format(TABLE_FORMAT, entry.getKey(), ":", entry.getValue()));
+            if (builder.length() > MessageEmbed.VALUE_MAX_LENGTH - 100) {
+                embed.addField(Integer.toString(embed.getFields().size() + 1), "```" + builder.toString() + "```", false);
+                builder.setLength(0);
+            }
+        }
+        embed.addField(Integer.toString(embed.getFields().size() + 1), "```" + builder.toString() + "```", false);
+        return embed.build();
+    }
+
+    /**
+     * Formats the guildRelicMessage.
+     *
+     * @param players the player GP info.
+     * @return a message embed.
+     */
+    public static MessageEmbed formatGuildRelicOverview(final Map<String, Integer> players, final String relicLevel) {
+        final EmbedBuilder embed = new EmbedBuilder(baseEmbed());
+        embed.setDescription("Relic Overview below or at: '" + relicLevel + "', sorted high -> low");
         final StringBuilder builder = new StringBuilder();
         for (final Map.Entry<String, Integer> entry : players.entrySet()) {
             builder.append(String.format(TABLE_FORMAT, entry.getKey(), ":", entry.getValue()));
