@@ -3,10 +3,12 @@ package nl.djj.swgoh_bot_v2.command_impl;
 import nl.djj.swgoh_bot_v2.config.SwgohGgEndpoint;
 import nl.djj.swgoh_bot_v2.database.DatabaseHandler;
 import nl.djj.swgoh_bot_v2.entities.Message;
+import nl.djj.swgoh_bot_v2.entities.SwgohGuild;
 import nl.djj.swgoh_bot_v2.exceptions.HttpRetrieveError;
 import nl.djj.swgoh_bot_v2.exceptions.SQLRetrieveError;
 import nl.djj.swgoh_bot_v2.helpers.HttpHelper;
 import nl.djj.swgoh_bot_v2.helpers.Logger;
+import nl.djj.swgoh_bot_v2.helpers.MessageHelper;
 import org.json.JSONObject;
 
 /**
@@ -46,7 +48,8 @@ public class GuildImpl {
         }
         try {
             final JSONObject guildData = httpHelper.getJsonObject(SwgohGgEndpoint.GUILD_ENDPOINT.getUrl() + guildId);
-            System.out.println(guildData);
+            final SwgohGuild guild = SwgohGuild.initFromJson(guildData);
+            message.done(MessageHelper.formatGuildSwgohProfile(guild));
         } catch (final HttpRetrieveError error) {
             message.error(error.getMessage());
         }
@@ -54,9 +57,22 @@ public class GuildImpl {
 
     /**
      * GP Overview for the guild.
+     *
      * @param message the guild.
      */
     public void gpOverview(final Message message) {
-        //TODO: implement
+        final String guildId;
+        try {
+            guildId = dbHandler.getSwgohIdByGuildId(message.getGuildId());
+        } catch (final SQLRetrieveError error) {
+            message.error(error.getMessage());
+            return;
+        }
+        try {
+            final JSONObject guildData = httpHelper.getJsonObject(SwgohGgEndpoint.GUILD_ENDPOINT.getUrl() + guildId);
+            message.done(MessageHelper.formatGuildGPOverview(implHelper.getProfileImpl().getGuildGp(guildData.getJSONArray("players"))));
+        } catch (final HttpRetrieveError error) {
+            message.error(error.getMessage());
+        }
     }
 }

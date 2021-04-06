@@ -25,6 +25,7 @@ public final class Main extends ListenerAdapter {
     private final transient CommandLoader commandLoader;
     private final transient ImplHelper implHelper;
     private final transient String className = this.getClass().getSimpleName();
+    public static boolean MAINTENANCE_MODE = false;
 
     /**
      * Main entry for the bot.

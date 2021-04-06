@@ -18,6 +18,8 @@ public class Control extends BaseCommand {
     private static final transient String FLAG_DISABLE = "disable";
     private static final transient String FLAG_UPDATE_DB = "updateDb";
     private static final transient String FLAG_SHUTDOWN = "shutdown";
+    private static final transient String FLAG_ENABLE_MAINTENANCE = "enableMaintenance";
+    private static final transient String FLAG_DISABLE_MAINTENANCE = "disableMaintenance";
 
     /**
      * Constructor.
@@ -44,6 +46,8 @@ public class Control extends BaseCommand {
         flags.put(FLAG_DISABLE, new Flag(FLAG_DISABLE, "Disables a command", name, FLAG_DISABLE, " <command name>"));
         flags.put(FLAG_UPDATE_DB, new Flag(FLAG_UPDATE_DB, "Updates the DB", name, FLAG_UPDATE_DB));
         flags.put(FLAG_SHUTDOWN, new Flag(FLAG_SHUTDOWN, "Shuts down the bot, be careful, you can't restart via Discord", name, FLAG_SHUTDOWN));
+        flags.put(FLAG_ENABLE_MAINTENANCE, new Flag(FLAG_ENABLE_MAINTENANCE, "Puts the bot in maintenance mode", name, FLAG_ENABLE_MAINTENANCE));
+        flags.put(FLAG_DISABLE_MAINTENANCE, new Flag(FLAG_DISABLE_MAINTENANCE, "Puts the bot in normal mode", name, FLAG_DISABLE_MAINTENANCE));
     }
 
     @Override
@@ -52,6 +56,8 @@ public class Control extends BaseCommand {
             case FLAG_ENABLE -> this.implHelper.getCommandImpl().enableCommand(message);
             case FLAG_DISABLE -> this.implHelper.getCommandImpl().disableCommand(message);
             case FLAG_UPDATE_DB -> this.implHelper.getControlImpl().createDatabase(message);
+            case FLAG_ENABLE_MAINTENANCE -> this.implHelper.getControlImpl().enableUpdateMode(message);
+            case FLAG_DISABLE_MAINTENANCE -> this.implHelper.getControlImpl().disableUpdateMode(message);
             case FLAG_SHUTDOWN -> this.implHelper.getControlImpl().closeBot();
             default -> message.error("This is not a valid flag, use '" + message.getGuildPrefix() + " help " + name + "'");
         }

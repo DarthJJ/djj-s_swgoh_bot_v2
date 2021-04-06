@@ -4,14 +4,15 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import nl.djj.swgoh_bot_v2.commands.BaseCommand;
 import nl.djj.swgoh_bot_v2.config.BotConstants;
-import nl.djj.swgoh_bot_v2.entities.Flag;
-import nl.djj.swgoh_bot_v2.entities.Message;
-import nl.djj.swgoh_bot_v2.entities.SwgohProfile;
+import nl.djj.swgoh_bot_v2.entities.*;
 
 import java.awt.*;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -24,6 +25,7 @@ public final class MessageHelper {
     private static final String REACTION_DONE = "U+2705";
     private static final String TABLE_FORMAT = "%-15s%-3s%-15s%n";
     private static final String UNIT_TABLE_FORMAT = "%-30s%-3s%-15s%n";
+    private static final String HELP_TABLE_FORMAT = "%-10s%-3s%-15s%n";
 
     /**
      * Constructor.
@@ -77,14 +79,14 @@ public final class MessageHelper {
     public static List<MessageEmbed> formatGenericHelpText(final Map<String, List<BaseCommand>> helpText) {
         final List<MessageEmbed> returnValue = new ArrayList<>();
         EmbedBuilder builder = new EmbedBuilder(baseEmbed());
-        builder.appendDescription("Generic help information");
+        builder.appendDescription("Commands available for you");
         for (final Map.Entry<String, List<BaseCommand>> entry : helpText.entrySet()) {
             final StringBuilder helpString = new StringBuilder();
             for (final BaseCommand command : entry.getValue()) {
-                helpString.append(String.format(TABLE_FORMAT, command.getName(), " = ", command.getDescription()));
+                helpString.append(String.format(HELP_TABLE_FORMAT, command.getName(), " = ", command.getDescription()));
             }
             helpString.append("\n");
-            builder.addField(new MessageEmbed.Field(entry.getKey(), helpString.toString(), false));
+            builder.addField(new MessageEmbed.Field(entry.getKey(), "```" + helpString.toString() + "```", false));
             if (builder.length() >= MessageEmbed.EMBED_MAX_LENGTH_BOT - 500) {
                 returnValue.add(builder.build());
                 builder = new EmbedBuilder(baseEmbed());
@@ -92,6 +94,21 @@ public final class MessageHelper {
         }
         returnValue.add(builder.build());
         return returnValue;
+    }
+
+    /**
+     * Formats the generic info for an embed.
+     *
+     * @param guild the guild.
+     * @return a message embed.
+     */
+    public static MessageEmbed formatGuildSwgohProfile(final SwgohGuild guild) {
+        final EmbedBuilder builder = new EmbedBuilder(baseEmbed());
+        builder.appendDescription("Guild information for: " + guild.getName());
+        builder.addField(new MessageEmbed.Field("Members:", Integer.toString(guild.getMembers()), false));
+        builder.addField(new MessageEmbed.Field("Profiles:", Integer.toString(guild.getProfiles()), false));
+        builder.addField(new MessageEmbed.Field("GP:", StringHelper.formatNumber(guild.getGalacticPower()), false));
+        return builder.build();
     }
 
     /**
@@ -142,6 +159,24 @@ public final class MessageHelper {
     }
 
     /**
+     * Generates a config embed.
+     *
+     * @param config the config.
+     * @return the embed.
+     */
+    public static MessageEmbed formatConfig(final Config config) {
+        final EmbedBuilder builder = new EmbedBuilder(baseEmbed());
+        builder.appendDescription("Bot configuration");
+        builder.addField(new MessageEmbed.Field("SWGOH ID", config.getSwgohId(), false));
+        builder.addField(new MessageEmbed.Field("Prefix", config.getPrefix(), false));
+        builder.addField(new MessageEmbed.Field("ModRole", config.getModerationRole(), false));
+        builder.addField(new MessageEmbed.Field("Presence Ignore role", config.getIgnoreRole(), false));
+        builder.addField(new MessageEmbed.Field("BotNotifyChannel", config.getNotifyChannel(), false));
+        builder.addField(new MessageEmbed.Field("BotLoggingChannel", config.getBotLoggingChannel(), false));
+        return builder.build();
+    }
+
+    /**
      * Creates an embed for the Arena profile.
      *
      * @param profile the profile.
@@ -168,9 +203,10 @@ public final class MessageHelper {
 
     /**
      * Formats the relic information.
-     * @param units the unit list.
+     *
+     * @param units      the unit list.
      * @param relicLevel the relic level checked.
-     * @param username the username of the user.
+     * @param username   the username of the user.
      * @return a list with embeds.
      */
     public static List<MessageEmbed> formatProfileRelic(final Map<String, Integer> units, final int relicLevel, final String username) {
@@ -187,7 +223,7 @@ public final class MessageHelper {
                 if (helpString.isEmpty()) {
                     continue;
                 }
-                builder.addField(new MessageEmbed.Field(Integer.toString(builder.getFields().size()), "```" + helpString.toString() + "```", false));
+                builder.addField(new MessageEmbed.Field(Integer.toString(builder.getFields().size() + 1), "```" + helpString.toString() + "```", false));
                 helpString.setLength(0);
                 counter = 0;
                 if (builder.length() >= MessageEmbed.EMBED_MAX_LENGTH_BOT - 500) {
@@ -201,6 +237,21 @@ public final class MessageHelper {
         }
         returnValue.add(builder.build());
         return returnValue;
+    }
+
+    public static MessageEmbed formatGuildGPOverview(final Map<String, Integer> players) {
+        final EmbedBuilder embed = new EmbedBuilder(baseEmbed());
+        embed.setDescription("GP Overview, sorted high -> low");
+        final StringBuilder builder = new StringBuilder();
+        for (Map.Entry<String, Integer> entry : players.entrySet()) {
+            builder.append(String.format(TABLE_FORMAT, entry.getKey(), ":", entry.getValue()));
+            if (builder.length() > 950) {
+                embed.addField(Integer.toString(embed.getFields().size() + 1), "```" + builder.toString() + "```", false);
+                builder.setLength(0);
+            }
+        }
+        embed.addField(Integer.toString(embed.getFields().size() + 1), "```" + builder.toString() + "```", false);
+        return embed.build();
     }
 
 //CHECKSTYLE.ON: MultipleStringLiteralsCheck

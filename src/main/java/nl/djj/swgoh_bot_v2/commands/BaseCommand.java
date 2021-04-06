@@ -25,7 +25,6 @@ public abstract class BaseCommand {
     protected transient String[] aliases;
     protected transient CommandCategory category;
     protected transient Map<String, Flag> flags;
-    protected transient boolean enabled;
     protected transient boolean flagRequired;
     //CHECKSTYLE.ON: VisibilityModifierCheck
 
@@ -82,22 +81,6 @@ public abstract class BaseCommand {
      */
     public Map<String, Flag> getFlags() {
         return flags;
-    }
-
-    /**
-     * @return enabled.
-     */
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    /**
-     * Sets the command enabled or not.
-     *
-     * @param isEnabled boolean value.
-     */
-    public void setEnabled(final boolean isEnabled) {
-        this.enabled = isEnabled;
     }
 
     /**

@@ -21,9 +21,9 @@ import nl.djj.swgoh_bot_v2.helpers.StringHelper;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * @author DJJ
@@ -213,6 +213,18 @@ public class ProfileImpl {
         } catch (final HttpRetrieveError error) {
             message.error(error.getMessage());
         }
+    }
+
+    public Map<String, Integer> getGuildGp(final JSONArray playerData) {
+        final Map<String, Integer> members = new ConcurrentHashMap<>();
+        for (int i = 0; i < playerData.length(); i++){
+            final JSONObject player = playerData.getJSONObject(i).getJSONObject("data");
+            members.put(player.getString("name"), player.getInt("galactic_power"));
+        }
+        return members.entrySet()
+                .stream()
+                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
     }
     //CHECKSTYLE.ON: NPathComplexityCheck
 }

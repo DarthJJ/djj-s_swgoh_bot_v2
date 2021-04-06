@@ -22,6 +22,7 @@ public final class Message {
     private final String command;
     private final String flag;
     private final List<String> args;
+    private final List<String> altArgs;
     private final MessageChannel channel;
 
     /**
@@ -37,7 +38,7 @@ public final class Message {
      * @param channel     the channel to answer to.
      * @param command     the command of the message.
      */
-    private Message(final String messageId, final String authorId, final String author, final String guildId, final String guildPrefix, final String command, final String flag, final List<String> args, final MessageChannel channel) {
+    private Message(final String messageId, final String authorId, final String author, final String guildId, final String guildPrefix, final String command, final String flag, final List<String> args, final List<String> altArgs, final MessageChannel channel) {
         super();
         this.messageId = messageId;
         this.authorId = authorId;
@@ -46,6 +47,7 @@ public final class Message {
         this.guildPrefix = guildPrefix;
         this.flag = flag;
         this.args = args;
+        this.altArgs = altArgs;
         this.command = command;
         this.channel = channel;
     }
@@ -135,6 +137,10 @@ public final class Message {
         return args;
     }
 
+    public List<String> getAltArgs() {
+        return altArgs;
+    }
+
     public MessageChannel getChannel() {
         return this.channel;
     }
@@ -156,14 +162,17 @@ public final class Message {
         final String messageID = event.getMessageId();
         final String guildId = event.getGuild().getId();
         final String messageContent = event.getMessage().getContentDisplay().replace(guildPrefix, "");
+        final String rawMessageContent = event.getMessage().getContentRaw().replace(guildPrefix, "");
 
         final List<String> args = new LinkedList<>(Arrays.asList(messageContent.split(" ")));
+        final List<String> altArgs = new LinkedList<>(Arrays.asList(rawMessageContent.split(" ")));
         final String commandName;
         if (args.isEmpty()) {
             commandName = "";
         } else {
             commandName = args.get(0);
             args.remove(commandName);
+            altArgs.remove(commandName);
         }
         final String flag;
         if (args.isEmpty()) {
@@ -171,7 +180,8 @@ public final class Message {
         } else {
             flag = args.get(0);
             args.remove(flag);
+            altArgs.remove(flag);
         }
-        return new Message(messageID, authorId, author, guildId, guildPrefix, commandName, flag, args, event.getChannel());
+        return new Message(messageID, authorId, author, guildId, guildPrefix, commandName, flag, args, altArgs, event.getChannel());
     }
 }

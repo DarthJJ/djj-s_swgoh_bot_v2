@@ -43,7 +43,7 @@ public class Profile extends BaseCommand {
     public void createFlags() {
         flags.put(FLAG_GENERIC, new Flag(FLAG_GENERIC, "Fetches the SWGOH profile for the user", name, FLAG_GENERIC));
         flags.put(FLAG_ARENA, new Flag(FLAG_ARENA, "Fetches the SWGOH Arena information for the user", name, FLAG_ARENA));
-        flags.put(FLAG_RELIC, new Flag(FLAG_RELIC, "Get's relic information about the users roster. optional parameter for level select", name, FLAG_RELIC, "-f <level> (inclusive)"));
+        flags.put(FLAG_RELIC, new Flag(FLAG_RELIC, "Get's relic information about the users roster. optional parameter for level select", name, FLAG_RELIC, "<level> (inclusive)"));
     }
 
     @Override

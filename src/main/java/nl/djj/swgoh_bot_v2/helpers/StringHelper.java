@@ -1,7 +1,10 @@
 package nl.djj.swgoh_bot_v2.helpers;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 /**
@@ -29,11 +32,20 @@ public final class StringHelper {
 
     /**
      * Gets the current DateTime.
+     *
      * @return a string representation.
      */
     public static String getCurrentDateTime() {
         final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
         final LocalDateTime now = LocalDateTime.now();
         return dtf.format(now);
+    }
+
+    public static String formatNumber(final int number) {
+        return new DecimalFormat("#,###,###", DecimalFormatSymbols.getInstance(Locale.GERMAN)).format(number);
+    }
+
+    public static String stripMessageChannel(final String channel) {
+        return channel.replace("<", "").replace(">", "").replace("#", "");
     }
 }

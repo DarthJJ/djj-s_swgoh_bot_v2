@@ -10,6 +10,8 @@ import nl.djj.swgoh_bot_v2.exceptions.SQLInsertionError;
 import nl.djj.swgoh_bot_v2.exceptions.SQLRetrieveError;
 import nl.djj.swgoh_bot_v2.helpers.HttpHelper;
 import nl.djj.swgoh_bot_v2.helpers.Logger;
+import nl.djj.swgoh_bot_v2.helpers.MessageHelper;
+import nl.djj.swgoh_bot_v2.helpers.StringHelper;
 
 /**
  * @author DJJ
@@ -37,7 +39,11 @@ public class ConfigImpl {
      * @return the role or an empty string.
      */
     public String getIgnoreRole(final String guildId) {
-        return ""; //TODO: Implement correct
+        try {
+            return dbHandler.getIgnoreRoleForGuild(guildId);
+        } catch (final SQLRetrieveError error) {
+            return "";
+        }
     }
 
     /**
@@ -69,6 +75,16 @@ public class ConfigImpl {
         }
     }
 
+    private Config getConfig(final String discordId) {
+        Config config;
+        try {
+            config = dbHandler.getConfig(discordId);
+        } catch (final SQLRetrieveError error) {
+            config = new Config(discordId);
+        }
+        return config;
+    }
+
     /**
      * Get's the prefix for the given guild.
      *
@@ -93,17 +109,24 @@ public class ConfigImpl {
             message.error("Please provide a prefix to set");
             return;
         }
-        Config config;
+        Config config = getConfig(message.getGuildId());
         try {
-            config = dbHandler.getConfig(message.getGuildId());
             this.httpHelper.getJsonObject(SwgohGgEndpoint.GUILD_ENDPOINT.getUrl() + message.getArgs().get(0));
-        } catch (final SQLRetrieveError error) {
-            config = new Config(message.getGuildId());
         } catch (final HttpRetrieveError error) {
             message.error(error.getMessage());
             return;
         }
         config.setSwgohId(message.getArgs().get(0));
+        updateConfig(config, message);
+    }
+
+    public void setIngoreRole(final Message message) {
+        if (message.getArgs().isEmpty()) {
+            message.error("Please tag a role");
+            return;
+        }
+        final Config config = getConfig(message.getGuildId());
+        config.setIgnoreRole(message.getArgs().get(0).replace("@", ""));
         updateConfig(config, message);
     }
 
@@ -113,10 +136,24 @@ public class ConfigImpl {
      * @param message the message containing the guild info.
      */
     public void showConfig(final Message message) {
-//        try {
-//            message.done(MessageHelper.formatConfig(dbHandler.getConfig(message.getGuildId())));
-//        } catch (final SQLRetrieveError error) {
-//            message.error(error.getMessage());
-//        }
+        try {
+            message.done(MessageHelper.formatConfig(dbHandler.getConfig(message.getGuildId())));
+        } catch (final SQLRetrieveError error) {
+            message.error(error.getMessage());
+        }
+    }
+
+    /**
+     * Sets the notify channel for the bot for the guild.
+     * @param message contains the guild info.
+     */
+    public void setNotifyChannel(final Message message) {
+        if (message.getArgs().isEmpty()){
+            message.error("Please tag a channel");
+            return;
+        }
+        final Config config = getConfig(message.getGuildId());
+        config.setNotifyChannel(StringHelper.stripMessageChannel(message.getAltArgs().get(0)));
+        updateConfig(config, message);
     }
 }

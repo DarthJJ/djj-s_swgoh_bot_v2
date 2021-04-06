@@ -56,7 +56,6 @@ public class CommandLoader {
     private void initializeCommands(final List<BaseCommand> toLoad) {
         for (final BaseCommand command : toLoad) {
             command.createFlags();
-            command.setEnabled(implHelper.getCommandImpl().getCommandEnabledStatus(command.getName()));
             commands.put(command.getName().toLowerCase(Locale.ENGLISH), command);
             logger.info(className, "Loaded command: " + command.getName());
             aliases.put(command.getName().toLowerCase(Locale.ENGLISH), command.getName().toLowerCase(Locale.ENGLISH));
@@ -81,6 +80,9 @@ public class CommandLoader {
         final Map<String, List<BaseCommand>> helpText = new ConcurrentHashMap<>();
         for (final Map.Entry<String, BaseCommand> entry : commands.entrySet()) {
             if (!this.implHelper.getProfileImpl().isAllowed(message.getAuthorId(), entry.getValue().getRequiredLevel())) {
+                continue;
+            }
+            if(!this.implHelper.getCommandImpl().getCommandEnabledStatus(entry.getValue().getName())){
                 continue;
             }
             if (helpText.containsKey(entry.getValue().getCategory().getName())) {
@@ -111,7 +113,7 @@ public class CommandLoader {
      */
     public BaseCommand getCommand(final String name, final boolean ownerOverride) {
         final BaseCommand command = getCommand(name);
-        if (command != null && (command.isEnabled() || ownerOverride)) {
+        if (command != null && (this.implHelper.getCommandImpl().getCommandEnabledStatus(command.getName()) || ownerOverride)) {
             return command;
         }
         return null;

@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.user.update.UserUpdateOnlineStatusEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import nl.djj.swgoh_bot_v2.Main;
 import nl.djj.swgoh_bot_v2.command_impl.ImplHelper;
 import nl.djj.swgoh_bot_v2.commands.BaseCommand;
 import nl.djj.swgoh_bot_v2.config.BotConstants;
@@ -39,9 +40,12 @@ public class EventListener extends ListenerAdapter {
      *
      * @param event the message event.
      */
-    //CHECKSTYLE.OFF: NPathComplexityCheck //TODO: remove this/ simplify this
+    //CHECKSTYLE.OFF: NPathComplexityCheck //
     @Override
-    public void onMessageReceived(final MessageReceivedEvent event) {
+    public void onMessageReceived(final @NotNull MessageReceivedEvent event) {
+        if (Main.MAINTENANCE_MODE && !event.getAuthor().getId().equals(BotConstants.OWNER_ID)) {
+            return;
+        }
         final String guildPrefix = implHelper.getConfigImpl().getPrefix(event.getGuild().getId());
         if (event.getMessage().getMentionedUsers().size() > 0 && event.getMessage().getMentionedUsers().get(0).getId().equals(event.getJDA().getSelfUser().getId())) {
             event.getMessage().getChannel().sendMessage("My prefix is '" + guildPrefix + "'").queue();
@@ -50,12 +54,11 @@ public class EventListener extends ListenerAdapter {
         if (event.getAuthor().isBot() || !event.getMessage().getContentDisplay().startsWith(guildPrefix)) {
             return;
         }
-
         final Message message = Message.initFromEvent(event, guildPrefix);
         message.working();
         final BaseCommand command = commands.getCommand(message.getCommand(), event.getAuthor().getId().equals(BotConstants.OWNER_ID));
         if (command == null) {
-            message.error("This command doesn't exist, please use: '" + guildPrefix + " help");
+            message.error("This command doesn't exist, please use: '" + guildPrefix + "help");
             return;
         }
         if (command.isFlagRequired() && message.getFlag().isEmpty()) {

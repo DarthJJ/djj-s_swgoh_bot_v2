@@ -1,5 +1,7 @@
 package nl.djj.swgoh_bot_v2.entities;
 
+import java.util.Objects;
+
 /**
  * @author DJJ
  */
@@ -14,7 +16,8 @@ public class Config {
 
     /**
      * Constructor.
-     * @param swgohId the SWGOH ID.
+     *
+     * @param swgohId   the SWGOH ID.
      * @param discordId the Discord ID.
      */
     public Config(final String swgohId, final String discordId) {
@@ -25,6 +28,7 @@ public class Config {
 
     /**
      * Constructor.
+     *
      * @param discordId the Discord ID.
      */
     public Config(final String discordId) {
@@ -33,7 +37,7 @@ public class Config {
     }
 
     public void setSwgohId(final String swgohId) {
-        this.swgohId = swgohId;
+        this.swgohId = Objects.requireNonNullElse(swgohId, "");
     }
 
     public String getSwgohId() {
@@ -49,7 +53,7 @@ public class Config {
     }
 
     public void setPrefix(final String prefix) {
-        this.prefix = prefix;
+        this.prefix = Objects.requireNonNullElse(prefix, "");
     }
 
     public String getModerationRole() {
@@ -57,7 +61,7 @@ public class Config {
     }
 
     public void setModerationRole(final String moderationRole) {
-        this.moderationRole = moderationRole;
+        this.moderationRole = Objects.requireNonNullElse(moderationRole, "");
     }
 
     public String getIgnoreRole() {
@@ -65,7 +69,7 @@ public class Config {
     }
 
     public void setIgnoreRole(final String ignoreRole) {
-        this.ignoreRole = ignoreRole;
+        this.ignoreRole = Objects.requireNonNullElse(ignoreRole, "");
     }
 
     public String getNotifyChannel() {
@@ -73,7 +77,7 @@ public class Config {
     }
 
     public void setNotifyChannel(final String notifyChannel) {
-        this.notifyChannel = notifyChannel;
+        this.notifyChannel = Objects.requireNonNullElse(notifyChannel, "");
     }
 
     public String getBotLoggingChannel() {
@@ -81,6 +85,6 @@ public class Config {
     }
 
     public void setBotLoggingChannel(final String botLoggingChannel) {
-        this.botLoggingChannel = botLoggingChannel;
+        this.botLoggingChannel = Objects.requireNonNullElse(botLoggingChannel, "");
     }
 }
