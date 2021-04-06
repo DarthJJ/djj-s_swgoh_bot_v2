@@ -12,6 +12,7 @@ import nl.djj.swgoh_bot_v2.commands.swgoh.Profile;
 import nl.djj.swgoh_bot_v2.entities.Message;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author DJJ
@@ -54,6 +55,7 @@ public class CommandLoader {
 
     private void initializeCommands(final List<BaseCommand> toLoad) {
         for (final BaseCommand command : toLoad) {
+            command.createFlags();
             command.setEnabled(implHelper.getCommandImpl().getCommandEnabledStatus(command.getName()));
             commands.put(command.getName().toLowerCase(Locale.ENGLISH), command);
             logger.info(className, "Loaded command: " + command.getName());
@@ -76,7 +78,7 @@ public class CommandLoader {
             message.done(MessageHelper.formatSpecificHelpText(command.getName(), command.getDescription(), command.getFlags(), message.getGuildPrefix()));
             return;
         }
-        final Map<String, List<BaseCommand>> helpText = new HashMap<>();
+        final Map<String, List<BaseCommand>> helpText = new ConcurrentHashMap<>();
         for (final Map.Entry<String, BaseCommand> entry : commands.entrySet()) {
             if (!this.implHelper.getProfileImpl().isAllowed(message.getAuthorId(), entry.getValue().getRequiredLevel())) {
                 continue;

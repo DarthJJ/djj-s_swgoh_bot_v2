@@ -6,7 +6,7 @@ import net.dv8tion.jda.api.events.user.update.UserUpdateOnlineStatusEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import nl.djj.swgoh_bot_v2.command_impl.ImplHelper;
 import nl.djj.swgoh_bot_v2.commands.BaseCommand;
-import nl.djj.swgoh_bot_v2.config.Config;
+import nl.djj.swgoh_bot_v2.config.BotConstants;
 import nl.djj.swgoh_bot_v2.entities.Message;
 import nl.djj.swgoh_bot_v2.helpers.CommandLoader;
 import nl.djj.swgoh_bot_v2.helpers.Logger;
@@ -42,7 +42,7 @@ public class EventListener extends ListenerAdapter {
     //CHECKSTYLE.OFF: NPathComplexityCheck //TODO: remove this/ simplify this
     @Override
     public void onMessageReceived(final MessageReceivedEvent event) {
-        String guildPrefix = implHelper.getConfigImpl().getPrefix(event.getGuild().getId());
+        final String guildPrefix = implHelper.getConfigImpl().getPrefix(event.getGuild().getId());
         if (event.getMessage().getMentionedUsers().size() > 0 && event.getMessage().getMentionedUsers().get(0).getId().equals(event.getJDA().getSelfUser().getId())) {
             event.getMessage().getChannel().sendMessage("My prefix is '" + guildPrefix + "'").queue();
             return;
@@ -53,7 +53,7 @@ public class EventListener extends ListenerAdapter {
 
         final Message message = Message.initFromEvent(event, guildPrefix);
         message.working();
-        final BaseCommand command = commands.getCommand(message.getCommand(), event.getAuthor().getId().equals(Config.OWNER_ID));
+        final BaseCommand command = commands.getCommand(message.getCommand(), event.getAuthor().getId().equals(BotConstants.OWNER_ID));
         if (command == null) {
             message.error("This command doesn't exist, please use: '" + guildPrefix + " help");
             return;

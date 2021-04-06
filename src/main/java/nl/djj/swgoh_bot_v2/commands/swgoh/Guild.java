@@ -13,6 +13,7 @@ import nl.djj.swgoh_bot_v2.helpers.Logger;
  */
 public class Guild extends BaseCommand {
     private static final transient String FLAG_GENERIC = "generic";
+    private static final transient String FLAG_GP = "gp";
 
     /**
      * Creates a SWGOH guild object.
@@ -22,27 +23,28 @@ public class Guild extends BaseCommand {
      */
     public Guild(final Logger logger, final ImplHelper implHelper) {
         super(logger, implHelper);
-        NAME = "guild";
-        REQUIRED_LEVEL = Permission.USER;
-        DESCRIPTION = "All SWGOH guild related commands";
-        ALIASES = new String[]{
+        name = "guild";
+        requiredLevel = Permission.USER;
+        description = "All SWGOH guild related commands";
+        aliases = new String[]{
                 "gg"
         };
-        CATEGORY = CommandCategory.SWGOH;
-        FLAG_REQUIRED = true;
-        createFlags();
+        category = CommandCategory.SWGOH;
+        flagRequired = true;
     }
 
     @Override
     public void createFlags() {
-        FLAGS.put(FLAG_GENERIC, new Flag(FLAG_GENERIC, "Fetches the SWGOH guild for the user", NAME, FLAG_GENERIC));
+        flags.put(FLAG_GENERIC, new Flag(FLAG_GENERIC, "Fetches the SWGOH guild for the user", name, FLAG_GENERIC));
+        flags.put(FLAG_GP, new Flag(FLAG_GP, "Sorts al the members based on GP", name, FLAG_GP));
     }
 
     @Override
     public void handleMessage(final Message message) {
         switch (message.getFlag()) {
             case FLAG_GENERIC -> this.implHelper.getGuildImpl().genericInfo(message);
-            default -> message.error("This is not a valid flag, use '" + message.getGuildPrefix() + " help " + NAME + "'");
+            case FLAG_GP -> this.implHelper.getGuildImpl().gpOverview(message);
+            default -> message.error("This is not a valid flag, use '" + message.getGuildPrefix() + " help " + name + "'");
         }
     }
 }

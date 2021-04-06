@@ -2,9 +2,7 @@ package nl.djj.swgoh_bot_v2.command_impl;
 
 import nl.djj.swgoh_bot_v2.config.SwgohGgEndpoint;
 import nl.djj.swgoh_bot_v2.database.DatabaseHandler;
-import nl.djj.swgoh_bot_v2.entities.Guild;
 import nl.djj.swgoh_bot_v2.entities.Message;
-import nl.djj.swgoh_bot_v2.entities.SwgohGuild;
 import nl.djj.swgoh_bot_v2.exceptions.HttpRetrieveError;
 import nl.djj.swgoh_bot_v2.exceptions.SQLRetrieveError;
 import nl.djj.swgoh_bot_v2.helpers.HttpHelper;
@@ -19,6 +17,13 @@ public class GuildImpl {
     private final transient DatabaseHandler dbHandler;
     private final transient ImplHelper implHelper;
 
+    /**
+     * The constructor.
+     *
+     * @param logger     the logger.
+     * @param dbHandler  the DB connection.
+     * @param implHelper the implHelper.
+     */
     public GuildImpl(final Logger logger, final DatabaseHandler dbHandler, final ImplHelper implHelper) {
         super();
         this.dbHandler = dbHandler;
@@ -26,6 +31,11 @@ public class GuildImpl {
         this.implHelper = implHelper;
     }
 
+    /**
+     * Generic info for the guild.
+     *
+     * @param message the guild.
+     */
     public void genericInfo(final Message message) {
         final String guildId;
         try {
@@ -40,5 +50,13 @@ public class GuildImpl {
         } catch (final HttpRetrieveError error) {
             message.error(error.getMessage());
         }
+    }
+
+    /**
+     * GP Overview for the guild.
+     * @param message the guild.
+     */
+    public void gpOverview(final Message message) {
+        //TODO: implement
     }
 }

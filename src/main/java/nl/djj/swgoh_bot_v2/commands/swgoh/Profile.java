@@ -24,27 +24,26 @@ public class Profile extends BaseCommand {
      */
     public Profile(final Logger logger, final ImplHelper implHelper) {
         super(logger, implHelper);
-        NAME = "profile";
-        REQUIRED_LEVEL = Permission.USER;
-        DESCRIPTION = "All SWGOH profile related commands";
-        ALIASES = new String[]{
+        name = "profile";
+        requiredLevel = Permission.USER;
+        description = "All SWGOH profile related commands";
+        aliases = new String[]{
                 "pr"
         };
-        CATEGORY = CommandCategory.SWGOH;
-        FLAG_REQUIRED = true;
-        createFlags();
+        category = CommandCategory.SWGOH;
+        flagRequired = true;
     }
 
     @Override
     public boolean isFlagRequired() {
-        return FLAG_REQUIRED;
+        return flagRequired;
     }
 
     @Override
     public void createFlags() {
-        FLAGS.put(FLAG_GENERIC, new Flag(FLAG_GENERIC, "Fetches the SWGOH profile for the user", NAME, FLAG_GENERIC));
-        FLAGS.put(FLAG_ARENA, new Flag(FLAG_ARENA, "Fetches the SWGOH Arena information for the user", NAME, FLAG_ARENA));
-        FLAGS.put(FLAG_RELIC, new Flag(FLAG_RELIC, "Get's relic information about the users roster. optional parameter for level select", NAME, FLAG_RELIC, "-f <level> (inclusive)"));
+        flags.put(FLAG_GENERIC, new Flag(FLAG_GENERIC, "Fetches the SWGOH profile for the user", name, FLAG_GENERIC));
+        flags.put(FLAG_ARENA, new Flag(FLAG_ARENA, "Fetches the SWGOH Arena information for the user", name, FLAG_ARENA));
+        flags.put(FLAG_RELIC, new Flag(FLAG_RELIC, "Get's relic information about the users roster. optional parameter for level select", name, FLAG_RELIC, "-f <level> (inclusive)"));
     }
 
     @Override
@@ -53,7 +52,7 @@ public class Profile extends BaseCommand {
             case FLAG_GENERIC -> this.implHelper.getProfileImpl().genericInfo(message);
             case FLAG_ARENA -> this.implHelper.getProfileImpl().toonArena(message);
             case FLAG_RELIC -> this.implHelper.getProfileImpl().relic(message);
-            default -> message.error("This is not a valid flag, use '" + message.getGuildPrefix() + " help " + NAME + "'");
+            default -> message.error("This is not a valid flag, use '" + message.getGuildPrefix() + " help " + name + "'");
         }
     }
 }

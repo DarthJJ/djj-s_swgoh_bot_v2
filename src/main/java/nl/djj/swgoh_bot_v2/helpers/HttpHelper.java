@@ -29,12 +29,12 @@ public class HttpHelper {
     }
 
     private String readAll(final Reader reader) throws IOException {
-        final StringBuilder sb = new StringBuilder();
-        int cp;
-        while ((cp = reader.read()) != -1) {
-            sb.append((char) cp);
+        final StringBuilder builder = new StringBuilder();
+        int line;
+        while ((line = reader.read()) != -1) {
+            builder.append((char) line);
         }
-        return sb.toString();
+        return builder.toString();
     }
 
     /**
@@ -44,9 +44,9 @@ public class HttpHelper {
      * @return JSON data.
      */
     public JSONArray getJsonArray(final String url) throws HttpRetrieveError {
-        try (InputStream is = new URL(url).openStream()) {
-            final BufferedReader rd = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
-            final String jsonText = readAll(rd);
+        try (InputStream stream = new URL(url).openStream()) {
+            final BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
+            final String jsonText = readAll(reader);
             return new JSONArray(jsonText);
         } catch (final IOException exception) {
             throw new HttpRetrieveError(className, exception.getMessage(), logger);
@@ -60,9 +60,9 @@ public class HttpHelper {
      * @return JSON data.
      */
     public JSONObject getJsonObject(final String url) throws HttpRetrieveError {
-        try (InputStream is = new URL(url).openStream()) {
-            final BufferedReader rd = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
-            final String jsonText = readAll(rd);
+        try (InputStream stream = new URL(url).openStream()) {
+            final BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
+            final String jsonText = readAll(reader);
             return new JSONObject(jsonText);
         } catch (final IOException exception) {
             throw new HttpRetrieveError(className, exception.getMessage(), logger);
@@ -82,9 +82,9 @@ public class HttpHelper {
             final URLConnection urlConn = urlCSV.openConnection();
             final InputStreamReader inputCSV = new InputStreamReader(
                     urlConn.getInputStream());
-            final BufferedReader br = new BufferedReader(inputCSV);
+            final BufferedReader reader = new BufferedReader(inputCSV);
             String line;
-            while ((line = br.readLine()) != null) {
+            while ((line = reader.readLine()) != null) {
                 returnValue.add(line);
             }
             return returnValue;

@@ -10,39 +10,46 @@ import nl.djj.swgoh_bot_v2.helpers.Logger;
 
 import java.util.HashMap;
 
+/**
+ * @author DJJ
+ */
 public class Config extends BaseCommand {
     private static final transient String FLAG_SET_GUILD = "setSwgohGuild";
     private static final transient String FLAG_GET_CONFIG = "getConfig";
     private static final transient String FLAG_SET_PREFIX = "setPrefix";
 
+    /**
+     * Constructor.
+     * @param logger the logger.
+     * @param implHelper the implHelper.
+     */
     public Config(final Logger logger, final ImplHelper implHelper) {
         super(logger, implHelper);
-        NAME = "config";
-        REQUIRED_LEVEL = Permission.MODERATOR;
-        DESCRIPTION = "All Bot config related tasks";
-        ALIASES = new String[]{
+        name = "config";
+        requiredLevel = Permission.MODERATOR;
+        description = "All Bot config related tasks";
+        aliases = new String[]{
                 "config"
         };
-        CATEGORY = CommandCategory.MODERATION;
-        FLAGS = new HashMap<>();
-        FLAG_REQUIRED = true;
-        createFlags();
+        category = CommandCategory.MODERATION;
+        flags = new HashMap<>();
+        flagRequired = true;
     }
 
     @Override
     public void createFlags() {
-        FLAGS.put(FLAG_SET_GUILD, new Flag(FLAG_SET_GUILD, "Sets the SWGOH guild id for the discord Guild", NAME, FLAG_SET_GUILD, "<guildId>"));
-        FLAGS.put(FLAG_GET_CONFIG, new Flag(FLAG_GET_CONFIG, "Gets the config for the discord Guild", NAME, FLAG_GET_CONFIG));
-        FLAGS.put(FLAG_SET_PREFIX, new Flag(FLAG_SET_PREFIX, "Sets the prefix for the current guild", NAME, FLAG_SET_PREFIX, "<prefix>"));
+        flags.put(FLAG_SET_GUILD, new Flag(FLAG_SET_GUILD, "Sets the SWGOH guild id for the discord Guild", name, FLAG_SET_GUILD, "<guildId>"));
+        flags.put(FLAG_GET_CONFIG, new Flag(FLAG_GET_CONFIG, "Gets the config for the discord Guild", name, FLAG_GET_CONFIG));
+        flags.put(FLAG_SET_PREFIX, new Flag(FLAG_SET_PREFIX, "Sets the prefix for the current guild", name, FLAG_SET_PREFIX, "<prefix>"));
     }
 
     @Override
     public void handleMessage(final Message message) {
         switch (message.getFlag()) {
             case FLAG_SET_GUILD -> this.implHelper.getConfigImpl().setGuildId(message);
-            case FLAG_GET_CONFIG -> this.implHelper.getConfigImpl().getConfig(message);
+            case FLAG_GET_CONFIG -> this.implHelper.getConfigImpl().showConfig(message);
             case FLAG_SET_PREFIX -> this.implHelper.getConfigImpl().setPrefix(message);
-            default -> message.error("This is not a valid flag, use '" + message.getGuildPrefix() + "help " + NAME + "'");
+            default -> message.error("This is not a valid flag, use '" + message.getGuildPrefix() + "help " + name + "'");
         }
     }
 }

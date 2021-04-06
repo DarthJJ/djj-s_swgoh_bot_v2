@@ -1,6 +1,6 @@
 package nl.djj.swgoh_bot_v2.command_impl;
 
-import nl.djj.swgoh_bot_v2.config.Config;
+import nl.djj.swgoh_bot_v2.config.BotConstants;
 import nl.djj.swgoh_bot_v2.config.SwgohGgEndpoint;
 import nl.djj.swgoh_bot_v2.database.DatabaseHandler;
 import nl.djj.swgoh_bot_v2.entities.Message;
@@ -87,10 +87,10 @@ public class UpdateImpl {
             message.error(error.getMessage());
             return;
         }
-        final JSONArray unitRequirementsData = requirementData.getJSONArray("units");
+        final JSONArray unitReqData = requirementData.getJSONArray("units");
         final List<GlRequirement> requirements = new ArrayList<>();
-        for (int i = 0; i < unitRequirementsData.length(); i++) {
-            final JSONObject glData = unitRequirementsData.getJSONObject(i);
+        for (int i = 0; i < unitReqData.length(); i++) {
+            final JSONObject glData = unitReqData.getJSONObject(i);
             final String glName = glData.getString("unitName");
             final JSONArray units = glData.getJSONArray("requiredUnits");
             for (int j = 0; j < units.length(); j++) {
@@ -114,17 +114,17 @@ public class UpdateImpl {
         logger.info(className, "Updating the abbreviations");
         final List<String> abbreviationData;
         try {
-            abbreviationData = httpHelper.getCsv(Config.ABBREVIATIONS_LINK);
+            abbreviationData = httpHelper.getCsv(BotConstants.ABBREVIATIONS_LINK);
         } catch (final HttpRetrieveError error) {
             message.error(error.getMessage());
             return;
         }
         final List<Abbreviation> abbreviations = new ArrayList<>();
-        for (final String abbreviationString : abbreviationData) {
-            if (abbreviationString.contains("toonId")) {
+        for (final String abbrString : abbreviationData) {
+            if (abbrString.contains("toonId")) {
                 continue;
             }
-            final String[] splitted = abbreviationString.split(";");
+            final String[] splitted = abbrString.split(";");
             abbreviations.add(new Abbreviation(splitted[0], splitted[1]));
         }
         try {

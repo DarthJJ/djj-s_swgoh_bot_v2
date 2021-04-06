@@ -25,22 +25,21 @@ public class Register extends BaseCommand {
      */
     public Register(final Logger logger, final ImplHelper implHelper) {
         super(logger, implHelper);
-        NAME = "register";
-        REQUIRED_LEVEL = Permission.USER;
-        DESCRIPTION = "Register or unregister with the bot.";
-        ALIASES = new String[]{
+        name = "register";
+        requiredLevel = Permission.USER;
+        description = "Register or unregister with the bot.";
+        aliases = new String[]{
                 "reg"
         };
-        CATEGORY = CommandCategory.BOT;
-        FLAGS = new HashMap<>();
-        FLAG_REQUIRED = true;
-        createFlags();
+        category = CommandCategory.BOT;
+        flags = new HashMap<>();
+        flagRequired = true;
     }
 
     @Override
     public void createFlags() {
-        FLAGS.put(FLAG_ADD, new Flag(FLAG_ADD, "Register to the bot", "usage: " + NAME, FLAG_ADD, " <allycode: xxx-xxx-xxx / xxxxxxxxx>"));
-        FLAGS.put(FLAG_REMOVE, new Flag(FLAG_REMOVE, "Unregister to the bot", "usage: ", NAME, FLAG_REMOVE));
+        flags.put(FLAG_ADD, new Flag(FLAG_ADD, "Register to the bot", "usage: " + name, FLAG_ADD, " <allycode: xxx-xxx-xxx / xxxxxxxxx>"));
+        flags.put(FLAG_REMOVE, new Flag(FLAG_REMOVE, "Unregister to the bot", "usage: ", name, FLAG_REMOVE));
     }
 
     @Override
@@ -48,7 +47,7 @@ public class Register extends BaseCommand {
         switch (message.getFlag()) {
             case FLAG_ADD -> this.implHelper.getProfileImpl().registerUser(message);
             case FLAG_REMOVE -> this.implHelper.getProfileImpl().unregisterUser(message);
-            default -> message.error("This is not a valid flag, use '" + message.getGuildPrefix() + " help " + NAME + "'");
+            default -> message.error("This is not a valid flag, use '" + message.getGuildPrefix() + " help " + name + "'");
         }
     }
 }

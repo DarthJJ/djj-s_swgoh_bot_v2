@@ -1,13 +1,13 @@
 package nl.djj.swgoh_bot_v2.command_impl;
 
-import nl.djj.swgoh_bot_v2.config.SwgohConfig;
+import nl.djj.swgoh_bot_v2.config.SwgohConstants;
 import nl.djj.swgoh_bot_v2.database.DatabaseHandler;
 import nl.djj.swgoh_bot_v2.entities.Unit;
 import nl.djj.swgoh_bot_v2.exceptions.SQLRetrieveError;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author DJJ
@@ -28,14 +28,14 @@ public class UnitImpl {
     /**
      * Returns a name for the given ID.
      *
-     * @param id the ID.
+     * @param identifier the ID.
      * @return the Name.
      */
-    public String getUnitNameForId(final String id) {
+    public String getUnitNameForId(final String identifier) {
         try {
-            return dbHandler.getUnitNameForId(id);
+            return dbHandler.getUnitNameForId(identifier);
         } catch (final SQLRetrieveError error) {
-            return id;
+            return identifier;
         }
     }
 
@@ -46,9 +46,9 @@ public class UnitImpl {
      * @return a list with toons who have failed the check.
      */
     public Map<String, Integer> checkRelicLevel(final List<Unit> units, final int relicLevel) {
-        final Map<String, Integer> unitsBelow = new HashMap<>();
+        final Map<String, Integer> unitsBelow = new ConcurrentHashMap<>();
         for (final Unit unit : units) {
-            if (unit.getGearLevel() >= SwgohConfig.MAX_GEAR_LEVEL && unit.getRelicLevel() - 2 <= relicLevel) {
+            if (unit.getGearLevel() >= SwgohConstants.MAX_GEAR_LEVEL && unit.getRelicLevel() - 2 <= relicLevel) {
                 unitsBelow.put(unit.getName(), unit.getRelicLevel() - 2);
             }
         }

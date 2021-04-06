@@ -22,16 +22,15 @@ public abstract class Help extends BaseCommand {
      */
     public Help(final Logger logger, final ImplHelper implHelper) {
         super(logger, implHelper);
-        NAME = "help";
-        REQUIRED_LEVEL = Permission.USER;
-        DESCRIPTION = "Register or unregister with the bot.";
-        ALIASES = new String[]{
+        name = "help";
+        requiredLevel = Permission.USER;
+        description = "Register or unregister with the bot.";
+        aliases = new String[]{
                 "reg"
         };
-        CATEGORY = CommandCategory.BOT;
-        FLAGS = new HashMap<>();
-        FLAG_REQUIRED = false;
-        createFlags();
+        category = CommandCategory.BOT;
+        flags = new HashMap<>();
+        flagRequired = false;
     }
 
     @Override

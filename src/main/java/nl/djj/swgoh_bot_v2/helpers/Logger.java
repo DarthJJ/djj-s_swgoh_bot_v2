@@ -113,10 +113,10 @@ public class Logger {
         } catch (final IOException exception) {
             error(className, exception.getMessage());
         }
-        try (BufferedWriter br = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8, StandardOpenOption.APPEND)) {
-            br.write(getDate(true) + SEPARATOR + content);
-            br.newLine();
-            br.flush();
+        try (BufferedWriter writer = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8, StandardOpenOption.APPEND)) {
+            writer.write(getDate(true) + SEPARATOR + content);
+            writer.newLine();
+            writer.flush();
         } catch (final IOException exception) {
             error(className, exception.getMessage());
         }

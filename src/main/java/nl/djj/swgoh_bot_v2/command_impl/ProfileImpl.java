@@ -1,9 +1,9 @@
 package nl.djj.swgoh_bot_v2.command_impl;
 
 import net.dv8tion.jda.api.entities.Role;
-import nl.djj.swgoh_bot_v2.config.Config;
+import nl.djj.swgoh_bot_v2.config.BotConstants;
 import nl.djj.swgoh_bot_v2.config.Permission;
-import nl.djj.swgoh_bot_v2.config.SwgohConfig;
+import nl.djj.swgoh_bot_v2.config.SwgohConstants;
 import nl.djj.swgoh_bot_v2.config.SwgohGgEndpoint;
 import nl.djj.swgoh_bot_v2.database.DatabaseHandler;
 import nl.djj.swgoh_bot_v2.entities.Message;
@@ -99,7 +99,7 @@ public class ProfileImpl {
      * @return if it is allowed.
      */
     public boolean isAllowed(final String discordId, final Permission requiredLevel) {
-        if (discordId.equals(Config.OWNER_ID)) {
+        if (discordId.equals(BotConstants.OWNER_ID)) {
             return true;
         }
         try {
@@ -200,13 +200,13 @@ public class ProfileImpl {
                 units.add(Unit.initFromJson(unitData.getJSONObject(KEY_DATA)));
             }
             profile.setUnits(units);
-            int relicLevel = SwgohConfig.MAX_RELIC_TIER;
+            int relicLevel = SwgohConstants.MAX_RELIC_TIER;
             try {
                 if (!message.getArgs().isEmpty()) {
                     relicLevel = Integer.parseInt(String.join("", message.getArgs()));
                 }
             } catch (final NumberFormatException exception) {
-                message.error("Relic number is not valid, please use a valid number between '1' and '" + SwgohConfig.MAX_RELIC_TIER + "'");
+                message.error("Relic number is not valid, please use a valid number between '1' and '" + SwgohConstants.MAX_RELIC_TIER + "'");
                 return;
             }
             message.done(MessageHelper.formatProfileRelic(implHelper.getUnitImpl().checkRelicLevel(profile.getUnits(), relicLevel), relicLevel, profile.getName()));

@@ -27,24 +27,23 @@ public class Control extends BaseCommand {
      */
     public Control(final Logger logger, final ImplHelper implHelper) {
         super(logger, implHelper);
-        NAME = "control";
-        REQUIRED_LEVEL = Permission.ADMINISTRATOR;
-        DESCRIPTION = "All the admin control commands of the bot, aka the danger-zone";
-        ALIASES = new String[]{
+        name = "control";
+        requiredLevel = Permission.ADMINISTRATOR;
+        description = "All the admin control commands of the bot, aka the danger-zone";
+        aliases = new String[]{
                 "ctrl"
         };
-        CATEGORY = CommandCategory.ADMIN;
-        FLAGS = new HashMap<>();
-        FLAG_REQUIRED = true;
-        createFlags();
+        category = CommandCategory.ADMIN;
+        flags = new HashMap<>();
+        flagRequired = true;
     }
 
     @Override
     public void createFlags() {
-        FLAGS.put(FLAG_ENABLE, new Flag(FLAG_ENABLE, "Enables a command", NAME, FLAG_ENABLE, " <command name>"));
-        FLAGS.put(FLAG_DISABLE, new Flag(FLAG_DISABLE, "Disables a command", NAME, FLAG_DISABLE, " <command name>"));
-        FLAGS.put(FLAG_UPDATE_DB, new Flag(FLAG_UPDATE_DB, "Updates the DB", NAME, FLAG_UPDATE_DB));
-        FLAGS.put(FLAG_SHUTDOWN, new Flag(FLAG_SHUTDOWN, "Shuts down the bot, be careful, you can't restart via Discord", NAME, FLAG_SHUTDOWN));
+        flags.put(FLAG_ENABLE, new Flag(FLAG_ENABLE, "Enables a command", name, FLAG_ENABLE, " <command name>"));
+        flags.put(FLAG_DISABLE, new Flag(FLAG_DISABLE, "Disables a command", name, FLAG_DISABLE, " <command name>"));
+        flags.put(FLAG_UPDATE_DB, new Flag(FLAG_UPDATE_DB, "Updates the DB", name, FLAG_UPDATE_DB));
+        flags.put(FLAG_SHUTDOWN, new Flag(FLAG_SHUTDOWN, "Shuts down the bot, be careful, you can't restart via Discord", name, FLAG_SHUTDOWN));
     }
 
     @Override
@@ -54,7 +53,7 @@ public class Control extends BaseCommand {
             case FLAG_DISABLE -> this.implHelper.getCommandImpl().disableCommand(message);
             case FLAG_UPDATE_DB -> this.implHelper.getControlImpl().createDatabase(message);
             case FLAG_SHUTDOWN -> this.implHelper.getControlImpl().closeBot();
-            default -> message.error("This is not a valid flag, use '" + message.getGuildPrefix() + " help " + NAME + "'");
+            default -> message.error("This is not a valid flag, use '" + message.getGuildPrefix() + " help " + name + "'");
         }
     }
 }

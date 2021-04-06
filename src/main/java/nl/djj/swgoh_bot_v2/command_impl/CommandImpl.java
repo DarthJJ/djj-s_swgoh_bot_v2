@@ -14,7 +14,7 @@ public class CommandImpl {
     private final transient DatabaseHandler dbHandler;
 
     /**
-     * @param logger the logger.
+     * @param logger    the logger.
      * @param dbHandler DB handler.
      */
     public CommandImpl(final Logger logger, final DatabaseHandler dbHandler) {
@@ -25,6 +25,7 @@ public class CommandImpl {
 
     /**
      * Retrieves the enabled status for a command.
+     *
      * @param commandName the command.
      * @return boolean value.
      */
@@ -34,6 +35,7 @@ public class CommandImpl {
 
     /**
      * Enable the command.
+     *
      * @param message the message.
      */
     public void enableCommand(final Message message) {
@@ -49,6 +51,7 @@ public class CommandImpl {
 
     /**
      * Disable a command.
+     *
      * @param message the message.
      */
     public void disableCommand(final Message message) {

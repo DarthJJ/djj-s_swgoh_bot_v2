@@ -3,8 +3,8 @@ package nl.djj.swgoh_bot_v2.entities;
 /**
  * @author DJJ
  */
-public class Guild {
-    private final transient String swgohId;
+public class Config {
+    private transient String swgohId;
     private final transient String discordId;
     private transient String prefix;
     private transient String moderationRole;
@@ -12,11 +12,28 @@ public class Guild {
     private transient String notifyChannel;
     private transient String botLoggingChannel;
 
-
-    public Guild(final String swgohId, final String discordId) {
+    /**
+     * Constructor.
+     * @param swgohId the SWGOH ID.
+     * @param discordId the Discord ID.
+     */
+    public Config(final String swgohId, final String discordId) {
         super();
         this.swgohId = swgohId;
         this.discordId = discordId;
+    }
+
+    /**
+     * Constructor.
+     * @param discordId the Discord ID.
+     */
+    public Config(final String discordId) {
+        super();
+        this.discordId = discordId;
+    }
+
+    public void setSwgohId(final String swgohId) {
+        this.swgohId = swgohId;
     }
 
     public String getSwgohId() {
@@ -31,7 +48,7 @@ public class Guild {
         return prefix;
     }
 
-    public void setPrefix(String prefix) {
+    public void setPrefix(final String prefix) {
         this.prefix = prefix;
     }
 
@@ -39,7 +56,7 @@ public class Guild {
         return moderationRole;
     }
 
-    public void setModerationRole(String moderationRole) {
+    public void setModerationRole(final String moderationRole) {
         this.moderationRole = moderationRole;
     }
 
@@ -47,7 +64,7 @@ public class Guild {
         return ignoreRole;
     }
 
-    public void setIgnoreRole(String ignoreRole) {
+    public void setIgnoreRole(final String ignoreRole) {
         this.ignoreRole = ignoreRole;
     }
 
@@ -55,7 +72,7 @@ public class Guild {
         return notifyChannel;
     }
 
-    public void setNotifyChannel(String notifyChannel) {
+    public void setNotifyChannel(final String notifyChannel) {
         this.notifyChannel = notifyChannel;
     }
 
@@ -63,7 +80,7 @@ public class Guild {
         return botLoggingChannel;
     }
 
-    public void setBotLoggingChannel(String botLoggingChannel) {
+    public void setBotLoggingChannel(final String botLoggingChannel) {
         this.botLoggingChannel = botLoggingChannel;
     }
 }

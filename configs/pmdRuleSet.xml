@@ -9,56 +9,20 @@
         <exclude name="JUnitTestContainsTooManyAsserts"/>
         <exclude name="SystemPrintln"/>
         <exclude name="PreserveStackTrace"/>
+        <exclude name="SwitchStmtsShouldHaveDefault"/>
     </rule>
     <rule ref="category/java/codestyle.xml">
         <exclude name="UnnecessaryConstructor"/>
         <exclude name="OnlyOneReturn"/>
         <exclude name="AvoidFinalLocalVariable"/>
         <exclude name="DefaultPackage"/>
-        <exclude name="AvoidDuplicateLiterals"/>
     </rule>
-    <rule ref="category/java/codestyle.xml/EmptyMethodInAbstractClassShouldBeAbstract" >
-        <properties>
-            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['.Help']"/>
-        </properties>
-    </rule>
-    <rule ref="category/java/bestpractices.xml/DoubleBraceInitialization" >
-        <properties>
-            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['.CommandLoader']"/>
-        </properties>
-    </rule>
-
-
-    <rule ref="category/java/codestyle.xml/LongVariable">
-        <properties>
-            <property name="minimum" value="25"/>
-            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['.DatabaseQueries']"/>
-        </properties>
-    </rule>
-    <rule ref="category/java/codestyle.xml/ClassNamingConventions">
-        <properties>
-            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['.BuildVersion']"/>
-        </properties>
-    </rule>
-    <rule ref="category/java/codestyle.xml/ShortClassName">
-        <properties>
-            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['.Ship']"/>
-        </properties>
-    </rule>
-    <rule ref="category/java/codestyle.xml/ShortVariable">
-        <properties>
-            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['.DatabaseQueries']"/>
-        </properties>
-    </rule>
-    <rule ref="category/java/codestyle.xml/ConfusingTernary">
-        <properties>
-            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['.JsonConverter']"/>
-        </properties>
-    </rule>
-    <rule ref="category/java/codestyle.xml/CommentDefaultAccessModifier">
-        <properties>
-            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['.StringAlignUtil']"/>
-        </properties>
+    <rule ref="category/java/errorprone.xml">
+        <exclude name="MissingSerialVersionUID"/>
+        <exclude name="AvoidCatchingNPE"/>
+        <exclude name="NonStaticInitializer"/>
+        <exclude name="AssignmentInOperand"/>
+        <exclude name="DataflowAnomalyAnalysis"/>
     </rule>
     <rule ref="category/java/design.xml">
         <exclude name="LawOfDemeter"/>
@@ -66,21 +30,41 @@
         <exclude name="AvoidCatchingGenericException"/>
         <exclude name="AvoidThrowingRawExceptionTypes"/>
         <exclude name="GodClass"/>
+        <exclude name="DataClass"/>
     </rule>
-    <rule ref="category/java/errorprone.xml/CloseResource">
+    <rule ref="category/java/multithreading.xml"/>
+    <rule ref="category/java/performance.xml">
+        <exclude name="AvoidInstantiatingObjectsInLoops"/>
+    </rule>
+    <rule ref="category/java/codestyle.xml/LongVariable">
         <properties>
-            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['.ConfigHandler']"/>
+            <property name="minimum" value="25" />
         </properties>
     </rule>
-    <rule ref="category/java/design.xml/CyclomaticComplexity">
+
+    <rule ref="category/java/codestyle.xml/ShortClassName">
         <properties>
-            <property name="methodReportLevel" value="11"/>
-            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['.StringComparator']"/>
+            <property name="minimum" value="4" />
         </properties>
     </rule>
-    <rule ref="category/java/design.xml/NPathComplexity">
+    <rule ref="category/java/codestyle.xml/CommentDefaultAccessModifier" >
         <properties>
-            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['.StringComparator']"/>
+            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['.TableNames']"/>
+        </properties>
+    </rule>
+    <rule ref="category/java/codestyle.xml/EmptyMethodInAbstractClassShouldBeAbstract" >
+        <properties>
+            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['.Help']"/>
+        </properties>
+    </rule>
+    <rule ref="category/java/codestyle.xml/FieldNamingConventions" >
+        <properties>
+            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['.TableNames']"/>
+        </properties>
+    </rule>
+    <rule ref="category/java/bestpractices.xml/DoubleBraceInitialization" >
+        <properties>
+            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['.CommandLoader']"/>
         </properties>
     </rule>
     <rule ref="category/java/design.xml/ExcessiveParameterList">
@@ -93,19 +77,29 @@
             <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['Main']"/>
         </properties>
     </rule>
-    <rule ref="category/java/design.xml/ExcessiveImports">
+    <rule ref="category/java/errorprone.xml/AvoidDuplicateLiterals">
         <properties>
-            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['.ExcelWriter']"/>
+            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['TableNames']"/>
         </properties>
     </rule>
-    <rule ref="category/java/design.xml/DataClass">
+    <rule ref="category/java/errorprone.xml/CloseResource">
         <properties>
-            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['.Guild']"/>
+            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['DatabaseHandler']"/>
+        </properties>
+    </rule>
+    <rule ref="category/java/errorprone.xml/AvoidFieldNameMatchingTypeName">
+        <properties>
+            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['Abbreviation']"/>
+        </properties>
+    </rule>
+    <rule ref="category/java/design.xml/TooManyFields">
+        <properties>
+            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['.TableNames']"/>
         </properties>
     </rule>
     <rule ref="category/java/design.xml/TooManyMethods">
         <properties>
-            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['.Calculator']"/>
+            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['.DatabaseHandler']"/>
         </properties>
     </rule>
     <rule ref="category/java/documentation.xml">
@@ -115,51 +109,6 @@
     <rule ref="category/java/documentation.xml/CommentRequired">
         <properties>
             <property name="fieldCommentRequirement" value="Ignored"/>
-        </properties>
-    </rule>
-    <rule ref="category/java/bestpractices.xml/SwitchStmtsShouldHaveDefault">
-        <properties>
-            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['.Control']"/>
-        </properties>
-    </rule>
-    <rule ref="category/java/errorprone.xml">
-        <exclude name="MissingSerialVersionUID"/>
-        <exclude name="AvoidCatchingNPE"/>
-        <exclude name="NonStaticInitializer"/>
-        <exclude name="AvoidDuplicateLiterals"/>
-        <exclude name="AssignmentInOperand"/>
-    </rule>
-    <rule ref="category/java/errorprone.xml/DataflowAnomalyAnalysis">
-        <properties>
-            <property name="violationSuppressRegex" value="^Found 'UR'-anomaly.*"/>
-            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['.JsonConverter']"/>
-        </properties>
-    </rule>
-    <rule ref="category/java/bestpractices.xml/ConstantsInInterface" >
-        <properties>
-            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['.TableNames']"/>
-        </properties>
-    </rule>
-
-    <rule ref="category/java/errorprone.xml/AvoidFieldNameMatchingTypeName">
-        <properties>
-            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['.Logger']"/>
-        </properties>
-    </rule>
-    <rule ref="category/java/multithreading.xml">
-        <!--		<exclude name="" />-->
-    </rule>
-    <rule ref="category/java/multithreading.xml/UseConcurrentHashMap">
-        <properties>
-            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['.JsonReader']"/>
-        </properties>
-    </rule>
-    <rule ref="category/java/performance.xml">
-        <!--		<exclude name="" />-->
-    </rule>
-    <rule ref="category/java/performance.xml/AvoidInstantiatingObjectsInLoops">
-        <properties>
-            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['.JsonConverter']"/>
         </properties>
     </rule>
 </ruleset>

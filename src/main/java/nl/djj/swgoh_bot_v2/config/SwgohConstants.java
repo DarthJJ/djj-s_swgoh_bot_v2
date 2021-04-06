@@ -3,7 +3,7 @@ package nl.djj.swgoh_bot_v2.config;
 /**
  * @author DJJ
  */
-public final class SwgohConfig {
+public final class SwgohConstants {
     /**
      * The Max Gear Level a toon can have.
      */
@@ -16,7 +16,7 @@ public final class SwgohConfig {
     /**
      * Constructor.
      */
-    private SwgohConfig() {
+    private SwgohConstants() {
         super();
     }
 }

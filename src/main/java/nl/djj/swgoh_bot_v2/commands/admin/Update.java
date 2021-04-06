@@ -26,24 +26,23 @@ public class Update extends BaseCommand {
      */
     public Update(final Logger logger, final ImplHelper implHelper) {
         super(logger, implHelper);
-        NAME = "update";
-        REQUIRED_LEVEL = Permission.ADMINISTRATOR;
-        DESCRIPTION = "All the update commands of the bot, aka the danger-zone";
-        ALIASES = new String[]{
+        name = "update";
+        requiredLevel = Permission.ADMINISTRATOR;
+        description = "All the update commands of the bot, aka the danger-zone";
+        aliases = new String[]{
                 "up"
         };
-        CATEGORY = CommandCategory.ADMIN;
-        FLAGS = new HashMap<>();
-        FLAG_REQUIRED = true;
-        createFlags();
+        category = CommandCategory.ADMIN;
+        flags = new HashMap<>();
+        flagRequired = true;
     }
 
 
     @Override
     public void createFlags() {
-        FLAGS.put(FLAG_UNITS, new Flag(FLAG_UNITS, "Updates the units", NAME, FLAG_UNITS));
-        FLAGS.put(FLAG_ABBREVIATIONS, new Flag(FLAG_ABBREVIATIONS, "Updates the unit abbreviations", NAME, FLAG_ABBREVIATIONS));
-        FLAGS.put(FLAG_GL_REQUIREMENTS, new Flag(FLAG_GL_REQUIREMENTS, "Updates the GL Requirements", NAME, FLAG_GL_REQUIREMENTS));
+        flags.put(FLAG_UNITS, new Flag(FLAG_UNITS, "Updates the units", name, FLAG_UNITS));
+        flags.put(FLAG_ABBREVIATIONS, new Flag(FLAG_ABBREVIATIONS, "Updates the unit abbreviations", name, FLAG_ABBREVIATIONS));
+        flags.put(FLAG_GL_REQUIREMENTS, new Flag(FLAG_GL_REQUIREMENTS, "Updates the GL Requirements", name, FLAG_GL_REQUIREMENTS));
     }
 
     @Override
@@ -52,7 +51,7 @@ public class Update extends BaseCommand {
             case FLAG_UNITS -> this.implHelper.getUpdateImpl().updateUnits(message);
             case FLAG_ABBREVIATIONS -> this.implHelper.getUpdateImpl().updateAbbreviations(message);
             case FLAG_GL_REQUIREMENTS -> this.implHelper.getUpdateImpl().updateGlRequirements(message);
-            default -> message.error("This is not a valid flag, use '" + message.getGuildPrefix() + " help " + NAME + "'");
+            default -> message.error("This is not a valid flag, use '" + message.getGuildPrefix() + " help " + name + "'");
         }
     }
 }
