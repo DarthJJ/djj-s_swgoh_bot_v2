@@ -67,6 +67,7 @@ public class CommandLoader {
         }
     }
 
+    //CHECKSTYLE.OFF: NPathComplexity
     private void handleHelpRequest(final Message message) {
         final BaseCommand command = getCommand(message.getFlag());
         if (!message.getFlag().isEmpty() && command == null) {
@@ -82,7 +83,7 @@ public class CommandLoader {
             if (!this.implHelper.getProfileImpl().isAllowed(message.getAuthorId(), entry.getValue().getRequiredLevel())) {
                 continue;
             }
-            if(!this.implHelper.getCommandImpl().getCommandEnabledStatus(entry.getValue().getName())){
+            if (!this.implHelper.getCommandImpl().getCommandEnabledStatus(entry.getValue().getName())) {
                 continue;
             }
             if (helpText.containsKey(entry.getValue().getCategory().getName())) {
@@ -97,6 +98,7 @@ public class CommandLoader {
         }
         message.done(MessageHelper.formatGenericHelpText(helpText));
     }
+    //CHECKSTYLE.ON: NPathComplexity
 
     private BaseCommand getCommand(final String name) {
         final String commandName = aliases.get(name.toLowerCase(Locale.ENGLISH));

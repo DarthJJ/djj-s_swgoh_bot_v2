@@ -102,6 +102,16 @@
             <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['.DatabaseHandler']"/>
         </properties>
     </rule>
+    <rule ref="category/java/design.xml/NPathComplexity">
+        <properties>
+            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['.EventListener']"/>
+        </properties>
+    </rule>
+    <rule ref="category/java/design.xml/CyclomaticComplexity">
+        <properties>
+            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['.EventListener']"/>
+        </properties>
+    </rule>
     <rule ref="category/java/documentation.xml">
         <exclude name="CommentSize"/>
         <exclude name="UncommentedEmptyConstructor"/>

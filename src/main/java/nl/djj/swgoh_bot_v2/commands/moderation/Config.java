@@ -54,7 +54,7 @@ public class Config extends BaseCommand {
             case FLAG_SET_GUILD -> this.implHelper.getConfigImpl().setGuildId(message);
             case FLAG_GET_CONFIG -> this.implHelper.getConfigImpl().showConfig(message);
             case FLAG_SET_PREFIX -> this.implHelper.getConfigImpl().setPrefix(message);
-            case FLAG_SET_IGNORE_ROLE -> this.implHelper.getConfigImpl().setIngoreRole(message);
+            case FLAG_SET_IGNORE_ROLE -> this.implHelper.getConfigImpl().setIgnoreRole(message);
             case FLAG_SET_NOTIFY_CHANNEL -> this.implHelper.getConfigImpl().setNotifyChannel(message);
             default -> message.error("This is not a valid flag, use '" + message.getGuildPrefix() + "help " + name + "'");
         }

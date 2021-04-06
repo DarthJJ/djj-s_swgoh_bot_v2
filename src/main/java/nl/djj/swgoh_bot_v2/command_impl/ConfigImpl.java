@@ -109,18 +109,22 @@ public class ConfigImpl {
             message.error("Please provide a prefix to set");
             return;
         }
-        Config config = getConfig(message.getGuildId());
         try {
             this.httpHelper.getJsonObject(SwgohGgEndpoint.GUILD_ENDPOINT.getUrl() + message.getArgs().get(0));
         } catch (final HttpRetrieveError error) {
             message.error(error.getMessage());
             return;
         }
+        final Config config = getConfig(message.getGuildId());
         config.setSwgohId(message.getArgs().get(0));
         updateConfig(config, message);
     }
 
-    public void setIngoreRole(final Message message) {
+    /**
+     *  Sets the ignore role for the guild.
+     * @param message the guild info.
+     */
+    public void setIgnoreRole(final Message message) {
         if (message.getArgs().isEmpty()) {
             message.error("Please tag a role");
             return;
@@ -145,10 +149,11 @@ public class ConfigImpl {
 
     /**
      * Sets the notify channel for the bot for the guild.
+     *
      * @param message contains the guild info.
      */
     public void setNotifyChannel(final Message message) {
-        if (message.getArgs().isEmpty()){
+        if (message.getArgs().isEmpty()) {
             message.error("Please tag a channel");
             return;
         }

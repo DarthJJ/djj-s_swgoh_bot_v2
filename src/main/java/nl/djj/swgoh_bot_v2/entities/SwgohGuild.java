@@ -24,7 +24,7 @@ public final class SwgohGuild {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -32,7 +32,7 @@ public final class SwgohGuild {
         return galacticPower;
     }
 
-    public void setGalacticPower(int galacticPower) {
+    public void setGalacticPower(final int galacticPower) {
         this.galacticPower = galacticPower;
     }
 
@@ -40,7 +40,7 @@ public final class SwgohGuild {
         return profiles;
     }
 
-    public void setProfiles(int profiles) {
+    public void setProfiles(final int profiles) {
         this.profiles = profiles;
     }
 
@@ -48,7 +48,7 @@ public final class SwgohGuild {
         return members;
     }
 
-    public void setMembers(int members) {
+    public void setMembers(final int members) {
         this.members = members;
     }
 

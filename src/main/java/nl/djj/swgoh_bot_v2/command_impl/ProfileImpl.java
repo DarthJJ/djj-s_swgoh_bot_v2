@@ -215,6 +215,11 @@ public class ProfileImpl {
         }
     }
 
+    /**
+     * Gets the GP overview for the guild.
+     * @param playerData the playerData.
+     * @return a map with values.
+     */
     public Map<String, Integer> getGuildGp(final JSONArray playerData) {
         final Map<String, Integer> members = new ConcurrentHashMap<>();
         for (int i = 0; i < playerData.length(); i++){

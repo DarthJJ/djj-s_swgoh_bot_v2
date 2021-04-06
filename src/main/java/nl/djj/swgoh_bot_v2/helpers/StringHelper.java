@@ -41,10 +41,20 @@ public final class StringHelper {
         return dtf.format(now);
     }
 
+    /**
+     * Format a number as string with "thousands" points.
+     * @param number the number to format.
+     * @return the formatted number.
+     */
     public static String formatNumber(final int number) {
         return new DecimalFormat("#,###,###", DecimalFormatSymbols.getInstance(Locale.GERMAN)).format(number);
     }
 
+    /**
+     * Removes special chars from the messageID.
+     * @param channel the channel to strip.
+     * @return the stripped channel.
+     */
     public static String stripMessageChannel(final String channel) {
         return channel.replace("<", "").replace(">", "").replace("#", "");
     }

@@ -25,7 +25,7 @@ public final class Main extends ListenerAdapter {
     private final transient CommandLoader commandLoader;
     private final transient ImplHelper implHelper;
     private final transient String className = this.getClass().getSimpleName();
-    public static boolean MAINTENANCE_MODE = false;
+    private static boolean MAINTENANCE_MODE;
 
     /**
      * Main entry for the bot.
@@ -72,6 +72,20 @@ public final class Main extends ListenerAdapter {
         } catch (final LoginException exception) {
             logger.error(className, exception.getMessage());
         }
+    }
+
+    /***
+     * @return Maintenance mode.
+     */
+    public static boolean isMaintenanceMode() {
+        return MAINTENANCE_MODE;
+    }
+
+    /**
+     * @param maintenanceMode the maintenance mode.
+     */
+    public static void setMaintenanceMode(final boolean maintenanceMode) {
+        MAINTENANCE_MODE = maintenanceMode;
     }
 
     private void closeBot() {

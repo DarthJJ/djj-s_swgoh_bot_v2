@@ -39,21 +39,29 @@ public abstract class ControlImpl {
         message.done("Database has been updated!");
     }
 
+    /**
+     * Enables update mode.
+     * @param message message object.
+     */
     public void enableUpdateMode(final Message message) {
-        Main.MAINTENANCE_MODE = true;
+        Main.setMaintenanceMode(true);
         toggleUpdateMode(message, START_UPDATE);
     }
 
+    /**
+     * Disables update mode.
+     * @param message message object.
+     */
     public void disableUpdateMode(final Message message) {
-        Main.MAINTENANCE_MODE = false;
+        Main.setMaintenanceMode(false);
         toggleUpdateMode(message, STOP_UPDATE);
     }
 
 
     private void toggleUpdateMode(final Message message, final String string) {
         final List<String> channels = dbHandler.getAllGuildNotifyChannels();
-        for (String channel : channels) {
-            TextChannel textChannel = message.getChannel().getJDA().getTextChannelById(channel);
+        for (final String channel : channels) {
+            final TextChannel textChannel = message.getChannel().getJDA().getTextChannelById(channel);
             if (textChannel != null) {
                 textChannel.sendMessage(string).queue();
             }

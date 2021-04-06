@@ -43,7 +43,7 @@ public class EventListener extends ListenerAdapter {
     //CHECKSTYLE.OFF: NPathComplexityCheck //
     @Override
     public void onMessageReceived(final @NotNull MessageReceivedEvent event) {
-        if (Main.MAINTENANCE_MODE && !event.getAuthor().getId().equals(BotConstants.OWNER_ID)) {
+        if (Main.isMaintenanceMode() && !event.getAuthor().getId().equals(BotConstants.OWNER_ID)) {
             return;
         }
         final String guildPrefix = implHelper.getConfigImpl().getPrefix(event.getGuild().getId());
