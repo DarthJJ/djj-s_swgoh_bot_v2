@@ -6,10 +6,7 @@ import nl.djj.swgoh_bot_v2.config.Permission;
 import nl.djj.swgoh_bot_v2.config.SwgohConstants;
 import nl.djj.swgoh_bot_v2.config.SwgohGgEndpoint;
 import nl.djj.swgoh_bot_v2.database.DatabaseHandler;
-import nl.djj.swgoh_bot_v2.entities.Message;
-import nl.djj.swgoh_bot_v2.entities.SwgohProfile;
-import nl.djj.swgoh_bot_v2.entities.Unit;
-import nl.djj.swgoh_bot_v2.entities.User;
+import nl.djj.swgoh_bot_v2.entities.*;
 import nl.djj.swgoh_bot_v2.exceptions.HttpRetrieveError;
 import nl.djj.swgoh_bot_v2.exceptions.SQLDeletionError;
 import nl.djj.swgoh_bot_v2.exceptions.SQLInsertionError;
@@ -21,9 +18,9 @@ import nl.djj.swgoh_bot_v2.helpers.StringHelper;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * @author DJJ
@@ -47,6 +44,22 @@ public class ProfileImpl {
         this.implHelper = implHelper;
     }
 
+    private JSONObject getProfileData(final Message message) {
+        final User user;
+        try {
+            user = dbHandler.getByDiscordId(message.getAuthorId());
+        } catch (final SQLRetrieveError error) {
+            message.error(error.getMessage());
+            return null;
+        }
+        try {
+            return httpHelper.getJsonObject(SwgohGgEndpoint.PLAYER_ENDPOINT.getUrl() + user.getAllycode());
+        } catch (final HttpRetrieveError error) {
+            message.error(error.getMessage());
+            return null;
+        }
+    }
+
     /**
      * Register a user based on the message.
      *
@@ -59,7 +72,7 @@ public class ProfileImpl {
         }
         final String allycode = String.join(", ", message.getArgs()).replace("-", "");
         if (!StringHelper.validateAllycode(allycode) || allycode.isEmpty()) {
-            message.getChannel().sendMessage("Allycode validation errror, syntax: <xxx-xxx-xxx>").queue();
+            message.getChannel().sendMessage("Allycode validation error, syntax: <xxx-xxx-xxx>").queue();
             return;
         }
         try {
@@ -119,20 +132,40 @@ public class ProfileImpl {
      * @param message the message.
      */
     public void genericInfo(final Message message) {
-        final User user;
+        final JSONObject playerData = getProfileData(message);
+        if (playerData == null) {
+            return;
+        }
+        final JSONObject playerProfile = playerData.getJSONObject(KEY_DATA);
+        message.done(MessageHelper.formatSwgohProfile(SwgohProfile.initFromJson(playerProfile)));
+    }
+
+    /**
+     * Compares the user's profile to the given allycode.
+     *
+     * @param message the message.
+     */
+    public void compare(final Message message) {
+        final JSONObject playerData = getProfileData(message);
+        if (playerData == null) {
+            return;
+        }
+        if (message.getArgs().isEmpty()) {
+            message.error("Please provide an allycode to compare with");
+            return;
+        }
+        if (!StringHelper.validateAllycode(message.getArgs().get(0))) {
+            message.getChannel().sendMessage("Allycode validation error, syntax: <xxx-xxx-xxx>").queue();
+            return;
+        }
+        final JSONObject rivalData;
         try {
-            user = dbHandler.getByDiscordId(message.getAuthorId());
-        } catch (final SQLRetrieveError error) {
+            rivalData = httpHelper.getJsonObject(SwgohGgEndpoint.PLAYER_ENDPOINT.getUrl() + message.getArgs().get(0));
+        } catch (final HttpRetrieveError error) {
             message.error(error.getMessage());
             return;
         }
-        try {
-            final JSONObject playerData = httpHelper.getJsonObject(SwgohGgEndpoint.PLAYER_ENDPOINT.getUrl() + user.getAllycode());
-            final JSONObject playerProfile = playerData.getJSONObject(KEY_DATA);
-            message.done(MessageHelper.formatSwgohProfile(SwgohProfile.initFromJson(playerProfile)));
-        } catch (final HttpRetrieveError error) {
-            message.error(error.getMessage());
-        }
+        message.done(MessageHelper.formatProfileCompare(implHelper.getUnitImpl().compareProfiles(playerData, rivalData)));
     }
 
     /**
@@ -141,22 +174,14 @@ public class ProfileImpl {
      * @param message the message.
      */
     public void toonArena(final Message message) {
-        final User user;
-        try {
-            user = dbHandler.getByDiscordId(message.getAuthorId());
-        } catch (final SQLRetrieveError error) {
-            message.error(error.getMessage());
+        final JSONObject playerData = getProfileData(message);
+        if (playerData == null) {
             return;
         }
-        try {
-            final JSONObject playerData = httpHelper.getJsonObject(SwgohGgEndpoint.PLAYER_ENDPOINT.getUrl() + user.getAllycode());
-            final JSONObject playerProfile = playerData.getJSONObject(KEY_DATA);
-            final SwgohProfile profile = SwgohProfile.initFromJson(playerProfile);
-            profile.setArenaTeam(implHelper.getUnitImpl(), playerProfile.getJSONObject("arena").getJSONArray("members"), playerProfile.getJSONObject("fleet_arena"));
-            message.done(MessageHelper.formatArenaProfile(profile));
-        } catch (final HttpRetrieveError error) {
-            message.error(error.getMessage());
-        }
+        final JSONObject playerProfile = playerData.getJSONObject(KEY_DATA);
+        final SwgohProfile profile = SwgohProfile.initFromJson(playerProfile);
+        profile.setArenaTeam(implHelper.getUnitImpl(), playerProfile.getJSONObject("arena").getJSONArray("members"), playerProfile.getJSONObject("fleet_arena"));
+        message.done(MessageHelper.formatArenaProfile(profile));
     }
 
     /**
@@ -179,57 +204,33 @@ public class ProfileImpl {
 
     /**
      * Checks the users relics.
+     *
      * @param message the message Object.
      */
     //CHECKSTYLE.OFF: NPathComplexityCheck
     public void relic(final Message message) {
-        final User user;
-        try {
-            user = dbHandler.getByDiscordId(message.getAuthorId());
-        } catch (final SQLRetrieveError error) {
-            message.error(error.getMessage());
+        final JSONObject playerData = getProfileData(message);
+        if (playerData == null) {
             return;
         }
+        final SwgohProfile profile = SwgohProfile.initFromJson(playerData.getJSONObject(KEY_DATA));
+        final JSONArray unitsData = playerData.getJSONArray(KEY_UNITS);
+        final List<Unit> units = new ArrayList<>();
+        for (int i = 0; i < unitsData.length(); i++) {
+            final JSONObject unitData = unitsData.getJSONObject(i);
+            units.add(Unit.initFromJson(unitData.getJSONObject(KEY_DATA)));
+        }
+        profile.setUnits(units);
+        int relicLevel = SwgohConstants.MAX_RELIC_TIER;
         try {
-            final JSONObject playerData = httpHelper.getJsonObject(SwgohGgEndpoint.PLAYER_ENDPOINT.getUrl() + user.getAllycode());
-            final SwgohProfile profile = SwgohProfile.initFromJson(playerData.getJSONObject(KEY_DATA));
-            final JSONArray unitsData = playerData.getJSONArray(KEY_UNITS);
-            final List<Unit> units = new ArrayList<>();
-            for (int i = 0; i < unitsData.length(); i++) {
-                final JSONObject unitData = unitsData.getJSONObject(i);
-                units.add(Unit.initFromJson(unitData.getJSONObject(KEY_DATA)));
+            if (!message.getArgs().isEmpty()) {
+                relicLevel = Integer.parseInt(String.join("", message.getArgs()));
             }
-            profile.setUnits(units);
-            int relicLevel = SwgohConstants.MAX_RELIC_TIER;
-            try {
-                if (!message.getArgs().isEmpty()) {
-                    relicLevel = Integer.parseInt(String.join("", message.getArgs()));
-                }
-            } catch (final NumberFormatException exception) {
-                message.error("Relic number is not valid, please use a valid number between '1' and '" + SwgohConstants.MAX_RELIC_TIER + "'");
-                return;
-            }
-            message.done(MessageHelper.formatProfileRelic(implHelper.getUnitImpl().checkRelicLevel(profile.getUnits(), relicLevel), relicLevel, profile.getName()));
-        } catch (final HttpRetrieveError error) {
-            message.error(error.getMessage());
+        } catch (final NumberFormatException exception) {
+            message.error("Relic number is not valid, please use a valid number between '1' and '" + SwgohConstants.MAX_RELIC_TIER + "'");
+            return;
         }
-    }
-
-    /**
-     * Gets the GP overview for the guild.
-     * @param playerData the playerData.
-     * @return a map with values.
-     */
-    public Map<String, Integer> getGuildGp(final JSONArray playerData) {
-        final Map<String, Integer> members = new ConcurrentHashMap<>();
-        for (int i = 0; i < playerData.length(); i++){
-            final JSONObject player = playerData.getJSONObject(i).getJSONObject("data");
-            members.put(player.getString("name"), player.getInt("galactic_power"));
-        }
-        return members.entrySet()
-                .stream()
-                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+        message.done(MessageHelper.formatProfileRelic(implHelper.getUnitImpl().checkRelicLevel(profile.getUnits(), relicLevel), relicLevel, profile.getName()));
     }
     //CHECKSTYLE.ON: NPathComplexityCheck
 }

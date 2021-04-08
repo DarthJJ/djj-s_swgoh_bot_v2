@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import nl.djj.swgoh_bot_v2.commands.BaseCommand;
 import nl.djj.swgoh_bot_v2.config.BotConstants;
+import nl.djj.swgoh_bot_v2.config.SwgohConstants;
 import nl.djj.swgoh_bot_v2.entities.*;
 
 import java.awt.*;
@@ -23,6 +24,7 @@ public final class MessageHelper {
     private static final String TABLE_FORMAT = "%-15s%-3s%-15s%n";
     private static final String UNIT_TABLE_FORMAT = "%-30s%-3s%-15s%n";
     private static final String HELP_TABLE_FORMAT = "%-10s%-3s%-15s%n";
+    private static final String PROFILE_TABLE_FORMAT = "%-8s%-15s%-3s%-15s%n";
 
     /**
      * Constructor.
@@ -83,7 +85,7 @@ public final class MessageHelper {
                 helpString.append(String.format(HELP_TABLE_FORMAT, command.getName(), " = ", command.getDescription()));
             }
             helpString.append("\n");
-            builder.addField(new MessageEmbed.Field(entry.getKey(), "```" + helpString.toString() + "```", false));
+            builder.addField(new MessageEmbed.Field(entry.getKey(), "```" + helpString + "```", false));
             if (builder.length() >= MessageEmbed.EMBED_MAX_LENGTH_BOT - 500) {
                 returnValue.add(builder.build());
                 builder = new EmbedBuilder(baseEmbed());
@@ -187,13 +189,13 @@ public final class MessageHelper {
             toonArena.append(s).append("\n");
         }
         builder.addField(new MessageEmbed.Field("Toon Arena Rank: ", Integer.toString(profile.getToonArenaRank()), false));
-        builder.addField(new MessageEmbed.Field("Toon Arena Team", "```" + toonArena.toString() + "```", false));
+        builder.addField(new MessageEmbed.Field("Toon Arena Team", "```" + toonArena + "```", false));
         final StringBuilder shipArena = new StringBuilder();
         for (final String s : profile.getShipArenaTeam()) {
             shipArena.append(s).append("\n");
         }
         builder.addField(new MessageEmbed.Field("Toon Arena Rank: ", Integer.toString(profile.getShipArenaRank()), false));
-        builder.addField(new MessageEmbed.Field("Toon Arena Team", "``` " + shipArena.toString() + " ```", false));
+        builder.addField(new MessageEmbed.Field("Toon Arena Team", "``` " + shipArena + " ```", false));
         builder.addField(new MessageEmbed.Field("Updated at: ", profile.getLastUpdated().toString(), false));
         return builder.build();
     }
@@ -220,7 +222,7 @@ public final class MessageHelper {
                 if (helpString.isEmpty()) {
                     continue;
                 }
-                builder.addField(new MessageEmbed.Field(Integer.toString(builder.getFields().size() + 1), "```" + helpString.toString() + "```", false));
+                builder.addField(new MessageEmbed.Field(Integer.toString(builder.getFields().size() + 1), "```" + helpString + "```", false));
                 helpString.setLength(0);
                 counter = 0;
                 if (builder.length() >= MessageEmbed.EMBED_MAX_LENGTH_BOT - 500) {
@@ -230,7 +232,7 @@ public final class MessageHelper {
             }
         }
         if (!helpString.isEmpty()) {
-            builder.addField(new MessageEmbed.Field(Integer.toString(builder.getFields().size()), "```" + helpString.toString() + "```", false));
+            builder.addField(new MessageEmbed.Field(Integer.toString(builder.getFields().size()), "```" + helpString + "```", false));
         }
         returnValue.add(builder.build());
         return returnValue;
@@ -247,13 +249,13 @@ public final class MessageHelper {
         embed.setDescription("GP Overview, sorted high -> low");
         final StringBuilder builder = new StringBuilder();
         for (final Map.Entry<String, Integer> entry : players.entrySet()) {
-            builder.append(String.format(TABLE_FORMAT, entry.getKey(), ":", entry.getValue()));
+            builder.append(String.format(TABLE_FORMAT, entry.getKey(), ":", StringHelper.formatNumber(entry.getValue())));
             if (builder.length() > MessageEmbed.VALUE_MAX_LENGTH - 100) {
-                embed.addField(Integer.toString(embed.getFields().size() + 1), "```" + builder.toString() + "```", false);
+                embed.addField(Integer.toString(embed.getFields().size() + 1), "```" + builder + "```", false);
                 builder.setLength(0);
             }
         }
-        embed.addField(Integer.toString(embed.getFields().size() + 1), "```" + builder.toString() + "```", false);
+        embed.addField(Integer.toString(embed.getFields().size() + 1), "```" + builder + "```", false);
         return embed.build();
     }
 
@@ -270,12 +272,64 @@ public final class MessageHelper {
         for (final Map.Entry<String, Integer> entry : players.entrySet()) {
             builder.append(String.format(TABLE_FORMAT, entry.getKey(), ":", entry.getValue()));
             if (builder.length() > MessageEmbed.VALUE_MAX_LENGTH - 100) {
-                embed.addField(Integer.toString(embed.getFields().size() + 1), "```" + builder.toString() + "```", false);
+                embed.addField(Integer.toString(embed.getFields().size() + 1), "```" + builder + "```", false);
                 builder.setLength(0);
             }
         }
-        embed.addField(Integer.toString(embed.getFields().size() + 1), "```" + builder.toString() + "```", false);
+        embed.addField(Integer.toString(embed.getFields().size() + 1), "```" + builder + "```", false);
         return embed.build();
+    }
+
+    /**
+     * Formats the profileCompare message.
+     * @param compareProfiles the compareProfiles.
+     * @return a list of embeds.
+     */
+    public static List<MessageEmbed> formatProfileCompare(final ProfileCompare... compareProfiles) {
+        EmbedBuilder embed = new EmbedBuilder(baseEmbed());
+        final List<MessageEmbed> returnValue = new ArrayList<>();
+        embed.setDescription("Profile comparison");
+        final String profileString = String.format(PROFILE_TABLE_FORMAT, "name:", compareProfiles[0].getName(), ":", compareProfiles[1].getName()) +
+                String.format(PROFILE_TABLE_FORMAT, "guild:", compareProfiles[0].getGuild(), ":", compareProfiles[1].getGuild()) +
+                String.format(PROFILE_TABLE_FORMAT, "GP:", compareProfiles[0].getGalacticPower(), ":", compareProfiles[1].getGalacticPower()) +
+                String.format(PROFILE_TABLE_FORMAT, "ToonGP:", compareProfiles[0].getToonGp(), ":", compareProfiles[1].getToonGp()) +
+                String.format(PROFILE_TABLE_FORMAT, "ShipGP:", compareProfiles[0].getShipGp(), ":", compareProfiles[1].getShipGp());
+        embed.addField("Profile", "```" + profileString + "```", false);
+        final String rosterString = String.format(PROFILE_TABLE_FORMAT, "Zetas:", compareProfiles[0].getZetas(), ":", compareProfiles[1].getZetas()) +
+                String.format(PROFILE_TABLE_FORMAT, "G13:", compareProfiles[0].getG13(), ":", compareProfiles[1].getG13()) +
+                String.format(PROFILE_TABLE_FORMAT, "G13:", compareProfiles[0].getG12(), ":", compareProfiles[1].getG12());
+        embed.addField("Roster", "```" + rosterString + "```", false);
+        final String relicString = String.format(PROFILE_TABLE_FORMAT, "tier0", compareProfiles[0].getRelics().get(0), ":", compareProfiles[1].getRelics().get(0)) +
+                String.format(PROFILE_TABLE_FORMAT, "tier1", compareProfiles[0].getRelics().get(1), ":", compareProfiles[1].getRelics().get(1)) +
+                String.format(PROFILE_TABLE_FORMAT, "tier2", compareProfiles[0].getRelics().get(2), ":", compareProfiles[1].getRelics().get(2)) +
+                String.format(PROFILE_TABLE_FORMAT, "tier3", compareProfiles[0].getRelics().get(3), ":", compareProfiles[1].getRelics().get(3)) +
+                String.format(PROFILE_TABLE_FORMAT, "tier4", compareProfiles[0].getRelics().get(4), ":", compareProfiles[1].getRelics().get(4)) +
+                String.format(PROFILE_TABLE_FORMAT, "tier5", compareProfiles[0].getRelics().get(5), ":", compareProfiles[1].getRelics().get(5)) +
+                String.format(PROFILE_TABLE_FORMAT, "tier6", compareProfiles[0].getRelics().get(6), ":", compareProfiles[1].getRelics().get(6)) +
+                String.format(PROFILE_TABLE_FORMAT, "tier7", compareProfiles[0].getRelics().get(7), ":", compareProfiles[1].getRelics().get(7)) +
+                String.format(PROFILE_TABLE_FORMAT, "tier8", compareProfiles[0].getRelics().get(8), ":", compareProfiles[1].getRelics().get(8));
+        embed.addField("Relics", "```" + relicString + "```", false);
+        returnValue.add(embed.build());
+        embed = new EmbedBuilder(baseEmbed());
+        for (final Map.Entry<String, String> entry : SwgohConstants.COMPARE_TOONS.entrySet()) {
+            UnitCompare player = compareProfiles[0].getUnits().get(entry.getKey());
+            if (player == null) {
+                player = new UnitCompare();
+            }
+            UnitCompare rival = compareProfiles[1].getUnits().get(entry.getKey());
+            if (rival == null) {
+                rival = new UnitCompare();
+            }
+            final String unitString = String.format(PROFILE_TABLE_FORMAT, "GP", player.getGalacticPower(), ":", rival.getGalacticPower()) +
+                    String.format(PROFILE_TABLE_FORMAT, "Stars", player.getRarity(), ":", rival.getRarity()) +
+                    String.format(PROFILE_TABLE_FORMAT, "Gear", player.getGear(), ":", rival.getGear()) +
+                    String.format(PROFILE_TABLE_FORMAT, "Relic", player.getRelic(), ":", rival.getRelic()) +
+                    String.format(PROFILE_TABLE_FORMAT, "Zetas", player.getZetas(), ":", rival.getZetas()) +
+                    String.format(PROFILE_TABLE_FORMAT, "Speed", player.getSpeed(), ":", rival.getSpeed());
+            embed.addField(entry.getValue(), "```" + unitString + "```", false);
+        }
+        returnValue.add(embed.build());
+        return returnValue;
     }
 
 //CHECKSTYLE.ON: MultipleStringLiteralsCheck

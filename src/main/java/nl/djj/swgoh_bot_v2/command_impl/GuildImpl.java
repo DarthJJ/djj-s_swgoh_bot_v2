@@ -45,33 +45,12 @@ public class GuildImpl {
      * @param message the guild.
      */
     public void genericInfo(final Message message) {
-        final String guildId;
-        try {
-            guildId = dbHandler.getSwgohIdByGuildId(message.getGuildId());
-        } catch (final SQLRetrieveError error) {
-            message.error(error.getMessage());
+        final JSONObject guildData = getGuildData(message);
+        if (guildData == null) {
             return;
         }
-        try {
-            final JSONObject guildData = httpHelper.getJsonObject(SwgohGgEndpoint.GUILD_ENDPOINT.getUrl() + guildId);
-            final SwgohGuild guild = SwgohGuild.initFromJson(guildData);
-            message.done(MessageHelper.formatGuildSwgohProfile(guild));
-        } catch (final HttpRetrieveError error) {
-            message.error(error.getMessage());
-        }
-    }
-
-    /**
-     * GP Overview for the guild.
-     *
-     * @param message the guild.
-     */
-    public void gpOverview(final Message message) {
-        final JSONObject guildData = getGuildData(message);
-        if (guildData != null) {
-            message.done(MessageHelper.formatGuildGPOverview(implHelper.getProfileImpl().getGuildGp(guildData.getJSONArray("players"))));
-        }
-
+        final SwgohGuild guild = SwgohGuild.initFromJson(guildData);
+        message.done(MessageHelper.formatGuildSwgohProfile(guild));
     }
 
     /**
@@ -114,6 +93,28 @@ public class GuildImpl {
         } catch (final HttpRetrieveError error) {
             message.error(error.getMessage());
             return null;
+        }
+    }
+
+    /**
+     * Gets the GP overview for the guild.
+     *
+     * @param message the message.
+     */
+    public void gpOverview(final Message message) {
+        final JSONObject guildData = getGuildData(message);
+        if (guildData != null) {
+            final JSONArray playerData = guildData.getJSONArray("players");
+            Map<String, Integer> members = new ConcurrentHashMap<>();
+            for (int i = 0; i < playerData.length(); i++) {
+                final JSONObject player = playerData.getJSONObject(i).getJSONObject("data");
+                members.put(player.getString("name"), player.getInt("galactic_power"));
+            }
+            members = members.entrySet()
+                    .stream()
+                    .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+            message.done(MessageHelper.formatGuildGPOverview(members));
         }
     }
 }

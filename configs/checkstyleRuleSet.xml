@@ -84,11 +84,6 @@
             <property name="maxTotal" value="50" />
         </module>
         <module name="ModifiedControlVariable" />
-        <module name="MultipleStringLiterals" >
-            <property name="allowedDuplicates" value="2"/>
-            <property name="ignoreStringsRegexp" value='^(("")|(","))$'/>
-            <!--property name="ignoreOccurrenceContext" value=""/-->
-        </module>
         <module name="MultipleVariableDeclarations" />
         <module name="MutableException" />
         <module name="NPathComplexity">
