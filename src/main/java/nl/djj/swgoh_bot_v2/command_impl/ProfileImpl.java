@@ -6,7 +6,11 @@ import nl.djj.swgoh_bot_v2.config.Permission;
 import nl.djj.swgoh_bot_v2.config.SwgohConstants;
 import nl.djj.swgoh_bot_v2.config.SwgohGgEndpoint;
 import nl.djj.swgoh_bot_v2.database.DatabaseHandler;
-import nl.djj.swgoh_bot_v2.entities.*;
+import nl.djj.swgoh_bot_v2.entities.Message;
+import nl.djj.swgoh_bot_v2.entities.SwgohProfile;
+import nl.djj.swgoh_bot_v2.entities.Unit;
+import nl.djj.swgoh_bot_v2.entities.User;
+import nl.djj.swgoh_bot_v2.entities.db.Player;
 import nl.djj.swgoh_bot_v2.exceptions.HttpRetrieveError;
 import nl.djj.swgoh_bot_v2.exceptions.SQLDeletionError;
 import nl.djj.swgoh_bot_v2.exceptions.SQLInsertionError;
@@ -56,6 +60,19 @@ public class ProfileImpl {
             return httpHelper.getJsonObject(SwgohGgEndpoint.PLAYER_ENDPOINT.getUrl() + user.getAllycode());
         } catch (final HttpRetrieveError error) {
             message.error(error.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Gets the profile data for the given allycode.
+     * @param allycode the allycode.
+     * @return the profile data as JSON.
+     */
+    public JSONObject getProfileData(final String allycode) {
+        try {
+            return httpHelper.getJsonObject(SwgohGgEndpoint.PLAYER_ENDPOINT.getUrl() + allycode);
+        } catch (final HttpRetrieveError error) {
             return null;
         }
     }
@@ -231,6 +248,22 @@ public class ProfileImpl {
             return;
         }
         message.done(MessageHelper.formatProfileRelic(implHelper.getUnitImpl().checkRelicLevel(profile.getUnits(), relicLevel), relicLevel, profile.getName()));
+    }
+
+    /**
+     * Inserts a profile for the user.
+     * @param playerData the player data.
+     * @param guildId the guild of the user.
+     * @throws SQLInsertionError when something goes wrong.
+     */
+    public void insertProfile(final JSONObject playerData, final int guildId) throws SQLInsertionError{
+        final int allycode = playerData.getInt("ally_code");
+        final String name = playerData.getString("name");
+        final int galacticPower = playerData.getInt("galactic_power");
+        final String url = SwgohGgEndpoint.ENDPOINT + playerData.getString("url");
+        final String lastUpdated = playerData.getString("last_updated");
+        this.dbHandler.insertPlayer(new Player(allycode, name, galacticPower, url, lastUpdated, guildId));
+
     }
     //CHECKSTYLE.ON: NPathComplexityCheck
 }

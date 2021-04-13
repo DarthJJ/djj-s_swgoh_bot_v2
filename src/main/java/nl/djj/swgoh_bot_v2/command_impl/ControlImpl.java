@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import nl.djj.swgoh_bot_v2.Main;
 import nl.djj.swgoh_bot_v2.database.DatabaseHandler;
 import nl.djj.swgoh_bot_v2.entities.Message;
+import nl.djj.swgoh_bot_v2.exceptions.SQLRetrieveError;
 import nl.djj.swgoh_bot_v2.helpers.Logger;
 
 import java.util.List;
@@ -41,6 +42,7 @@ public abstract class ControlImpl {
 
     /**
      * Enables update mode.
+     *
      * @param message message object.
      */
     public void enableUpdateMode(final Message message) {
@@ -50,6 +52,7 @@ public abstract class ControlImpl {
 
     /**
      * Disables update mode.
+     *
      * @param message message object.
      */
     public void disableUpdateMode(final Message message) {
@@ -59,12 +62,17 @@ public abstract class ControlImpl {
 
 
     private void toggleUpdateMode(final Message message, final String string) {
-        final List<String> channels = dbHandler.getAllGuildNotifyChannels();
-        for (final String channel : channels) {
-            final TextChannel textChannel = message.getChannel().getJDA().getTextChannelById(channel);
-            if (textChannel != null) {
-                textChannel.sendMessage(string).queue();
+        try {
+            final List<String> channels = dbHandler.getAllGuildNotifyChannels();
+
+            for (final String channel : channels) {
+                final TextChannel textChannel = message.getChannel().getJDA().getTextChannelById(channel);
+                if (textChannel != null) {
+                    textChannel.sendMessage(string).queue();
+                }
             }
+        } catch (final SQLRetrieveError error) {
+            message.error(error.getMessage());
         }
     }
 

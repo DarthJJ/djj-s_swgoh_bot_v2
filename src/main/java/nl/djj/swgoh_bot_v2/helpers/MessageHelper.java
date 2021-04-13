@@ -25,6 +25,7 @@ public final class MessageHelper {
     private static final String UNIT_TABLE_FORMAT = "%-30s%-3s%-15s%n";
     private static final String HELP_TABLE_FORMAT = "%-10s%-3s%-15s%n";
     private static final String PROFILE_TABLE_FORMAT = "%-8s%-15s%-3s%-15s%n";
+    private static final String GUILD_TABLE_FORMAT = "%-11s%-15s%-3s%-15s%n";
 
     /**
      * Constructor.
@@ -281,7 +282,47 @@ public final class MessageHelper {
     }
 
     /**
+     * Formats the guild profiles in an embed.
+     * @param playerGuild the guild of the player.
+     * @param rivalGuild the guild of the rival.
+     * @return an list with embeds.
+     */
+    public static List<MessageEmbed> formatGuildCompare(final GuildCompare playerGuild, final GuildCompare rivalGuild) {
+        final List<MessageEmbed> returnValue = new ArrayList<>();
+        EmbedBuilder embed = new EmbedBuilder(baseEmbed());
+        embed.setDescription("Guild Compare");
+        final String profileString = String.format(GUILD_TABLE_FORMAT, "name:", playerGuild.getGuild().getName(), ":", rivalGuild.getGuild().getName()) +
+                String.format(GUILD_TABLE_FORMAT, "GP", StringHelper.formatNumber(playerGuild.getGuild().getGalacticPower()), ":", StringHelper.formatNumber(rivalGuild.getGuild().getGalacticPower())) +
+                String.format(GUILD_TABLE_FORMAT, "Members", playerGuild.getGuild().getMembers(), ":", rivalGuild.getGuild().getMembers()) +
+                String.format(GUILD_TABLE_FORMAT, "Zetas", playerGuild.getZetas(), ":", rivalGuild.getZetas());
+        embed.addField("Profile", "```" + profileString + "```", false);
+        final String gearString = String.format(GUILD_TABLE_FORMAT, "G13", playerGuild.getG13(), ":", rivalGuild.getG13()) +
+                String.format(GUILD_TABLE_FORMAT, "G12", playerGuild.getG12(), ":", rivalGuild.getG12());
+        embed.addField("Gear", "```" + gearString + "```", false);
+        returnValue.add(embed.build());
+        embed = new EmbedBuilder(baseEmbed());
+        for (final Map.Entry<String, String> entry : SwgohConstants.COMPARE_TOONS.entrySet()) {
+            final GuildCompare.UnitProfile playerUnitProfile = playerGuild.getUnits().get(entry.getKey());
+            final GuildCompare.UnitProfile rivalUnitProfile = rivalGuild.getUnits().get(entry.getKey());
+            final String unitString = String.format(GUILD_TABLE_FORMAT, "7 Stars", playerUnitProfile.getSevenStars(), ":", rivalUnitProfile.getSevenStars()) +
+                    String.format(GUILD_TABLE_FORMAT, "6 Stars", playerUnitProfile.getSixStars(), ":", rivalUnitProfile.getSixStars()) +
+                    String.format(GUILD_TABLE_FORMAT, "G13", playerUnitProfile.getG13(), ":", rivalUnitProfile.getG13()) +
+                    String.format(GUILD_TABLE_FORMAT, "G12", playerUnitProfile.getG12(), ":", rivalUnitProfile.getG12()) +
+                    String.format(GUILD_TABLE_FORMAT, "Zetas", playerUnitProfile.getZetas(), ":", rivalUnitProfile.getZetas()) +
+                    String.format(GUILD_TABLE_FORMAT, "Relic 5+", playerUnitProfile.getRelic5plus(), ":", rivalUnitProfile.getRelic5plus());
+            embed.addField(entry.getValue(), "```" + unitString + "```", false);
+            if (embed.length() >= MessageEmbed.EMBED_MAX_LENGTH_BOT - 500) {
+                returnValue.add(embed.build());
+                embed = new EmbedBuilder(baseEmbed());
+            }
+        }
+        returnValue.add(embed.build());
+        return returnValue;
+    }
+
+    /**
      * Formats the profileCompare message.
+     *
      * @param compareProfiles the compareProfiles.
      * @return a list of embeds.
      */
@@ -291,9 +332,9 @@ public final class MessageHelper {
         embed.setDescription("Profile comparison");
         final String profileString = String.format(PROFILE_TABLE_FORMAT, "name:", compareProfiles[0].getName(), ":", compareProfiles[1].getName()) +
                 String.format(PROFILE_TABLE_FORMAT, "guild:", compareProfiles[0].getGuild(), ":", compareProfiles[1].getGuild()) +
-                String.format(PROFILE_TABLE_FORMAT, "GP:", compareProfiles[0].getGalacticPower(), ":", compareProfiles[1].getGalacticPower()) +
-                String.format(PROFILE_TABLE_FORMAT, "ToonGP:", compareProfiles[0].getToonGp(), ":", compareProfiles[1].getToonGp()) +
-                String.format(PROFILE_TABLE_FORMAT, "ShipGP:", compareProfiles[0].getShipGp(), ":", compareProfiles[1].getShipGp());
+                String.format(PROFILE_TABLE_FORMAT, "GP:", StringHelper.formatNumber(compareProfiles[0].getGalacticPower()), ":", StringHelper.formatNumber(compareProfiles[1].getGalacticPower())) +
+                String.format(PROFILE_TABLE_FORMAT, "ToonGP:", StringHelper.formatNumber(compareProfiles[0].getToonGp()), ":", StringHelper.formatNumber(compareProfiles[1].getToonGp())) +
+                String.format(PROFILE_TABLE_FORMAT, "ShipGP:", StringHelper.formatNumber(compareProfiles[0].getShipGp()), ":", StringHelper.formatNumber(compareProfiles[1].getShipGp()));
         embed.addField("Profile", "```" + profileString + "```", false);
         final String rosterString = String.format(PROFILE_TABLE_FORMAT, "Zetas:", compareProfiles[0].getZetas(), ":", compareProfiles[1].getZetas()) +
                 String.format(PROFILE_TABLE_FORMAT, "G13:", compareProfiles[0].getG13(), ":", compareProfiles[1].getG13()) +

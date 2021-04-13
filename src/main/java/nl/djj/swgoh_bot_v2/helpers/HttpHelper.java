@@ -44,6 +44,7 @@ public class HttpHelper {
      * @return JSON data.
      */
     public JSONArray getJsonArray(final String url) throws HttpRetrieveError {
+        logger.debug(className, "Retrieving from: " + url);
         try (InputStream stream = new URL(url).openStream()) {
             final BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
             final String jsonText = readAll(reader);
@@ -60,6 +61,7 @@ public class HttpHelper {
      * @return JSON data.
      */
     public JSONObject getJsonObject(final String url) throws HttpRetrieveError {
+        logger.debug(className, "Retrieving from: " + url);
         try (InputStream stream = new URL(url).openStream()) {
             final BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
             final String jsonText = readAll(reader);
@@ -76,6 +78,7 @@ public class HttpHelper {
      * @throws HttpRetrieveError when something goes wrong.
      */
     public List<String> getCsv(final String url) throws HttpRetrieveError {
+        logger.debug(className, "Retrieving from: " + url);
         try {
             final URL urlCSV = new URL(url);
             final List<String> returnValue = new ArrayList<>();

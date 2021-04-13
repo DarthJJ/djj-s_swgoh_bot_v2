@@ -4,6 +4,8 @@ import nl.djj.swgoh_bot_v2.config.SwgohConstants;
 import nl.djj.swgoh_bot_v2.database.DatabaseHandler;
 import nl.djj.swgoh_bot_v2.entities.ProfileCompare;
 import nl.djj.swgoh_bot_v2.entities.Unit;
+import nl.djj.swgoh_bot_v2.entities.db.PlayerUnit;
+import nl.djj.swgoh_bot_v2.exceptions.SQLInsertionError;
 import nl.djj.swgoh_bot_v2.exceptions.SQLRetrieveError;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -79,8 +81,9 @@ public class UnitImpl {
 
     /**
      * Creates the profile compares.
+     *
      * @param playerData the data of the player.
-     * @param rivalData the data of the rival.
+     * @param rivalData  the data of the rival.
      * @return an array of profileCompares.
      */
     public ProfileCompare[] compareProfiles(final JSONObject playerData, final JSONObject rivalData) {
@@ -103,7 +106,12 @@ public class UnitImpl {
         return new ProfileCompare[]{player, rival};
     }
 
-    private void createUnitProfile(final JSONArray unitData, final ProfileCompare profile) {
+    /**
+     * Creates a unit profile.
+     * @param unitData the data.
+     * @param profile the profile.
+     */
+    public void createUnitProfile(final JSONArray unitData, final ProfileCompare profile) {
         for (int i = 0; i < unitData.length(); i++) {
             final JSONObject unitJson = unitData.getJSONObject(i).getJSONObject("data");
             if (SwgohConstants.COMPARE_TOONS.containsKey(unitJson.getString("base_id"))) {
@@ -117,6 +125,27 @@ public class UnitImpl {
                 profile.addG12();
             }
             profile.addRelic(unitJson.getInt("relic_tier"));
+        }
+    }
+
+    /**
+     * Adds the playerUnits to the DB.
+     * @param playerUnits the units,
+     * @param allycode the allycode.
+     * @param guildId the guildId.
+     * @throws SQLInsertionError when something goes wrong.
+     */
+    public void insertUnits(final JSONArray playerUnits, final int allycode, final int guildId) throws SQLInsertionError {
+        for (int i = 0; i < playerUnits.length(); i++) {
+            final JSONObject unitData = playerUnits.optJSONObject(i).getJSONObject("data");
+            final String baseId = unitData.getString("base_id");
+            final int rarity = unitData.getInt("rarity");
+            final int galacticPower = unitData.getInt("power");
+            final int gear = unitData.getInt("gear_level");
+            final int relic = Math.max(-1, unitData.getInt("relic_tier") - 2);
+            final int zetas = unitData.getJSONArray("zeta_abilities").length();
+            final int speed = unitData.getJSONObject("stats").getInt("5");
+            this.dbHandler.insertPlayerUnit(new PlayerUnit(allycode, guildId, baseId, rarity, galacticPower, gear, relic, zetas, speed));
         }
     }
 }

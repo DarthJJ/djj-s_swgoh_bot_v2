@@ -29,6 +29,16 @@ public final class SwgohConstants {
     public static final int MAX_RELIC_TIER = 8;
 
     /**
+     * Allycode length.
+     */
+    public static final int ALLYCODE_LENGTH = 9;
+
+    /**
+     * The relic levels in the game.
+     */
+    public static final int[] RELIC_LEVELS = {0, 1, 2, 3, 4, 5, 6, 7, 8};
+
+    /**
      * The list of compare toons.
      */
     public static final Map<String, String> COMPARE_TOONS = Map.ofEntries(

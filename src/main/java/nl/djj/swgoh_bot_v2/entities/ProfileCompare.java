@@ -51,7 +51,7 @@ public class ProfileCompare {
 
     /**
      * Updates the zeta count.
-     * @param amount the amount to get.
+     * @param amount the amount to add.
      */
     public void addZeta(final int amount) {
         this.zetas = this.zetas + amount;
