@@ -1,6 +1,7 @@
-package nl.djj.swgoh_bot_v2.entities;
+package nl.djj.swgoh_bot_v2.entities.swgoh;
 
 import nl.djj.swgoh_bot_v2.command_impl.UnitImpl;
+import nl.djj.swgoh_bot_v2.entities.Unit;
 import org.json.JSONArray;
 import org.json.JSONObject;
 

@@ -2,7 +2,7 @@ package nl.djj.swgoh_bot_v2.command_impl;
 
 import nl.djj.swgoh_bot_v2.config.SwgohConstants;
 import nl.djj.swgoh_bot_v2.database.DatabaseHandler;
-import nl.djj.swgoh_bot_v2.entities.ProfileCompare;
+import nl.djj.swgoh_bot_v2.entities.compare.ProfileCompare;
 import nl.djj.swgoh_bot_v2.entities.Unit;
 import nl.djj.swgoh_bot_v2.entities.db.PlayerUnit;
 import nl.djj.swgoh_bot_v2.entities.db.UnitAbility;

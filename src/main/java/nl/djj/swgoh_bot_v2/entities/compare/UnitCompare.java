@@ -1,4 +1,4 @@
-package nl.djj.swgoh_bot_v2.entities;
+package nl.djj.swgoh_bot_v2.entities.compare;
 
 /**
  * @author DJJ

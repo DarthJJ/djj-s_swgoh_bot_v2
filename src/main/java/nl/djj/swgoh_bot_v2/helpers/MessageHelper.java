@@ -6,6 +6,12 @@ import nl.djj.swgoh_bot_v2.commands.BaseCommand;
 import nl.djj.swgoh_bot_v2.config.BotConstants;
 import nl.djj.swgoh_bot_v2.config.SwgohConstants;
 import nl.djj.swgoh_bot_v2.entities.*;
+import nl.djj.swgoh_bot_v2.entities.compare.GuildCompare;
+import nl.djj.swgoh_bot_v2.entities.compare.ProfileCompare;
+import nl.djj.swgoh_bot_v2.entities.compare.UnitCompare;
+import nl.djj.swgoh_bot_v2.entities.db.Config;
+import nl.djj.swgoh_bot_v2.entities.swgoh.SwgohGuild;
+import nl.djj.swgoh_bot_v2.entities.swgoh.SwgohProfile;
 
 import java.awt.*;
 import java.time.ZonedDateTime;

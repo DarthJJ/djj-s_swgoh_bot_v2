@@ -3,7 +3,7 @@ package nl.djj.swgoh_bot_v2.command_impl;
 import nl.djj.swgoh_bot_v2.config.BotConstants;
 import nl.djj.swgoh_bot_v2.config.SwgohGgEndpoint;
 import nl.djj.swgoh_bot_v2.database.DatabaseHandler;
-import nl.djj.swgoh_bot_v2.entities.Config;
+import nl.djj.swgoh_bot_v2.entities.db.Config;
 import nl.djj.swgoh_bot_v2.entities.Message;
 import nl.djj.swgoh_bot_v2.exceptions.HttpRetrieveError;
 import nl.djj.swgoh_bot_v2.exceptions.SQLInsertionError;
