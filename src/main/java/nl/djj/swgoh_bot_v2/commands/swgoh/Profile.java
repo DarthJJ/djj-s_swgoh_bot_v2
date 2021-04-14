@@ -52,7 +52,6 @@ public class Profile extends BaseCommand {
     public void handleMessage(final Message message) {
         switch (message.getFlag()) {
             case FLAG_GENERIC -> this.implHelper.getProfileImpl().genericInfo(message);
-            case FLAG_ARENA -> this.implHelper.getProfileImpl().toonArena(message);
             case FLAG_RELIC -> this.implHelper.getProfileImpl().relic(message);
             case FLAG_COMPARE ->  this.implHelper.getProfileImpl().compare(message);
             default -> message.error("This is not a valid flag, use '" + message.getGuildPrefix() + " help " + name + "'");

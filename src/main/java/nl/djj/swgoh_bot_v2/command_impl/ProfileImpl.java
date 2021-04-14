@@ -88,7 +88,7 @@ public class ProfileImpl {
             return;
         }
         final String allycode = String.join(", ", message.getArgs()).replace("-", "");
-        if (!StringHelper.validateAllycode(allycode) || allycode.isEmpty()) {
+        if (StringHelper.isInvalidAllycode(allycode) || allycode.isEmpty()) {
             message.getChannel().sendMessage("Allycode validation error, syntax: <xxx-xxx-xxx>").queue();
             return;
         }
@@ -171,7 +171,7 @@ public class ProfileImpl {
             message.error("Please provide an allycode to compare with");
             return;
         }
-        if (!StringHelper.validateAllycode(message.getArgs().get(0))) {
+        if (StringHelper.isInvalidAllycode(message.getArgs().get(0))) {
             message.getChannel().sendMessage("Allycode validation error, syntax: <xxx-xxx-xxx>").queue();
             return;
         }
@@ -183,22 +183,6 @@ public class ProfileImpl {
             return;
         }
         message.done(MessageHelper.formatProfileCompare(implHelper.getUnitImpl().compareProfiles(playerData, rivalData)));
-    }
-
-    /**
-     * Gets the toon arena info.
-     *
-     * @param message the message.
-     */
-    public void toonArena(final Message message) {
-        final JSONObject playerData = getProfileData(message);
-        if (playerData == null) {
-            return;
-        }
-        final JSONObject playerProfile = playerData.getJSONObject(KEY_DATA);
-        final SwgohProfile profile = SwgohProfile.initFromJson(playerProfile);
-        profile.setArenaTeam(implHelper.getUnitImpl(), playerProfile.getJSONObject("arena").getJSONArray("members"), playerProfile.getJSONObject("fleet_arena"));
-        message.done(MessageHelper.formatArenaProfile(profile));
     }
 
     /**

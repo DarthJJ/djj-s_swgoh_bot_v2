@@ -6,6 +6,7 @@ import nl.djj.swgoh_bot_v2.database.DatabaseHandler;
 import nl.djj.swgoh_bot_v2.entities.Message;
 import nl.djj.swgoh_bot_v2.entities.db.Abbreviation;
 import nl.djj.swgoh_bot_v2.entities.db.GlRequirement;
+import nl.djj.swgoh_bot_v2.entities.db.Ability;
 import nl.djj.swgoh_bot_v2.entities.db.UnitInfo;
 import nl.djj.swgoh_bot_v2.exceptions.HttpRetrieveError;
 import nl.djj.swgoh_bot_v2.exceptions.SQLInsertionError;
@@ -130,6 +131,49 @@ public class UpdateImpl {
         try {
             dbHandler.updateAbbreviations(abbreviations);
             message.done("Abbreviations updated!");
+        } catch (final SQLInsertionError error) {
+            message.error(error.getMessage());
+        }
+    }
+
+    /**
+     * Updates all the abilities of characters.
+     *
+     * @param message the message.
+     */
+    public void updateAbilities(final Message message) {
+        logger.info(className, "Updating the abilities");
+        final JSONArray abilityData;
+        try {
+            abilityData = httpHelper.getJsonArray(SwgohGgEndpoint.ABILITY_ENDPOINT.getUrl());
+        } catch (final HttpRetrieveError error) {
+            message.error(error.getMessage());
+            return;
+        }
+        final List<Ability> abilities = new ArrayList<>();
+        for (int i = 0; i < abilityData.length(); i++) {
+            final JSONObject ability = abilityData.getJSONObject(i);
+            final String baseId;
+            final String name = ability.getString("name");
+            final int tierMax = ability.getInt("tier_max");
+            final boolean isZeta = ability.getBoolean("is_zeta");
+            final boolean isOmega = ability.getBoolean("is_omega");
+            final String unitBaseId;
+            if (ability.isNull("ship_base_id")) {
+                unitBaseId = ability.getString("character_base_id");
+            } else {
+                unitBaseId = ability.getString("ship_base_id");
+            }
+            if ("uniqueskill_GALACTICLEGEND01".equals(ability.getString("base_id"))) { //Hack for GL duplicate unique name. Thank you CG
+                baseId = ability.getString("base_id") + "_" + unitBaseId;
+            } else {
+                baseId = ability.getString("base_id");
+            }
+            abilities.add(new Ability(baseId, name, tierMax, isZeta, isOmega, unitBaseId));
+        }
+        try {
+            dbHandler.updateAbilities(abilities);
+            message.done("Abilities updated");
         } catch (final SQLInsertionError error) {
             message.error(error.getMessage());
         }

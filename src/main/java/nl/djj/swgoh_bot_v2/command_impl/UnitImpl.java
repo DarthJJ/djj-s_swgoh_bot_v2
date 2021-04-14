@@ -5,6 +5,7 @@ import nl.djj.swgoh_bot_v2.database.DatabaseHandler;
 import nl.djj.swgoh_bot_v2.entities.ProfileCompare;
 import nl.djj.swgoh_bot_v2.entities.Unit;
 import nl.djj.swgoh_bot_v2.entities.db.PlayerUnit;
+import nl.djj.swgoh_bot_v2.entities.db.UnitAbility;
 import nl.djj.swgoh_bot_v2.exceptions.SQLInsertionError;
 import nl.djj.swgoh_bot_v2.exceptions.SQLRetrieveError;
 import org.json.JSONArray;
@@ -108,8 +109,9 @@ public class UnitImpl {
 
     /**
      * Creates a unit profile.
+     *
      * @param unitData the data.
-     * @param profile the profile.
+     * @param profile  the profile.
      */
     public void createUnitProfile(final JSONArray unitData, final ProfileCompare profile) {
         for (int i = 0; i < unitData.length(); i++) {
@@ -130,9 +132,10 @@ public class UnitImpl {
 
     /**
      * Adds the playerUnits to the DB.
+     *
      * @param playerUnits the units,
-     * @param allycode the allycode.
-     * @param guildId the guildId.
+     * @param allycode    the allycode.
+     * @param guildId     the guildId.
      * @throws SQLInsertionError when something goes wrong.
      */
     public void insertUnits(final JSONArray playerUnits, final int allycode, final int guildId) throws SQLInsertionError {
@@ -143,9 +146,15 @@ public class UnitImpl {
             final int galacticPower = unitData.getInt("power");
             final int gear = unitData.getInt("gear_level");
             final int relic = Math.max(-1, unitData.getInt("relic_tier") - 2);
-            final int zetas = unitData.getJSONArray("zeta_abilities").length();
             final int speed = unitData.getJSONObject("stats").getInt("5");
-            this.dbHandler.insertPlayerUnit(new PlayerUnit(allycode, guildId, baseId, rarity, galacticPower, gear, relic, zetas, speed));
+            final JSONArray abilityData = unitData.getJSONArray("ability_data");
+            final PlayerUnit playerUnit = new PlayerUnit(allycode, guildId, baseId, rarity, galacticPower, gear, relic, speed);
+            for (int j = 0; j < abilityData.length(); j++) {
+                final String abilityId = abilityData.getJSONObject(j).getString("id");
+                final int level = abilityData.getJSONObject(j).getInt("ability_tier");
+                playerUnit.addAbility(new UnitAbility(abilityId, allycode, guildId, level));
+            }
+            this.dbHandler.insertPlayerUnit(playerUnit);
         }
     }
 }

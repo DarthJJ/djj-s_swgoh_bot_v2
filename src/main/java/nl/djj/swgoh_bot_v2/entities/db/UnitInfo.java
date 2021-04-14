@@ -9,6 +9,7 @@ public class UnitInfo {
     private final transient Alignment alignment;
     private final transient boolean character;
 
+
     /**
      * Constructor.
      * @param baseId the base id of the toon.

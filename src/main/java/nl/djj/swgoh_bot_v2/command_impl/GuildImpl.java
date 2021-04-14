@@ -144,7 +144,7 @@ public class GuildImpl {
         }
         String code = message.getArgs().get(0);
         if (code.length() >= SwgohConstants.ALLYCODE_LENGTH) {
-            if (!StringHelper.validateAllycode(code)) {
+            if (StringHelper.isInvalidAllycode(code)) {
                 message.error("Please use the proper format <xxx-xxx-xxx>");
                 return;
             }

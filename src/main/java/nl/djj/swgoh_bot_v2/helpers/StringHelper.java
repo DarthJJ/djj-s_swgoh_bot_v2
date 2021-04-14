@@ -26,8 +26,8 @@ public final class StringHelper {
      * @param allycode the allycode.
      * @return the status.
      */
-    public static boolean validateAllycode(final String allycode) {
-        return ALLYCODE_REGEX.matcher(allycode).matches();
+    public static boolean isInvalidAllycode(final String allycode) {
+        return !ALLYCODE_REGEX.matcher(allycode).matches();
     }
 
     /**
