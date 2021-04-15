@@ -32,7 +32,7 @@ dependencies {
 task fatJar(type: Jar) {
     archiveFileName = project.name + "_" + project.version + ".jar"
     manifest {
-        attributes 'Main-Class': 'nl.djj.swgoh_bot_v2.Main',
+        attributes 'Main-Class': mainClassName,
                 'Implementation-Title': project.name,
                 'Implementation-Version': project.version
     }

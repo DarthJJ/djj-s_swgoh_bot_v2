@@ -10,7 +10,7 @@ import nl.djj.swgoh_bot_v2.entities.compare.GuildCompare;
 import nl.djj.swgoh_bot_v2.entities.compare.ProfileCompare;
 import nl.djj.swgoh_bot_v2.entities.compare.UnitCompare;
 import nl.djj.swgoh_bot_v2.entities.db.Config;
-import nl.djj.swgoh_bot_v2.entities.swgoh.SwgohGuild;
+import nl.djj.swgoh_bot_v2.entities.db.Guild;
 import nl.djj.swgoh_bot_v2.entities.swgoh.SwgohProfile;
 
 import java.awt.*;
@@ -108,11 +108,10 @@ public final class MessageHelper {
      * @param guild the guild.
      * @return a message embed.
      */
-    public static MessageEmbed formatGuildSwgohProfile(final SwgohGuild guild) {
+    public static MessageEmbed formatGuildSwgohProfile(final Guild guild) {
         final EmbedBuilder builder = new EmbedBuilder(baseEmbed());
         builder.appendDescription("Guild information for: " + guild.getName());
         builder.addField(new MessageEmbed.Field("Members:", Integer.toString(guild.getMembers()), false));
-        builder.addField(new MessageEmbed.Field("Profiles:", Integer.toString(guild.getProfiles()), false));
         builder.addField(new MessageEmbed.Field("GP:", StringHelper.formatNumber(guild.getGalacticPower()), false));
         return builder.build();
     }

@@ -50,7 +50,7 @@ public class Guild extends BaseCommand {
             case FLAG_GP -> this.implHelper.getGuildImpl().gpOverview(message);
             case FLAG_RELIC -> this.implHelper.getGuildImpl().relicOverview(message);
             case FLAG_COMPARE -> this.implHelper.getGuildImpl().compare(message);
-            default -> message.error("This is not a valid flag, use '" + message.getGuildPrefix() + " help " + name + "'");
+            default -> message.error("This is not a valid flag, use '" + message.getGuildPrefix() + "help " + name + "'");
         }
     }
 }

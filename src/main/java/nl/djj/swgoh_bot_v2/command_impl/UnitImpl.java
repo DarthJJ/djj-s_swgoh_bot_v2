@@ -11,6 +11,7 @@ import nl.djj.swgoh_bot_v2.exceptions.SQLRetrieveError;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -139,6 +140,7 @@ public class UnitImpl {
      * @throws SQLInsertionError when something goes wrong.
      */
     public void insertUnits(final JSONArray playerUnits, final int allycode, final int guildId) throws SQLInsertionError {
+        final List<PlayerUnit> units = new ArrayList<>();
         for (int i = 0; i < playerUnits.length(); i++) {
             final JSONObject unitData = playerUnits.optJSONObject(i).getJSONObject("data");
             final String baseId = unitData.getString("base_id");
@@ -154,7 +156,9 @@ public class UnitImpl {
                 final int level = abilityData.getJSONObject(j).getInt("ability_tier");
                 playerUnit.addAbility(new UnitAbility(abilityId, allycode, guildId, level));
             }
-            this.dbHandler.insertPlayerUnit(playerUnit);
+//            this.dbHandler.insertPlayerUnit(playerUnit);
+            units.add(playerUnit);
         }
+        this.dbHandler.insertPlayerUnits(units);
     }
 }

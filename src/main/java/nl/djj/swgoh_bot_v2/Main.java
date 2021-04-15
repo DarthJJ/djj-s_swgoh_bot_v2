@@ -70,7 +70,7 @@ public final class Main extends ListenerAdapter {
             builder.enableIntents(GatewayIntent.GUILD_PRESENCES, GatewayIntent.GUILD_MEMBERS);
             builder.build();
         } catch (final LoginException exception) {
-            logger.error(className, exception.getMessage());
+            logger.error(className, "initializeDiscord", exception.getMessage());
         }
     }
 

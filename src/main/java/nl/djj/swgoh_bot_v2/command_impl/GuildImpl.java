@@ -3,9 +3,8 @@ package nl.djj.swgoh_bot_v2.command_impl;
 import nl.djj.swgoh_bot_v2.config.SwgohConstants;
 import nl.djj.swgoh_bot_v2.config.SwgohGgEndpoint;
 import nl.djj.swgoh_bot_v2.database.DatabaseHandler;
-import nl.djj.swgoh_bot_v2.entities.compare.GuildCompare;
 import nl.djj.swgoh_bot_v2.entities.Message;
-import nl.djj.swgoh_bot_v2.entities.swgoh.SwgohGuild;
+import nl.djj.swgoh_bot_v2.entities.compare.GuildCompare;
 import nl.djj.swgoh_bot_v2.entities.db.Guild;
 import nl.djj.swgoh_bot_v2.exceptions.HttpRetrieveError;
 import nl.djj.swgoh_bot_v2.exceptions.SQLInsertionError;
@@ -17,10 +16,8 @@ import nl.djj.swgoh_bot_v2.helpers.StringHelper;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.LinkedHashMap;
+import java.time.LocalDateTime;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 /**
  * @author DJJ
@@ -44,18 +41,40 @@ public class GuildImpl {
         this.implHelper = implHelper;
     }
 
+    private int getAndUpdateGuildData(final int swgohId) throws HttpRetrieveError, SQLRetrieveError, SQLInsertionError {
+        final JSONObject guildData = httpHelper.getJsonObject(SwgohGgEndpoint.GUILD_ENDPOINT.getUrl() + swgohId);
+        final JSONObject guildInfo = guildData.getJSONObject("data");
+        final JSONArray players = guildData.getJSONArray("players");
+        final String guildName = guildInfo.getString("name");
+        final int guildMembers = guildInfo.getInt("member_count");
+        final int guildGp = guildInfo.getInt("galactic_power");
+        final int guildId = guildInfo.getInt("id");
+        final LocalDateTime lastUpdated = StringHelper.getCurrentDateTime();
+        final Guild guild = new Guild(guildName, guildId, guildGp, guildMembers, lastUpdated);
+        this.dbHandler.insertGuild(guild);
+        for (int i = 0; i < players.length(); i++) {
+            final JSONObject playerJson = players.getJSONObject(i);
+            final JSONArray playerUnits = playerJson.getJSONArray("units");
+            this.implHelper.getProfileImpl().insertProfile(playerJson.getJSONObject("data"), guild.getIdentifier());
+            this.implHelper.getUnitImpl().insertUnits(playerUnits, playerJson.getJSONObject("data").getInt("ally_code"), guildId);
+        }
+        return guildId;
+    }
+
     /**
      * Generic info for the guild.
      *
      * @param message the guild.
      */
     public void genericInfo(final Message message) {
-        final JSONObject guildData = getGuildData(message);
-        if (guildData == null) {
-            return;
+        try {
+            final int swgohId = dbHandler.getSwgohIdByGuildId(message.getGuildId());
+            final int guildId = getAndUpdateGuildData(swgohId);
+            final Guild guild = this.dbHandler.getGuild(guildId);
+            message.done(MessageHelper.formatGuildSwgohProfile(guild));
+        } catch (final HttpRetrieveError | SQLRetrieveError | SQLInsertionError error) {
+            message.error(error.getMessage());
         }
-        final SwgohGuild guild = SwgohGuild.initFromJson(guildData);
-        message.done(MessageHelper.formatGuildSwgohProfile(guild));
     }
 
     /**
@@ -64,49 +83,26 @@ public class GuildImpl {
      * @param message the guild info.
      */
     public void relicOverview(final Message message) {
-        if (message.getArgs().isEmpty()) {
-            message.error("Please provide a relic level");
-            return;
-        }
-        final JSONObject guildData = getGuildData(message);
-        if (guildData != null) {
-            final JSONArray playersData = guildData.getJSONArray("players");
-            Map<String, Integer> playerResults = new ConcurrentHashMap<>();
-            for (int i = 0; i < playersData.length(); i++) {
-                final JSONObject playerData = playersData.getJSONObject(i);
-                final Map<String, Integer> playerResult = this.implHelper.getUnitImpl().checkRelicLevel(playerData.getJSONArray("units"), Integer.parseInt(message.getArgs().get(0)));
-                playerResults.put(playerData.getJSONObject("data").getString("name"), playerResult.size());
-            }
-            playerResults = playerResults.entrySet()
-                    .stream()
-                    .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
-                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
-            message.done(MessageHelper.formatGuildRelicOverview(playerResults, message.getArgs().get(0)));
-        }
-    }
-
-    private JSONObject getGuildData(final Message message) {
-        final String guildId;
-        try {
-            guildId = dbHandler.getSwgohIdByGuildId(message.getGuildId());
-        } catch (final SQLRetrieveError error) {
-            message.error(error.getMessage());
-            return null;
-        }
-        try {
-            return httpHelper.getJsonObject(SwgohGgEndpoint.GUILD_ENDPOINT.getUrl() + guildId);
-        } catch (final HttpRetrieveError error) {
-            message.error(error.getMessage());
-            return null;
-        }
-    }
-
-    private JSONObject getGuildData(final String code) {
-        try {
-            return httpHelper.getJsonObject(SwgohGgEndpoint.GUILD_ENDPOINT.getUrl() + code);
-        } catch (final HttpRetrieveError error) {
-            return null;
-        }
+        //TODO: update to new format
+//        if (message.getArgs().isEmpty()) {
+//            message.error("Please provide a relic level");
+//            return;
+//        }
+//        final JSONObject guildData = getGuildData(message);
+//        if (guildData != null) {
+//            final JSONArray playersData = guildData.getJSONArray("players");
+//            Map<String, Integer> playerResults = new ConcurrentHashMap<>();
+//            for (int i = 0; i < playersData.length(); i++) {
+//                final JSONObject playerData = playersData.getJSONObject(i);
+//                final Map<String, Integer> playerResult = this.implHelper.getUnitImpl().checkRelicLevel(playerData.getJSONArray("units"), Integer.parseInt(message.getArgs().get(0)));
+//                playerResults.put(playerData.getJSONObject("data").getString("name"), playerResult.size());
+//            }
+//            playerResults = playerResults.entrySet()
+//                    .stream()
+//                    .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+//                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+//            message.done(MessageHelper.formatGuildRelicOverview(playerResults, message.getArgs().get(0)));
+//        }
     }
 
     /**
@@ -115,20 +111,21 @@ public class GuildImpl {
      * @param message the message.
      */
     public void gpOverview(final Message message) {
-        final JSONObject guildData = getGuildData(message);
-        if (guildData != null) {
-            final JSONArray playerData = guildData.getJSONArray("players");
-            Map<String, Integer> members = new ConcurrentHashMap<>();
-            for (int i = 0; i < playerData.length(); i++) {
-                final JSONObject player = playerData.getJSONObject(i).getJSONObject("data");
-                members.put(player.getString("name"), player.getInt("galactic_power"));
-            }
-            members = members.entrySet()
-                    .stream()
-                    .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
-                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
-            message.done(MessageHelper.formatGuildGPOverview(members));
-        }
+        //TODO: update to new format
+//        final JSONObject guildData = getGuildData(message);
+//        if (guildData != null) {
+//            final JSONArray playerData = guildData.getJSONArray("players");
+//            Map<String, Integer> members = new ConcurrentHashMap<>();
+//            for (int i = 0; i < playerData.length(); i++) {
+//                final JSONObject player = playerData.getJSONObject(i).getJSONObject("data");
+//                members.put(player.getString("name"), player.getInt("galactic_power"));
+//            }
+//            members = members.entrySet()
+//                    .stream()
+//                    .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+//                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+//            message.done(MessageHelper.formatGuildGPOverview(members));
+//        }
     }
 
     /**
@@ -156,19 +153,14 @@ public class GuildImpl {
                 code = Integer.toString(userData.getJSONObject("data").getInt("guild_id"));
             }
         }
-        final JSONObject rivalData = getGuildData(code);
-        final JSONObject guildData = getGuildData(message);
-        if (rivalData == null || guildData == null) {
-            message.error("No data received for either guild or rival");
-            return;
-        }
         try {
-            final int playerGuildId = insertGuildData(guildData);
+            final int guildId = dbHandler.getSwgohIdByGuildId(message.getGuildId());
+            final int playerGuildId = getAndUpdateGuildData(guildId);
             final GuildCompare playerGuild = createProfile(playerGuildId);
-            final int rivalGuildId = insertGuildData(rivalData);
+            final int rivalGuildId = getAndUpdateGuildData(Integer.parseInt(code));
             final GuildCompare rivalGuild = createProfile(rivalGuildId);
             message.done(MessageHelper.formatGuildCompare(playerGuild, rivalGuild));
-        } catch (final SQLInsertionError | SQLRetrieveError error) {
+        } catch (final SQLInsertionError | SQLRetrieveError | HttpRetrieveError error) {
             message.error(error.getMessage());
         }
     }
@@ -194,23 +186,5 @@ public class GuildImpl {
             profile.addUnitProfile(entry.getKey(), new GuildCompare.UnitProfile(entry.getValue(), sevenStars, sixStars, unitG13, unitG12, unitZetas, relic5plus));
         }
         return profile;
-    }
-
-    private int insertGuildData(final JSONObject guildData) throws SQLInsertionError {
-        final JSONObject guildInfo = guildData.getJSONObject("data");
-        final JSONArray players = guildData.getJSONArray("players");
-        final String guildName = guildInfo.getString("name");
-        final int guildMembers = guildInfo.getInt("member_count");
-        final int guildGp = guildInfo.getInt("galactic_power");
-        final int guildId = guildInfo.getInt("id");
-        final Guild guild = new Guild(guildName, guildId, guildGp, guildMembers);
-        this.dbHandler.insertGuild(guild);
-        for (int i = 0; i < players.length(); i++) {
-            final JSONObject playerJson = players.getJSONObject(i);
-            final JSONArray playerUnits = playerJson.getJSONArray("units");
-            this.implHelper.getProfileImpl().insertProfile(playerJson.getJSONObject("data"), guild.getIdentifier());
-            this.implHelper.getUnitImpl().insertUnits(playerUnits, playerJson.getJSONObject("data").getInt("ally_code"), guildId);
-        }
-        return guild.getIdentifier();
     }
 }

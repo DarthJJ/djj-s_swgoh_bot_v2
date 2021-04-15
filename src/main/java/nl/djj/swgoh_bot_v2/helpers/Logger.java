@@ -8,8 +8,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 /**
  * @author DJJ
@@ -45,12 +43,13 @@ public class Logger {
     /**
      * Call to log an error.
      *
-     * @param className the classname.
+     * @param className the className.
+     * @param methodName the method name.
      * @param message   the message.
      */
-    public void error(final String className, final String message) {
+    public void error(final String className, final String methodName, final String message) {
         if (debugMode) {
-            System.err.println(ANSI_RED + ERROR_PREFIX + SEPARATOR + className + SEPARATOR + message + ANSI_RESET);
+            System.err.println(ANSI_RED + ERROR_PREFIX + SEPARATOR + className + SEPARATOR + methodName + SEPARATOR + message + ANSI_RESET);
         }
         appendToFile(ERROR_PREFIX, className + SEPARATOR + message);
     }
@@ -105,29 +104,20 @@ public class Logger {
     }
 
     private void appendToFile(final String fileType, final String content) {
-        final File file = new File("log/" + fileType + "_" + getDate(false) + ".log");
+        final File file = new File("log/" + fileType + "_" + StringHelper.getCurrentDateAsString() + ".log");
         try {
             if (!file.exists() && !file.createNewFile()) {
                 throw new IOException("Couldn't create log file");
             }
         } catch (final IOException exception) {
-            error(className, exception.getMessage());
+            error(className, "appendToFile", exception.getMessage());
         }
         try (BufferedWriter writer = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8, StandardOpenOption.APPEND)) {
-            writer.write(getDate(true) + SEPARATOR + content);
+            writer.write(StringHelper.getCurrentDateTimeAsString() + SEPARATOR + content);
             writer.newLine();
             writer.flush();
         } catch (final IOException exception) {
-            error(className, exception.getMessage());
+            error(className, "appendToFile", exception.getMessage());
         }
-    }
-
-    private String getDate(final boolean includeTime) {
-        String timeFormat = "dd-MM-yyyy";
-        if (includeTime) {
-            timeFormat += " HH:mm:ss";
-        }
-        final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(timeFormat);
-        return dtf.format(LocalDateTime.now());
     }
 }

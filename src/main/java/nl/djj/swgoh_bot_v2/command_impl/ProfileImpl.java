@@ -200,7 +200,7 @@ public class ProfileImpl {
                 return;
             }
         }
-        dbHandler.updatePresence(userId, username, StringHelper.getCurrentDateTime());
+        dbHandler.updatePresence(userId, username, StringHelper.getCurrentDateTimeAsString());
     }
 
     /**

@@ -9,12 +9,13 @@ public class HttpRetrieveError extends Exception {
     /**
      * Constructor.
      *
-     * @param className classname.
-     * @param message   the error.
-     * @param logger    the logger.
+     * @param className  className.
+     * @param message    the error.
+     * @param methodName the methodName.
+     * @param logger     the logger.
      */
-    public HttpRetrieveError(final String className, final String message, final Logger logger) {
+    public HttpRetrieveError(final String className, final String methodName, final String message, final Logger logger) {
         super(message);
-        logger.error(className, message);
+        logger.error(className, methodName, message);
     }
 }

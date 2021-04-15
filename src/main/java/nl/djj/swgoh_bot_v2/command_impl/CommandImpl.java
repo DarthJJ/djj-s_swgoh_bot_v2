@@ -44,7 +44,7 @@ public class CommandImpl {
             dbHandler.enableCommand(enableCommand);
             message.done("Command: " + enableCommand + " enabled!");
         } catch (final SQLInsertionError error) {
-            logger.error(className, error.getMessage());
+            logger.error(className, "enableCommand", error.getMessage());
             message.error(error.getMessage());
         }
     }
@@ -60,7 +60,7 @@ public class CommandImpl {
             dbHandler.disableCommand(enableCommand);
             message.done("Command: " + enableCommand + " disabled!");
         } catch (final SQLInsertionError error) {
-            logger.error(className, error.getMessage());
+            logger.error(className, "disableCommand", error.getMessage());
             message.error(error.getMessage());
         }
     }

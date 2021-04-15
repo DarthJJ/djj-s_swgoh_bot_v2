@@ -29,6 +29,7 @@ public class HttpHelper {
     }
 
     private String readAll(final Reader reader) throws IOException {
+        logger.debug(className, "Reading JSON Data");
         final StringBuilder builder = new StringBuilder();
         int line;
         while ((line = reader.read()) != -1) {
@@ -50,7 +51,7 @@ public class HttpHelper {
             final String jsonText = readAll(reader);
             return new JSONArray(jsonText);
         } catch (final IOException exception) {
-            throw new HttpRetrieveError(className, exception.getMessage(), logger);
+            throw new HttpRetrieveError(className, "getJsonArray", exception.getMessage(), logger);
         }
     }
 
@@ -67,7 +68,7 @@ public class HttpHelper {
             final String jsonText = readAll(reader);
             return new JSONObject(jsonText);
         } catch (final IOException exception) {
-            throw new HttpRetrieveError(className, exception.getMessage(), logger);
+            throw new HttpRetrieveError(className, "getJsonObject", exception.getMessage(), logger);
         }
     }
 
@@ -92,7 +93,7 @@ public class HttpHelper {
             }
             return returnValue;
         } catch (final IOException exception) {
-            throw new HttpRetrieveError(className, exception.getMessage(), logger);
+            throw new HttpRetrieveError(className, "getCsv", exception.getMessage(), logger);
         }
     }
 }
