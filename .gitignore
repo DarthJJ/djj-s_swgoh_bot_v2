@@ -2,7 +2,9 @@
 .gradle
 /build/
 log
-database
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
 .env
 # Ignore Gradle GUI config
 gradle-app.setting
