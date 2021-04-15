@@ -111,21 +111,13 @@ public class GuildImpl {
      * @param message the message.
      */
     public void gpOverview(final Message message) {
-        //TODO: update to new format
-//        final JSONObject guildData = getGuildData(message);
-//        if (guildData != null) {
-//            final JSONArray playerData = guildData.getJSONArray("players");
-//            Map<String, Integer> members = new ConcurrentHashMap<>();
-//            for (int i = 0; i < playerData.length(); i++) {
-//                final JSONObject player = playerData.getJSONObject(i).getJSONObject("data");
-//                members.put(player.getString("name"), player.getInt("galactic_power"));
-//            }
-//            members = members.entrySet()
-//                    .stream()
-//                    .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
-//                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
-//            message.done(MessageHelper.formatGuildGPOverview(members));
-//        }
+        try {
+            final int guildId = getAndUpdateGuildData(dbHandler.getSwgohIdByGuildId(message.getGuildId()));
+            final Map<String, Integer> gpOverview = dbHandler.getGuildGPOverview(guildId);
+            message.done(MessageHelper.formatGuildGPOverview(gpOverview));
+        } catch (final SQLRetrieveError | HttpRetrieveError | SQLInsertionError error) {
+            message.error(error.getMessage());
+        }
     }
 
     /**
