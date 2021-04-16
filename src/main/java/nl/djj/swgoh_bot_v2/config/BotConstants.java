@@ -51,6 +51,11 @@ public final class BotConstants {
     public static final String DEFAULT_PREFIX = "!#";
 
     /**
+     * The max amount of hours of data caching.
+     */
+    public static final int MAX_DATA_AGE = 24;
+
+    /**
      * Constructor.
      */
     private BotConstants() {

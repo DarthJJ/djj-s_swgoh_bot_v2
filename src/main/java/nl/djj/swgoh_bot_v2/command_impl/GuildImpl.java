@@ -1,5 +1,6 @@
 package nl.djj.swgoh_bot_v2.command_impl;
 
+import nl.djj.swgoh_bot_v2.config.BotConstants;
 import nl.djj.swgoh_bot_v2.config.SwgohConstants;
 import nl.djj.swgoh_bot_v2.config.SwgohGgEndpoint;
 import nl.djj.swgoh_bot_v2.database.DatabaseHandler;
@@ -48,7 +49,7 @@ public class GuildImpl {
         if (swgohIdentifier == -1) {
             guild = dbHandler.getGuild(dbHandler.getSwgohIdByGuildId(discordId));
             swgohId = guild.getIdentifier();
-            if (false && Duration.between(guild.getLastUpdated(), StringHelper.getCurrentDateTime()).toHours() < 24) {
+            if (Duration.between(guild.getLastUpdated(), StringHelper.getCurrentDateTime()).toHours() < BotConstants.MAX_DATA_AGE) {
                 return guild.getIdentifier();
             }
         } else {
