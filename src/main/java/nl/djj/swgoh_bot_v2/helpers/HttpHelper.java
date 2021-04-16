@@ -3,6 +3,7 @@ package nl.djj.swgoh_bot_v2.helpers;
 import nl.djj.swgoh_bot_v2.exceptions.HttpRetrieveError;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 
 import java.io.*;
 import java.net.URL;
@@ -28,15 +29,17 @@ public class HttpHelper {
         this.logger = logger;
     }
 
-    private String readAll(final Reader reader) throws IOException {
-        logger.debug(className, "Reading JSON Data");
-        final StringBuilder builder = new StringBuilder();
-        int line;
-        while ((line = reader.read()) != -1) {
-            builder.append((char) line);
-        }
-        return builder.toString();
+    private JSONObject stringToJsonObject(final Reader reader) throws IOException {
+        logger.debug(className, "Reading JSON data into an object");
+        return new JSONObject(new JSONTokener(reader));
     }
+
+    private JSONArray stringToJSonArray(final Reader reader) throws IOException {
+        logger.debug(className, "Reading JSON data into an array");
+        return new JSONArray(new JSONTokener(reader));
+    }
+
+
 
     /**
      * Download a JSON array from the given URL.
@@ -48,8 +51,7 @@ public class HttpHelper {
         logger.debug(className, "Retrieving from: " + url);
         try (InputStream stream = new URL(url).openStream()) {
             final BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
-            final String jsonText = readAll(reader);
-            return new JSONArray(jsonText);
+            return stringToJSonArray(reader);
         } catch (final IOException exception) {
             throw new HttpRetrieveError(className, "getJsonArray", exception.getMessage(), logger);
         }
@@ -65,8 +67,7 @@ public class HttpHelper {
         logger.debug(className, "Retrieving from: " + url);
         try (InputStream stream = new URL(url).openStream()) {
             final BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
-            final String jsonText = readAll(reader);
-            return new JSONObject(jsonText);
+            return stringToJsonObject(reader);
         } catch (final IOException exception) {
             throw new HttpRetrieveError(className, "getJsonObject", exception.getMessage(), logger);
         }
@@ -74,6 +75,7 @@ public class HttpHelper {
 
     /**
      * Get's CSV data.
+     *
      * @param url the url to download from.
      * @return CSV data.
      * @throws HttpRetrieveError when something goes wrong.

@@ -271,9 +271,9 @@ public final class MessageHelper {
      * @param players the player GP info.
      * @return a message embed.
      */
-    public static MessageEmbed formatGuildRelicOverview(final Map<String, Integer> players, final String relicLevel) {
+    public static MessageEmbed formatGuildRelicOverview(final Map<String, Integer> players, final int relicLevel) {
         final EmbedBuilder embed = new EmbedBuilder(baseEmbed());
-        embed.setDescription("Relic Overview below or at: '" + relicLevel + "', sorted high -> low");
+        embed.setDescription("Relic Overview higher or at: '" + relicLevel + "', sorted high -> low");
         final StringBuilder builder = new StringBuilder();
         for (final Map.Entry<String, Integer> entry : players.entrySet()) {
             builder.append(String.format(TABLE_FORMAT, entry.getKey(), ":", entry.getValue()));

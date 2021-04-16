@@ -16,6 +16,7 @@ import nl.djj.swgoh_bot_v2.helpers.StringHelper;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Map;
 
@@ -41,7 +42,18 @@ public class GuildImpl {
         this.implHelper = implHelper;
     }
 
-    private int getAndUpdateGuildData(final int swgohId) throws HttpRetrieveError, SQLRetrieveError, SQLInsertionError {
+    private int getAndUpdateGuildData(final String discordId, final int swgohIdentifier) throws HttpRetrieveError, SQLRetrieveError, SQLInsertionError {
+        Guild guild;
+        final int swgohId;
+        if (swgohIdentifier == -1) {
+            guild = dbHandler.getGuild(dbHandler.getSwgohIdByGuildId(discordId));
+            swgohId = guild.getIdentifier();
+            if (false && Duration.between(guild.getLastUpdated(), StringHelper.getCurrentDateTime()).toHours() < 24) {
+                return guild.getIdentifier();
+            }
+        } else {
+            swgohId = swgohIdentifier;
+        }
         final JSONObject guildData = httpHelper.getJsonObject(SwgohGgEndpoint.GUILD_ENDPOINT.getUrl() + swgohId);
         final JSONObject guildInfo = guildData.getJSONObject("data");
         final JSONArray players = guildData.getJSONArray("players");
@@ -50,7 +62,7 @@ public class GuildImpl {
         final int guildGp = guildInfo.getInt("galactic_power");
         final int guildId = guildInfo.getInt("id");
         final LocalDateTime lastUpdated = StringHelper.getCurrentDateTime();
-        final Guild guild = new Guild(guildName, guildId, guildGp, guildMembers, lastUpdated);
+        guild = new Guild(guildName, guildId, guildGp, guildMembers, lastUpdated);
         this.dbHandler.insertGuild(guild);
         for (int i = 0; i < players.length(); i++) {
             final JSONObject playerJson = players.getJSONObject(i);
@@ -68,8 +80,7 @@ public class GuildImpl {
      */
     public void genericInfo(final Message message) {
         try {
-            final int swgohId = dbHandler.getSwgohIdByGuildId(message.getGuildId());
-            final int guildId = getAndUpdateGuildData(swgohId);
+            final int guildId = getAndUpdateGuildData(message.getGuildId(), -1);
             final Guild guild = this.dbHandler.getGuild(guildId);
             message.done(MessageHelper.formatGuildSwgohProfile(guild));
         } catch (final HttpRetrieveError | SQLRetrieveError | SQLInsertionError error) {
@@ -83,26 +94,17 @@ public class GuildImpl {
      * @param message the guild info.
      */
     public void relicOverview(final Message message) {
-        //TODO: update to new format
-//        if (message.getArgs().isEmpty()) {
-//            message.error("Please provide a relic level");
-//            return;
-//        }
-//        final JSONObject guildData = getGuildData(message);
-//        if (guildData != null) {
-//            final JSONArray playersData = guildData.getJSONArray("players");
-//            Map<String, Integer> playerResults = new ConcurrentHashMap<>();
-//            for (int i = 0; i < playersData.length(); i++) {
-//                final JSONObject playerData = playersData.getJSONObject(i);
-//                final Map<String, Integer> playerResult = this.implHelper.getUnitImpl().checkRelicLevel(playerData.getJSONArray("units"), Integer.parseInt(message.getArgs().get(0)));
-//                playerResults.put(playerData.getJSONObject("data").getString("name"), playerResult.size());
-//            }
-//            playerResults = playerResults.entrySet()
-//                    .stream()
-//                    .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
-//                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
-//            message.done(MessageHelper.formatGuildRelicOverview(playerResults, message.getArgs().get(0)));
-//        }
+        if (message.getArgs().isEmpty()) {
+            message.getArgs().add("1");
+        }
+        try {
+            final int relicLevel = Integer.parseInt(message.getArgs().get(0));
+            final int guildId = getAndUpdateGuildData(message.getGuildId(), -1);
+            final Map<String, Integer> relicOverview = this.dbHandler.getGuildRelicOverview(guildId, relicLevel);
+            message.done(MessageHelper.formatGuildRelicOverview(relicOverview, relicLevel));
+        } catch (final SQLRetrieveError | HttpRetrieveError | SQLInsertionError error) {
+            message.error(error.getMessage());
+        }
     }
 
     /**
@@ -112,7 +114,7 @@ public class GuildImpl {
      */
     public void gpOverview(final Message message) {
         try {
-            final int guildId = getAndUpdateGuildData(dbHandler.getSwgohIdByGuildId(message.getGuildId()));
+            final int guildId = getAndUpdateGuildData(message.getGuildId(), -1);
             final Map<String, Integer> gpOverview = dbHandler.getGuildGPOverview(guildId);
             message.done(MessageHelper.formatGuildGPOverview(gpOverview));
         } catch (final SQLRetrieveError | HttpRetrieveError | SQLInsertionError error) {
@@ -146,10 +148,9 @@ public class GuildImpl {
             }
         }
         try {
-            final int guildId = dbHandler.getSwgohIdByGuildId(message.getGuildId());
-            final int playerGuildId = getAndUpdateGuildData(guildId);
+            final int playerGuildId = getAndUpdateGuildData(message.getGuildId(), -1);
             final GuildCompare playerGuild = createProfile(playerGuildId);
-            final int rivalGuildId = getAndUpdateGuildData(Integer.parseInt(code));
+            final int rivalGuildId = getAndUpdateGuildData(null, Integer.parseInt(code));
             final GuildCompare rivalGuild = createProfile(rivalGuildId);
             message.done(MessageHelper.formatGuildCompare(playerGuild, rivalGuild));
         } catch (final SQLInsertionError | SQLRetrieveError | HttpRetrieveError error) {

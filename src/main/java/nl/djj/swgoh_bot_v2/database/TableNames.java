@@ -108,6 +108,7 @@ public class TableNames {
     final transient DbColumn SQLITE_MASTER_NAME = SQLITE_MASTER.addColumn("name", "string", null);
 
     final transient DbJoin ZETA_JOIN = spec.addJoin(null, ABILITY.getName(), null, UNIT_ABILITY.getName(), ABILITY_ID.getName());
+    final transient DbJoin PLAYER_UNIT_JOIN = spec.addJoin(null, PLAYER.getName(), null, PLAYER_UNIT.getName(), PLAYER_ALLYCODE.getName());
     static final transient int IS_UPDATED = 1;
 
     /**

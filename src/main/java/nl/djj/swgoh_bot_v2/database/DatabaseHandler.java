@@ -521,7 +521,7 @@ public abstract class DatabaseHandler extends TableNames {
     }
 
     public Map<String, Integer> getGuildGPOverview(final int guildId) throws SQLRetrieveError {
-        logger.debug(className, "Getting GP Overview");
+        logger.debug(className, "Getting Guild GP Overview");
         final String query = new SelectQuery()
                 .addColumns(PLAYER_NAME, PLAYER_GP)
                 .addCondition(BinaryCondition.equalTo(PLAYER_GUILD_ID, guildId))
@@ -537,7 +537,39 @@ public abstract class DatabaseHandler extends TableNames {
         } catch (final SQLException exception) {
             throw new SQLRetrieveError(className, "getGuildGpOverview", exception.getMessage(), logger);
         }
+    }
 
+    /**
+     *   final SelectQuery selectQuery = new SelectQuery()
+     *                 .addCustomColumns(FunctionCall.count().addColumnParams())
+     *                 .addCondition(BinaryCondition.equalTo(UNIT_ABILITY_GUILD_ID, guildId))
+     *                 .addJoins(SelectQuery.JoinType.INNER, ZETA_JOIN)
+     *                 .addCondition(BinaryCondition.equalTo(ABILITY_IS_ZETA, true))
+     *                 .addCondition(BinaryCondition.equalTo(ABILITY_TIER_MAX, UNIT_ABILITY_LEVEL));
+     */
+    public Map<String, Integer> getGuildRelicOverview(final int guildId, final int relicLevel) throws SQLRetrieveError {
+        logger.debug(className, "Getting Guild Relic overview");
+        final String query = new SelectQuery()
+                .addColumns(PLAYER_NAME)
+//                .addCustomColumns(PLAYER_NAME, FunctionCall.count().addColumnParams(PLAYER_UNIT_ALLYCODE))
+                .addAliasedColumn(FunctionCall.count().addColumnParams(PLAYER_UNIT_ALLYCODE), "relicCount")
+                .addJoins(SelectQuery.JoinType.INNER, PLAYER_UNIT_JOIN)
+                .addCondition(BinaryCondition.equalTo(PLAYER_UNIT_GUILD_ID, guildId))
+                .addCondition(BinaryCondition.greaterThanOrEq(PLAYER_UNIT_RELIC, relicLevel))
+                .addGroupings(PLAYER_NAME)
+//                .addCustomOrdering(FunctionCall.count().addColumnParams(PLAYER_UNIT_ALLYCODE).toString(), OrderObject.Dir.DESCENDING)
+                .addCustomOrdering("relicCount", OrderObject.Dir.DESCENDING)
+                .validate().toString();
+        try {
+            final Map<String, Integer> returnValue = new LinkedHashMap<>();
+            final ResultSet result = statement.executeQuery(query);
+            while (result.next()) {
+                returnValue.put(result.getString(PLAYER_NAME.getName()), result.getInt("relicCount"));
+            }
+            return returnValue;
+        } catch (final SQLException exception) {
+            throw new SQLRetrieveError(className, "getGuildGpOverview", exception.getMessage(), logger);
+        }
     }
 
     /**
