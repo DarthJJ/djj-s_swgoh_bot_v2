@@ -7,10 +7,10 @@ import nl.djj.swgoh_bot_v2.config.SwgohConstants;
 import nl.djj.swgoh_bot_v2.config.SwgohGgEndpoint;
 import nl.djj.swgoh_bot_v2.database.DatabaseHandler;
 import nl.djj.swgoh_bot_v2.entities.Message;
-import nl.djj.swgoh_bot_v2.entities.swgoh.SwgohProfile;
 import nl.djj.swgoh_bot_v2.entities.Unit;
-import nl.djj.swgoh_bot_v2.entities.db.User;
 import nl.djj.swgoh_bot_v2.entities.db.Player;
+import nl.djj.swgoh_bot_v2.entities.db.User;
+import nl.djj.swgoh_bot_v2.entities.swgoh.SwgohProfile;
 import nl.djj.swgoh_bot_v2.exceptions.HttpRetrieveError;
 import nl.djj.swgoh_bot_v2.exceptions.SQLDeletionError;
 import nl.djj.swgoh_bot_v2.exceptions.SQLInsertionError;
@@ -203,6 +203,13 @@ public class ProfileImpl {
         dbHandler.updatePresence(userId, username, StringHelper.getCurrentDateTimeAsString());
     }
 
+    public void glStatus(final Message message) {
+        final JSONObject playerData = getProfileData(message);
+        if (playerData == null) {
+            return;
+        }
+    }
+
     /**
      * Checks the users relics.
      *
@@ -244,7 +251,7 @@ public class ProfileImpl {
         final int allycode = playerData.getInt("ally_code");
         final String name = playerData.getString("name");
         final int galacticPower = playerData.getInt("galactic_power");
-        final String url = SwgohGgEndpoint.ENDPOINT + playerData.getString("url");
+        final String url = SwgohGgEndpoint.PLAYER_ENDPOINT.getUrl() + playerData.getString("url");
         final String lastUpdated = playerData.getString("last_updated");
         this.dbHandler.insertPlayer(new Player(allycode, name, galacticPower, url, lastUpdated, guildId));
 
