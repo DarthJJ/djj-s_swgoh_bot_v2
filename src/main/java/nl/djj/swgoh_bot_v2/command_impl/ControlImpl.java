@@ -47,7 +47,7 @@ public abstract class ControlImpl {
      */
     public void enableUpdateMode(final Message message) {
         Main.setMaintenanceMode(true);
-        toggleUpdateMode(message, START_UPDATE);
+        sendNotification(message, START_UPDATE);
     }
 
     /**
@@ -57,11 +57,11 @@ public abstract class ControlImpl {
      */
     public void disableUpdateMode(final Message message) {
         Main.setMaintenanceMode(false);
-        toggleUpdateMode(message, STOP_UPDATE);
+        sendNotification(message, STOP_UPDATE);
     }
 
 
-    private void toggleUpdateMode(final Message message, final String string) {
+    private void sendNotification(final Message message, final String string) {
         try {
             final List<String> channels = dbHandler.getAllGuildNotifyChannels();
 
@@ -71,6 +71,7 @@ public abstract class ControlImpl {
                     textChannel.sendMessage(string).queue();
                 }
             }
+            message.done("Notification sent");
         } catch (final SQLRetrieveError error) {
             message.error(error.getMessage());
         }
@@ -80,4 +81,8 @@ public abstract class ControlImpl {
      * overridden for bot closure.
      */
     public abstract void closeBot();
+
+    public void sendMessage(final Message message, final String string) {
+        sendNotification(message, string);
+    }
 }
