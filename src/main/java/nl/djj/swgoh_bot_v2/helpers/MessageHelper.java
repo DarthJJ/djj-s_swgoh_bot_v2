@@ -5,13 +5,15 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import nl.djj.swgoh_bot_v2.commands.BaseCommand;
 import nl.djj.swgoh_bot_v2.config.BotConstants;
 import nl.djj.swgoh_bot_v2.config.SwgohConstants;
-import nl.djj.swgoh_bot_v2.entities.*;
+import nl.djj.swgoh_bot_v2.entities.Flag;
+import nl.djj.swgoh_bot_v2.entities.Message;
 import nl.djj.swgoh_bot_v2.entities.compare.GuildCompare;
 import nl.djj.swgoh_bot_v2.entities.compare.ProfileCompare;
 import nl.djj.swgoh_bot_v2.entities.compare.UnitCompare;
 import nl.djj.swgoh_bot_v2.entities.db.Config;
 import nl.djj.swgoh_bot_v2.entities.db.Guild;
 import nl.djj.swgoh_bot_v2.entities.swgoh.SwgohProfile;
+import org.json.JSONArray;
 
 import java.awt.*;
 import java.time.ZonedDateTime;
@@ -288,8 +290,9 @@ public final class MessageHelper {
 
     /**
      * Formats the guild profiles in an embed.
+     *
      * @param playerGuild the guild of the player.
-     * @param rivalGuild the guild of the rival.
+     * @param rivalGuild  the guild of the rival.
      * @return an list with embeds.
      */
     public static List<MessageEmbed> formatGuildCompare(final GuildCompare playerGuild, final GuildCompare rivalGuild) {
@@ -376,6 +379,26 @@ public final class MessageHelper {
         }
         returnValue.add(embed.build());
         return returnValue;
+    }
+
+    /**
+     * Creates the changelog message.
+     *
+     * @param changelog the changelog.
+     * @param version   the version.
+     * @return an embed.
+     */
+    public static MessageEmbed formatChangelog(final double version, final Map<String, JSONArray> changelog) {
+       final EmbedBuilder embed = new EmbedBuilder(baseEmbed());
+        embed.setDescription("Changelog for version: **__" + version + "__**");
+        for (final Map.Entry<String, JSONArray> entry : changelog.entrySet()) {
+            final StringBuilder changeString = new StringBuilder();
+            for (int i = 0; i < entry.getValue().length(); i++) {
+                changeString.append(entry.getValue().get(i)).append("\n");
+            }
+            embed.addField(entry.getKey(), "```" + changeString + "```", false);
+        }
+        return embed.build();
     }
 
 //CHECKSTYLE.ON: MultipleStringLiteralsCheck
