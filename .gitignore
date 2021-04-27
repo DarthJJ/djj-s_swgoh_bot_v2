@@ -9,6 +9,12 @@ log
 # Ignore Gradle GUI config
 gradle-app.setting
 
+#ECLIPSE STUFF
+bin/
+.classpath
+.project
+.settings/org.eclipse.buildship.core.prefs
+
 # Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
 !gradle-wrapper.jar
 
