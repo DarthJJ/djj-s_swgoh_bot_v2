@@ -1,1 +1,0 @@
-sudo /usr/bin/java -jar build/libs/swgoh_bot_v2-1.0-SNAPSHOT-all.jar
