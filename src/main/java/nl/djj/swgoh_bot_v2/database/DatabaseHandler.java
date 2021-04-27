@@ -2,7 +2,7 @@ package nl.djj.swgoh_bot_v2.database;
 
 import com.healthmarketscience.sqlbuilder.*;
 import nl.djj.swgoh_bot_v2.config.GalacticLegends;
-import nl.djj.swgoh_bot_v2.entities.compare.GlCompare;
+import nl.djj.swgoh_bot_v2.entities.compare.GLUnits;
 import nl.djj.swgoh_bot_v2.entities.db.*;
 import nl.djj.swgoh_bot_v2.exceptions.SQLDeletionError;
 import nl.djj.swgoh_bot_v2.exceptions.SQLInsertionError;
@@ -857,7 +857,7 @@ public abstract class DatabaseHandler extends TableNames {
         }
     }
 
-    public GlCompare GetGLCompareUnitForPlayer(final String baseId, final int allycode) throws SQLRetrieveError {
+    public GLUnits GetGLCompareUnitForPlayer(final String baseId, final int allycode) throws SQLRetrieveError {
         logger.debug(className, "Getting playerUnit: " + baseId + " | for allycode: " + allycode);
         final String query = new SelectQuery()
                 .addColumns(PLAYER_UNIT_GEAR, PLAYER_UNIT_RELIC, PLAYER_UNIT_RARITY, PLAYER_UNIT_GEAR_PIECES)
@@ -872,9 +872,9 @@ public abstract class DatabaseHandler extends TableNames {
                 final int gearPieces = result.getInt(PLAYER_UNIT_GEAR_PIECES.getName());
                 final int relic = result.getInt(PLAYER_UNIT_RELIC.getName());
                 final int rarity = result.getInt(PLAYER_UNIT_RARITY.getName());
-                return new GlCompare(unitName, gear, gearPieces, relic, rarity, getZetaCountForPlayerUnit(allycode, baseId));
+                return new GLUnits(unitName, gear, gearPieces, relic, rarity, getZetaCountForPlayerUnit(allycode, baseId));
             }
-            return new GlCompare(unitName, -1, -1, -1, -1, -1);
+            return new GLUnits(unitName, -1, -1, -1, -1, -1);
         } catch (final SQLException exception) {
             throw new SQLRetrieveError(className, "getUnitForPlayer", exception.getMessage(), logger);
         }
@@ -900,6 +900,40 @@ public abstract class DatabaseHandler extends TableNames {
             return -1;
         } catch (final SQLException exception) {
             throw new SQLRetrieveError(className, "getZetaCountForGuild", exception.getMessage(), logger);
+        }
+    }
+
+    public List<Integer> getMembersOfGuild(final int guildId) throws SQLRetrieveError {
+        logger.debug(className, "Retrieving members in guild");
+        final String query = new SelectQuery()
+                .addColumns(PLAYER_ALLYCODE)
+                .addCondition(BinaryCondition.equalTo(PLAYER_GUILD_ID, guildId))
+                .validate().toString();
+        try {
+            final ResultSet result = statement.executeQuery(query);
+            final List<Integer> allycodes = new ArrayList<>();
+            while (result.next()) {
+                allycodes.add(result.getInt(PLAYER_ALLYCODE.getName()));
+            }
+            return allycodes;
+        } catch (final SQLException exception) {
+            throw new SQLRetrieveError(className, "getMembersOfGuild", exception.getMessage(), logger);
+        }
+    }
+
+    public String getPlayerNameForAllycode(final int allycode) throws SQLRetrieveError {
+        final String query = new SelectQuery()
+                .addColumns(PLAYER_NAME)
+                .addCondition(BinaryCondition.equalTo(PLAYER_ALLYCODE, allycode))
+                .validate().toString();
+        try {
+            final ResultSet result = statement.executeQuery(query);
+            if(result.next()){
+                return result.getString(PLAYER_NAME.getName());
+            }
+            return "N/A";
+        } catch (final SQLException exception){
+            throw new SQLRetrieveError(className, "getPlayerNameForAllycode", exception.getMessage(), logger);
         }
     }
     //CHECKSTYLE.ON: MultipleStringLiteralsCheck

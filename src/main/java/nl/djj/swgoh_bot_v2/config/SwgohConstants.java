@@ -66,6 +66,7 @@ public final class SwgohConstants {
     );
 
     public static final Map<Integer, Double> relicScale = Map.ofEntries(
+            entry(0, 0.0),
             entry(1, 0.05),
             entry(2, 0.1),
             entry(3, 0.1),
@@ -76,6 +77,7 @@ public final class SwgohConstants {
     );
 
     public static final Map<Integer, Double> gearScale = Map.ofEntries(
+            entry(0, 0.0),
             entry(1, 0.01),
             entry(2, 0.01),
             entry(3, 0.01),
@@ -92,6 +94,7 @@ public final class SwgohConstants {
     );
 
     public static final Map<Integer, Double> rarityScale = Map.ofEntries(
+            entry(0, 0.0),
             entry(1, 0.03),
             entry(2, 0.05),
             entry(3, 0.08),

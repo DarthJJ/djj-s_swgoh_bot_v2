@@ -6,7 +6,7 @@ import java.math.RoundingMode;
 /**
  * @author DJJ
  **/
-public class GlCompare {
+public class GLUnits {
     private final transient String unitName;
     private final transient int gearLevel;
     private final transient int gearPieces;
@@ -25,7 +25,7 @@ public class GlCompare {
      * @param rarity     the rarity level.
      * @param zetas      the zetas.
      */
-    public GlCompare(final String unitName, final int gearLevel, final int gearPieces, final int relicLevel, final int rarity, final int zetas) {
+    public GLUnits(final String unitName, final int gearLevel, final int gearPieces, final int relicLevel, final int rarity, final int zetas) {
         this.unitName = unitName;
         this.gearLevel = gearLevel;
         this.gearPieces = gearPieces;

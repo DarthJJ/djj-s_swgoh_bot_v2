@@ -7,10 +7,7 @@ import nl.djj.swgoh_bot_v2.config.BotConstants;
 import nl.djj.swgoh_bot_v2.config.SwgohConstants;
 import nl.djj.swgoh_bot_v2.entities.Flag;
 import nl.djj.swgoh_bot_v2.entities.Message;
-import nl.djj.swgoh_bot_v2.entities.compare.GlCompare;
-import nl.djj.swgoh_bot_v2.entities.compare.GuildCompare;
-import nl.djj.swgoh_bot_v2.entities.compare.ProfileCompare;
-import nl.djj.swgoh_bot_v2.entities.compare.UnitCompare;
+import nl.djj.swgoh_bot_v2.entities.compare.*;
 import nl.djj.swgoh_bot_v2.entities.db.Config;
 import nl.djj.swgoh_bot_v2.entities.db.Guild;
 import nl.djj.swgoh_bot_v2.entities.swgoh.SwgohProfile;
@@ -383,14 +380,31 @@ public final class MessageHelper {
         return embed.build();
     }
 
-    public static MessageEmbed formatPlayerGLStatus(final String glName, final double totalCompletion, final List<GlCompare> compares) {
+    public static MessageEmbed formatPlayerGLStatus(final PlayerGLStatus playerGlStatus) {
         final EmbedBuilder embed = new EmbedBuilder(baseEmbed());
-        embed.setDescription("GL Status for: " + glName + "\nTotal Completion: **" + new DecimalFormat("##.##%").format(totalCompletion)+ "**");
+        embed.setDescription("GL Status for: " + playerGlStatus.getGlEvent() + "\nTotal Completion: **" + new DecimalFormat("##.##%").format(playerGlStatus.getTotalCompleteness()) + "**");
         StringBuilder status = new StringBuilder(String.format(GL_OVERVIEW_FORMAT, "name", GEAR_ICON, RELIC_ICON, ZETA_ICON, "status"));
-        for (GlCompare compare : compares) {
+        for (GLUnits compare : playerGlStatus.getUnits()) {
             status.append(String.format(GL_OVERVIEW_FORMAT, compare.getUnitName(), compare.getGearLevel(), compare.getRelicLevel(), compare.getZetas(), new DecimalFormat("##.##%").format(compare.getCompleteness())));
         }
         embed.addField("status", "```" + status + "```", false);
+        return embed.build();
+    }
+
+    public static MessageEmbed formatGuildGLStatus(final String event, final Map<String, PlayerGLStatus> playerStatus) {
+        final EmbedBuilder embed = new EmbedBuilder(baseEmbed());
+        embed.setDescription("Guild GL Status for: " + event);
+        int counter = 0;
+        StringBuilder status = new StringBuilder(String.format(TABLE_FORMAT, "Name", "", "Status"));
+        for (final Map.Entry<String, PlayerGLStatus> entry : playerStatus.entrySet()) {
+            counter++;
+            status.append(String.format(TABLE_FORMAT, entry.getKey(), ":", new DecimalFormat("##.##%").format(entry.getValue().getTotalCompleteness())));
+            if (counter == 5) {
+                embed.addField(Integer.toString(embed.getFields().size()), "```" + status + "```", false);
+                counter = 0;
+                status = new StringBuilder(String.format(TABLE_FORMAT, "Name", "", "Status"));
+            }
+        }
         return embed.build();
     }
 

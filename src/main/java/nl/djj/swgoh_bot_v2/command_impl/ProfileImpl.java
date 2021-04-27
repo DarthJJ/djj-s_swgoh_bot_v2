@@ -5,7 +5,8 @@ import nl.djj.swgoh_bot_v2.config.*;
 import nl.djj.swgoh_bot_v2.database.DatabaseHandler;
 import nl.djj.swgoh_bot_v2.entities.Message;
 import nl.djj.swgoh_bot_v2.entities.Unit;
-import nl.djj.swgoh_bot_v2.entities.compare.GlCompare;
+import nl.djj.swgoh_bot_v2.entities.compare.PlayerGLStatus;
+import nl.djj.swgoh_bot_v2.entities.compare.GLUnits;
 import nl.djj.swgoh_bot_v2.entities.db.GlRequirement;
 import nl.djj.swgoh_bot_v2.entities.db.Player;
 import nl.djj.swgoh_bot_v2.entities.db.User;
@@ -234,19 +235,23 @@ public class ProfileImpl {
             final int allycode = getAndUpdateProfileData(message, -1);
             final GalacticLegends glEVent = GalacticLegends.getByKey(message.getArgs().get(0));
             final List<GlRequirement> requirements = dbHandler.getGlRequirements(glEVent);
-            final List<GlCompare> compares = new ArrayList<>();
-            double totalCompletion = 0.0;
-            for (GlRequirement requirement : requirements) {
-                final GlCompare unit = dbHandler.GetGLCompareUnitForPlayer(requirement.getBaseId(), allycode);
-                unit.setCompleteness(CalculationHelper.calculateCompletion(unit.getRarity(), unit.getGearLevel(), unit.getRelicLevel(), unit.getGearPieces(),
-                        SwgohConstants.MAX_RARITY_LEVEL, requirement.getRelicLevel(), requirement.getGearLevel()));
-                totalCompletion += unit.getCompleteness();
-                compares.add(unit);
-            }
-            message.done(MessageHelper.formatPlayerGLStatus(glEVent.getName(), totalCompletion / requirements.size(), compares));
+            message.done(MessageHelper.formatPlayerGLStatus(getGlStatus(glEVent.getName(), allycode, requirements)));
         } catch (final SQLRetrieveError | SQLInsertionError | HttpRetrieveError error) {
             message.error(error.getMessage());
         }
+    }
+
+    public PlayerGLStatus getGlStatus(final String eventName, final int allycode, final List<GlRequirement> requirements) throws SQLRetrieveError {
+        final List<GLUnits> compares = new ArrayList<>();
+        double totalCompletion = 0.0;
+        for (GlRequirement requirement : requirements) {
+            final GLUnits unit = dbHandler.GetGLCompareUnitForPlayer(requirement.getBaseId(), allycode);
+            unit.setCompleteness(CalculationHelper.calculateCompletion(unit.getRarity(), unit.getGearLevel(), unit.getRelicLevel(), unit.getGearPieces(),
+                    SwgohConstants.MAX_RARITY_LEVEL, requirement.getRelicLevel(), requirement.getGearLevel()));
+            totalCompletion += unit.getCompleteness();
+            compares.add(unit);
+        }
+        return new PlayerGLStatus(eventName, compares, totalCompletion / requirements.size());
     }
 
     /**

@@ -1,11 +1,15 @@
 package nl.djj.swgoh_bot_v2.command_impl;
 
+import net.dv8tion.jda.api.entities.MessageChannel;
 import nl.djj.swgoh_bot_v2.config.BotConstants;
+import nl.djj.swgoh_bot_v2.config.GalacticLegends;
 import nl.djj.swgoh_bot_v2.config.SwgohConstants;
 import nl.djj.swgoh_bot_v2.config.SwgohGgEndpoint;
 import nl.djj.swgoh_bot_v2.database.DatabaseHandler;
 import nl.djj.swgoh_bot_v2.entities.Message;
 import nl.djj.swgoh_bot_v2.entities.compare.GuildCompare;
+import nl.djj.swgoh_bot_v2.entities.compare.PlayerGLStatus;
+import nl.djj.swgoh_bot_v2.entities.db.GlRequirement;
 import nl.djj.swgoh_bot_v2.entities.db.Guild;
 import nl.djj.swgoh_bot_v2.exceptions.HttpRetrieveError;
 import nl.djj.swgoh_bot_v2.exceptions.SQLInsertionError;
@@ -19,7 +23,9 @@ import org.json.JSONObject;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * @author DJJ
@@ -43,7 +49,7 @@ public class GuildImpl {
         this.implHelper = implHelper;
     }
 
-    private int getAndUpdateGuildData(final String discordId, final int swgohIdentifier) throws HttpRetrieveError, SQLRetrieveError, SQLInsertionError {
+    private int getAndUpdateGuildData(final String discordId, final int swgohIdentifier, final MessageChannel channel) throws HttpRetrieveError, SQLRetrieveError, SQLInsertionError {
         Guild guild;
         final int swgohId;
         if (swgohIdentifier == -1) {
@@ -54,6 +60,9 @@ public class GuildImpl {
             }
         } else {
             swgohId = swgohIdentifier;
+        }
+        if (channel != null){
+            channel.sendMessage("Guild data is older than: " + BotConstants.MAX_DATA_AGE + " hours\nRefreshing from SWGOH.gg").queue();
         }
         final JSONObject guildData = httpHelper.getJsonObject(SwgohGgEndpoint.GUILD_ENDPOINT.getUrl() + swgohId);
         final JSONObject guildInfo = guildData.getJSONObject("data");
@@ -81,7 +90,7 @@ public class GuildImpl {
      */
     public void genericInfo(final Message message) {
         try {
-            final int guildId = getAndUpdateGuildData(message.getGuildId(), -1);
+            final int guildId = getAndUpdateGuildData(message.getGuildId(), -1, message.getChannel());
             final Guild guild = this.dbHandler.getGuild(guildId);
             message.done(MessageHelper.formatGuildSwgohProfile(guild));
         } catch (final HttpRetrieveError | SQLRetrieveError | SQLInsertionError error) {
@@ -100,7 +109,7 @@ public class GuildImpl {
         }
         try {
             final int relicLevel = Integer.parseInt(message.getArgs().get(0));
-            final int guildId = getAndUpdateGuildData(message.getGuildId(), -1);
+            final int guildId = getAndUpdateGuildData(message.getGuildId(), -1, message.getChannel());
             final Map<String, Integer> relicOverview = this.dbHandler.getGuildRelicOverview(guildId, relicLevel);
             message.done(MessageHelper.formatGuildRelicOverview(relicOverview, relicLevel));
         } catch (final SQLRetrieveError | HttpRetrieveError | SQLInsertionError error) {
@@ -115,9 +124,40 @@ public class GuildImpl {
      */
     public void gpOverview(final Message message) {
         try {
-            final int guildId = getAndUpdateGuildData(message.getGuildId(), -1);
+            final int guildId = getAndUpdateGuildData(message.getGuildId(), -1, message.getChannel());
             final Map<String, Integer> gpOverview = dbHandler.getGuildGPOverview(guildId);
             message.done(MessageHelper.formatGuildGPOverview(gpOverview));
+        } catch (final SQLRetrieveError | HttpRetrieveError | SQLInsertionError error) {
+            message.error(error.getMessage());
+        }
+    }
+
+    /**
+     * Get's the GL status of the guild.
+     *
+     * @param message the message.
+     */
+    public void glOverview(final Message message) {
+        if (message.getArgs().isEmpty()) {
+            message.error("Please provide an valid GL");
+            return;
+        }
+        if (!GalacticLegends.isEvent(message.getArgs().get(0))) {
+            message.error("Invalid GL name given, please use: \n```" + GalacticLegends.getKeys() + "```");
+            return;
+        }
+        try {
+            final int guildId = getAndUpdateGuildData(message.getGuildId(), -1, message.getChannel());
+            final GalacticLegends glEvent = GalacticLegends.getByKey(message.getArgs().get(0));
+
+            final List<GlRequirement> requirements = dbHandler.getGlRequirements(glEvent);
+            final List<Integer> guildAllyCodes = dbHandler.getMembersOfGuild(guildId);
+            final Map<String, PlayerGLStatus> playerStatus = new TreeMap<>();
+            for (int allycode : guildAllyCodes) {
+                final String playerName = dbHandler.getPlayerNameForAllycode(allycode);
+                playerStatus.put(playerName, this.implHelper.getProfileImpl().getGlStatus(glEvent.getName(), allycode, requirements));
+            }
+            message.done(MessageHelper.formatGuildGLStatus(glEvent.getName(), playerStatus));
         } catch (final SQLRetrieveError | HttpRetrieveError | SQLInsertionError error) {
             message.error(error.getMessage());
         }
@@ -149,9 +189,9 @@ public class GuildImpl {
             }
         }
         try {
-            final int playerGuildId = getAndUpdateGuildData(message.getGuildId(), -1);
+            final int playerGuildId = getAndUpdateGuildData(message.getGuildId(), -1, message.getChannel());
             final GuildCompare playerGuild = createProfile(playerGuildId);
-            final int rivalGuildId = getAndUpdateGuildData(null, Integer.parseInt(code));
+            final int rivalGuildId = getAndUpdateGuildData(null, Integer.parseInt(code), null);
             final GuildCompare rivalGuild = createProfile(rivalGuildId);
             message.done(MessageHelper.formatGuildCompare(playerGuild, rivalGuild));
         } catch (final SQLInsertionError | SQLRetrieveError | HttpRetrieveError error) {

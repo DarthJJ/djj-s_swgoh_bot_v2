@@ -16,6 +16,7 @@ public class Guild extends BaseCommand {
     private static final transient String FLAG_GP = "gp";
     private static final transient String FLAG_RELIC = "relic";
     private static final transient String FLAG_COMPARE = "compare";
+    private static final transient String FLAG_GL = "gl";
 
     /**
      * Creates a SWGOH guild object.
@@ -41,6 +42,8 @@ public class Guild extends BaseCommand {
         flags.put(FLAG_GP, new Flag(FLAG_GP, "Sorts al the members based on GP", name, FLAG_GP));
         flags.put(FLAG_RELIC, new Flag(FLAG_RELIC, "Shows all members with the amount of toons below or at the given relic level", name, FLAG_RELIC, " <relicLevel>"));
         flags.put(FLAG_COMPARE, new Flag(FLAG_COMPARE, "Compares 1 guild to another", name, FLAG_COMPARE, "<guildId/allycode>"));
+        flags.put(FLAG_GL, new Flag(FLAG_GL, "Get's the GL status of the guild", name, FLAG_GL, "<GL>"));
+
     }
 
     @Override
@@ -50,6 +53,7 @@ public class Guild extends BaseCommand {
             case FLAG_GP -> this.implHelper.getGuildImpl().gpOverview(message);
             case FLAG_RELIC -> this.implHelper.getGuildImpl().relicOverview(message);
             case FLAG_COMPARE -> this.implHelper.getGuildImpl().compare(message);
+            case FLAG_GL ->  this.implHelper.getGuildImpl().glOverview(message);
             default -> message.error("This is not a valid flag, use '" + message.getGuildPrefix() + "help " + name + "'");
         }
     }
