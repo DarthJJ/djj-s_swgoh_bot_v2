@@ -82,6 +82,11 @@ public abstract class ControlImpl {
      */
     public abstract void closeBot();
 
+    /**
+     * Sends a notification to all guilds.
+     * @param message the message to use.
+     * @param string the message.
+     */
     public void sendMessage(final Message message, final String string) {
         sendNotification(message, string);
     }

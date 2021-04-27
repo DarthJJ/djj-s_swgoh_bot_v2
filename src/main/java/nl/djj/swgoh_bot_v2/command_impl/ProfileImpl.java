@@ -6,7 +6,7 @@ import nl.djj.swgoh_bot_v2.database.DatabaseHandler;
 import nl.djj.swgoh_bot_v2.entities.Message;
 import nl.djj.swgoh_bot_v2.entities.Unit;
 import nl.djj.swgoh_bot_v2.entities.compare.PlayerGLStatus;
-import nl.djj.swgoh_bot_v2.entities.compare.GLUnits;
+import nl.djj.swgoh_bot_v2.entities.compare.GLUnit;
 import nl.djj.swgoh_bot_v2.entities.db.GlRequirement;
 import nl.djj.swgoh_bot_v2.entities.db.Player;
 import nl.djj.swgoh_bot_v2.entities.db.User;
@@ -222,6 +222,10 @@ public class ProfileImpl {
         dbHandler.updatePresence(userId, username, StringHelper.getCurrentDateTimeAsString());
     }
 
+    /**
+     * Get's the GL status for a player.
+     * @param message the message.
+     */
     public void glStatus(final Message message) {
         if (message.getArgs().isEmpty()) {
             message.error("Please provide an valid GL");
@@ -241,11 +245,19 @@ public class ProfileImpl {
         }
     }
 
+    /**
+     * Formats a GL status for the player.
+     * @param eventName the GL name.
+     * @param allycode the player allycode.
+     * @param requirements the list of requirements.
+     * @return a PlayerGLStatus object.
+     * @throws SQLRetrieveError when something goes wrong .
+     */
     public PlayerGLStatus getGlStatus(final String eventName, final int allycode, final List<GlRequirement> requirements) throws SQLRetrieveError {
-        final List<GLUnits> compares = new ArrayList<>();
+        final List<GLUnit> compares = new ArrayList<>();
         double totalCompletion = 0.0;
-        for (GlRequirement requirement : requirements) {
-            final GLUnits unit = dbHandler.GetGLCompareUnitForPlayer(requirement.getBaseId(), allycode);
+        for (final GlRequirement requirement : requirements) {
+            final GLUnit unit = dbHandler.getGLCompareUnitForPlayer(requirement.getBaseId(), allycode);
             unit.setCompleteness(CalculationHelper.calculateCompletion(unit.getRarity(), unit.getGearLevel(), unit.getRelicLevel(), unit.getGearPieces(),
                     SwgohConstants.MAX_RARITY_LEVEL, requirement.getRelicLevel(), requirement.getGearLevel()));
             totalCompletion += unit.getCompleteness();

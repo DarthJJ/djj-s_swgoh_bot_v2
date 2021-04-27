@@ -2,7 +2,7 @@ package nl.djj.swgoh_bot_v2.database;
 
 import com.healthmarketscience.sqlbuilder.*;
 import nl.djj.swgoh_bot_v2.config.GalacticLegends;
-import nl.djj.swgoh_bot_v2.entities.compare.GLUnits;
+import nl.djj.swgoh_bot_v2.entities.compare.GLUnit;
 import nl.djj.swgoh_bot_v2.entities.db.*;
 import nl.djj.swgoh_bot_v2.exceptions.SQLDeletionError;
 import nl.djj.swgoh_bot_v2.exceptions.SQLInsertionError;
@@ -839,6 +839,12 @@ public abstract class DatabaseHandler extends TableNames {
         }
     }
 
+    /**
+     * Gets a list of GLRequirements.
+     * @param event the event to search for.
+     * @return a list of GLRequirements.
+     * @throws SQLRetrieveError when something goes wrong.
+     */
     public List<GlRequirement> getGlRequirements(final GalacticLegends event) throws SQLRetrieveError {
         logger.debug(className, "Getting GL Requirements for: " + event.getName());
         final String query = new SelectQuery()
@@ -857,7 +863,14 @@ public abstract class DatabaseHandler extends TableNames {
         }
     }
 
-    public GLUnits GetGLCompareUnitForPlayer(final String baseId, final int allycode) throws SQLRetrieveError {
+    /**
+     * Gets the GL Unit data for a player.
+     * @param baseId the unit baseId.
+     * @param allycode the player allycode.
+     * @return A GLUnit object.
+     * @throws SQLRetrieveError when something goes wrong.
+     */
+    public GLUnit getGLCompareUnitForPlayer(final String baseId, final int allycode) throws SQLRetrieveError {
         logger.debug(className, "Getting playerUnit: " + baseId + " | for allycode: " + allycode);
         final String query = new SelectQuery()
                 .addColumns(PLAYER_UNIT_GEAR, PLAYER_UNIT_RELIC, PLAYER_UNIT_RARITY, PLAYER_UNIT_GEAR_PIECES)
@@ -872,14 +885,21 @@ public abstract class DatabaseHandler extends TableNames {
                 final int gearPieces = result.getInt(PLAYER_UNIT_GEAR_PIECES.getName());
                 final int relic = result.getInt(PLAYER_UNIT_RELIC.getName());
                 final int rarity = result.getInt(PLAYER_UNIT_RARITY.getName());
-                return new GLUnits(unitName, gear, gearPieces, relic, rarity, getZetaCountForPlayerUnit(allycode, baseId));
+                return new GLUnit(unitName, gear, gearPieces, relic, rarity, getZetaCountForPlayerUnit(allycode, baseId));
             }
-            return new GLUnits(unitName, -1, -1, -1, -1, -1);
+            return new GLUnit(unitName, -1, -1, -1, -1, -1);
         } catch (final SQLException exception) {
             throw new SQLRetrieveError(className, "getUnitForPlayer", exception.getMessage(), logger);
         }
     }
 
+    /**
+     * Gets the amount of zetas a playerUnit has.
+     * @param allycode the player allycode.
+     * @param unitId the unit baseId.
+     * @return an integer value.
+     * @throws SQLRetrieveError when something goes wrong.
+     */
     public int getZetaCountForPlayerUnit(final int allycode, final String unitId) throws SQLRetrieveError {
         logger.debug(className, "Retrieving Guild Zeta Count");
         final SelectQuery selectQuery = new SelectQuery()
@@ -903,6 +923,12 @@ public abstract class DatabaseHandler extends TableNames {
         }
     }
 
+    /**
+     * Get's all the members of a guild.
+     * @param guildId the guild Id.
+     * @return a list of members.
+     * @throws SQLRetrieveError when something goes wrong.
+     */
     public List<Integer> getMembersOfGuild(final int guildId) throws SQLRetrieveError {
         logger.debug(className, "Retrieving members in guild");
         final String query = new SelectQuery()
@@ -921,6 +947,12 @@ public abstract class DatabaseHandler extends TableNames {
         }
     }
 
+    /**
+     * Gets the name for an allycode.
+     * @param allycode the allycode.
+     * @return a string value for the name.
+     * @throws SQLRetrieveError when something goes wrong.
+     */
     public String getPlayerNameForAllycode(final int allycode) throws SQLRetrieveError {
         final String query = new SelectQuery()
                 .addColumns(PLAYER_NAME)

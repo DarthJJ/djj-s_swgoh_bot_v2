@@ -65,7 +65,10 @@ public final class SwgohConstants {
             entry("CAPITALNEGOTIATOR", "Negotiator")
     );
 
-    public static final Map<Integer, Double> relicScale = Map.ofEntries(
+    /**
+     * The completion mappings for relics.
+     */
+    public static final Map<Integer, Double> RELIC_SCALE = Map.ofEntries(
             entry(0, 0.0),
             entry(1, 0.05),
             entry(2, 0.1),
@@ -76,7 +79,10 @@ public final class SwgohConstants {
             entry(7, 0.25)
     );
 
-    public static final Map<Integer, Double> gearScale = Map.ofEntries(
+    /**
+     * The completion mappings for gear.
+     */
+    public static final Map<Integer, Double> GEAR_SCALE = Map.ofEntries(
             entry(0, 0.0),
             entry(1, 0.01),
             entry(2, 0.01),
@@ -93,7 +99,10 @@ public final class SwgohConstants {
             entry(13, 0.22)
     );
 
-    public static final Map<Integer, Double> rarityScale = Map.ofEntries(
+    /**
+     * The completion mappings for rarity.
+     */
+    public static final Map<Integer, Double> RARITY_SCALE = Map.ofEntries(
             entry(0, 0.0),
             entry(1, 0.03),
             entry(2, 0.05),

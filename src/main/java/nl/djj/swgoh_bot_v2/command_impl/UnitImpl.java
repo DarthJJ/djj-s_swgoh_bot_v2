@@ -153,7 +153,7 @@ public class UnitImpl {
             final JSONArray gearPiecesArray = unitData.getJSONArray("gear");
             int gearPieces = 0;
             for (int j = 0; j < gearPiecesArray.length(); j++) {
-                if (gearPiecesArray.getJSONObject(j).getBoolean("is_obtained")){
+                if (gearPiecesArray.getJSONObject(j).getBoolean("is_obtained")) {
                     gearPieces++;
                 }
             }

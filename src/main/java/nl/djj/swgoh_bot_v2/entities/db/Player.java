@@ -19,6 +19,7 @@ public class Player {
      * @param galacticPower the GP.
      * @param url the swgoh url.
      * @param lastUpdated the lastUpdated date.
+     * @param lastUpdatedSwgoh the lastUpdated date on swgoh.
      * @param guildId the guildId.
      */
     public Player(final int allycode, final String name, final int galacticPower, final String url, final String lastUpdated, final String lastUpdatedSwgoh, final int guildId) {

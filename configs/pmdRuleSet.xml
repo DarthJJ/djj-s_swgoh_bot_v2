@@ -79,6 +79,11 @@
             <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['Main']"/>
         </properties>
     </rule>
+    <rule ref="category/java/errorprone.xml/DoNotTerminateVM">
+        <properties>
+            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['Main']"/>
+        </properties>
+    </rule>
     <rule ref="category/java/errorprone.xml/AvoidDuplicateLiterals">
         <properties>
             <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['TableNames']"/>

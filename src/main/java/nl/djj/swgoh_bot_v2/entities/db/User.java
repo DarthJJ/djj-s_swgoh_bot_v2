@@ -15,10 +15,11 @@ public class User {
     private final LocalDateTime lastUpdated;
 
     /**
-     * @param allycode  the allycode of the user.
-     * @param permLevel the permission level associated by the user.
-     * @param username  the username of the user.
-     * @param discordId the discordId of the user.
+     * @param allycode    the allycode of the user.
+     * @param permLevel   the permission level associated by the user.
+     * @param username    the username of the user.
+     * @param discordId   the discordId of the user.
+     * @param lastUpdated the lastUpdated date.
      */
     public User(final int allycode, final int permLevel, final String username, final String discordId, final LocalDateTime lastUpdated) {
         super();
@@ -30,10 +31,11 @@ public class User {
     }
 
     /**
-     * @param allycode   the allycode of the user.
-     * @param permission the permission associated by the user.
-     * @param username   the username of the user.
-     * @param discordId  the discordId of the user.
+     * @param allycode    the allycode of the user.
+     * @param permission  the permission associated by the user.
+     * @param username    the username of the user.
+     * @param discordId   the discordId of the user.
+     * @param lastUpdated the lastUpdated date.
      */
     public User(final int allycode, final Permission permission, final String username, final String discordId, final LocalDateTime lastUpdated) {
         super();

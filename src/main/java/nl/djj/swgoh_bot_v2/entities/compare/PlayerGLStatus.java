@@ -8,7 +8,7 @@ import java.util.List;
 public class PlayerGLStatus {
 
     private final transient String GlEvent;
-    private final transient List<GLUnits> units;
+    private final transient List<GLUnit> units;
     private final transient double totalCompleteness;
 
     /**
@@ -17,7 +17,7 @@ public class PlayerGLStatus {
      * @param units the units.
      * @param totalCompleteness the totalCompleteness.
      */
-    public PlayerGLStatus(final String glEvent, final List<GLUnits> units, final double totalCompleteness) {
+    public PlayerGLStatus(final String glEvent, final List<GLUnit> units, final double totalCompleteness) {
         this.GlEvent = glEvent;
         this.units = units;
         this.totalCompleteness = totalCompleteness;
@@ -27,7 +27,7 @@ public class PlayerGLStatus {
         return GlEvent;
     }
 
-    public List<GLUnits> getUnits() {
+    public List<GLUnit> getUnits() {
         return units;
     }
 

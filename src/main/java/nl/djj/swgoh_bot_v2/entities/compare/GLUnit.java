@@ -1,12 +1,9 @@
 package nl.djj.swgoh_bot_v2.entities.compare;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-
 /**
  * @author DJJ
  **/
-public class GLUnits {
+public class GLUnit {
     private final transient String unitName;
     private final transient int gearLevel;
     private final transient int gearPieces;
@@ -25,7 +22,7 @@ public class GLUnits {
      * @param rarity     the rarity level.
      * @param zetas      the zetas.
      */
-    public GLUnits(final String unitName, final int gearLevel, final int gearPieces, final int relicLevel, final int rarity, final int zetas) {
+    public GLUnit(final String unitName, final int gearLevel, final int gearPieces, final int relicLevel, final int rarity, final int zetas) {
         this.unitName = unitName;
         this.gearLevel = gearLevel;
         this.gearPieces = gearPieces;

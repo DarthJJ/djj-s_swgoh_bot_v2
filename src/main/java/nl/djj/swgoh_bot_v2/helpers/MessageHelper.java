@@ -31,7 +31,7 @@ public final class MessageHelper {
     private static final String GEAR_ICON = "\u2699";
     private static final String RELIC_ICON = "\uD83D\uDCDC";
     private static final String ZETA_ICON = "\u2742";
-    private static final String RARITY_ICON = "\u2605";
+//    private static final String RARITY_ICON = "\u2605";
     private static final String TABLE_FORMAT = "%-15s%-3s%-15s%n";
     private static final String UNIT_TABLE_FORMAT = "%-30s%-3s%-15s%n";
     private static final String HELP_TABLE_FORMAT = "%-10s%-3s%-15s%n";
@@ -97,7 +97,7 @@ public final class MessageHelper {
             for (final BaseCommand command : entry.getValue()) {
                 helpString.append(String.format(HELP_TABLE_FORMAT, command.getName(), " = ", command.getDescription()));
             }
-            helpString.append("\n");
+            helpString.append('\n');
             builder.addField(new MessageEmbed.Field(entry.getKey(), "```" + helpString + "```", false));
             if (builder.length() >= MessageEmbed.EMBED_MAX_LENGTH_BOT - 500) {
                 returnValue.add(builder.build());
@@ -373,24 +373,35 @@ public final class MessageHelper {
         for (final Map.Entry<String, JSONArray> entry : changelog.entrySet()) {
             final StringBuilder changeString = new StringBuilder();
             for (int i = 0; i < entry.getValue().length(); i++) {
-                changeString.append(entry.getValue().get(i)).append("\n");
+                changeString.append(entry.getValue().get(i)).append('\n');
             }
             embed.addField(entry.getKey(), "```" + changeString + "```", false);
         }
         return embed.build();
     }
 
+    /**
+     * Formats a message for the playerGLStatus.
+     * @param playerGlStatus the playerGLStatus.
+     * @return a message embed.
+     */
     public static MessageEmbed formatPlayerGLStatus(final PlayerGLStatus playerGlStatus) {
         final EmbedBuilder embed = new EmbedBuilder(baseEmbed());
         embed.setDescription("GL Status for: " + playerGlStatus.getGlEvent() + "\nTotal Completion: **" + new DecimalFormat("##.##%").format(playerGlStatus.getTotalCompleteness()) + "**");
-        StringBuilder status = new StringBuilder(String.format(GL_OVERVIEW_FORMAT, "name", GEAR_ICON, RELIC_ICON, ZETA_ICON, "status"));
-        for (GLUnits compare : playerGlStatus.getUnits()) {
+        final StringBuilder status = new StringBuilder(String.format(GL_OVERVIEW_FORMAT, "name", GEAR_ICON, RELIC_ICON, ZETA_ICON, "status"));
+        for (final GLUnit compare : playerGlStatus.getUnits()) {
             status.append(String.format(GL_OVERVIEW_FORMAT, compare.getUnitName(), compare.getGearLevel(), compare.getRelicLevel(), compare.getZetas(), new DecimalFormat("##.##%").format(compare.getCompleteness())));
         }
         embed.addField("status", "```" + status + "```", false);
         return embed.build();
     }
 
+    /**
+     * Formats a message for the Guild GL Status.
+     * @param event the event name.
+     * @param playerStatus the player statussen.
+     * @return a message embed.
+     */
     public static MessageEmbed formatGuildGLStatus(final String event, final Map<String, PlayerGLStatus> playerStatus) {
         final EmbedBuilder embed = new EmbedBuilder(baseEmbed());
         embed.setDescription("Guild GL Status for: " + event);

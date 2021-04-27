@@ -61,7 +61,7 @@ public class GuildImpl {
         } else {
             swgohId = swgohIdentifier;
         }
-        if (channel != null){
+        if (channel != null) {
             channel.sendMessage("Guild data is older than: " + BotConstants.MAX_DATA_AGE + " hours\nRefreshing from SWGOH.gg").queue();
         }
         final JSONObject guildData = httpHelper.getJsonObject(SwgohGgEndpoint.GUILD_ENDPOINT.getUrl() + swgohId);
@@ -153,7 +153,7 @@ public class GuildImpl {
             final List<GlRequirement> requirements = dbHandler.getGlRequirements(glEvent);
             final List<Integer> guildAllyCodes = dbHandler.getMembersOfGuild(guildId);
             final Map<String, PlayerGLStatus> playerStatus = new TreeMap<>();
-            for (int allycode : guildAllyCodes) {
+            for (final int allycode : guildAllyCodes) {
                 final String playerName = dbHandler.getPlayerNameForAllycode(allycode);
                 playerStatus.put(playerName, this.implHelper.getProfileImpl().getGlStatus(glEvent.getName(), allycode, requirements));
             }
