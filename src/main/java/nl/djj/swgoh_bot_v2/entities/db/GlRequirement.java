@@ -1,12 +1,13 @@
 package nl.djj.swgoh_bot_v2.entities.db;
 
+import nl.djj.swgoh_bot_v2.config.GalacticLegends;
 import org.json.JSONObject;
 
 /**
  * @author DJJ
  */
 public class GlRequirement {
-    private transient String glEvent;
+    private transient GalacticLegends glEvent;
     private transient String baseId;
     private transient int gearLevel;
     private transient int relicLevel;
@@ -18,11 +19,25 @@ public class GlRequirement {
         super();
     }
 
-    public String getGlEvent() {
+    /**
+     * The Constructor.
+     * @param glEvent the event.
+     * @param baseId the unit baseID.
+     * @param gearLevel the gear level.
+     * @param relicLevel the relic level.
+     */
+    public GlRequirement(final GalacticLegends glEvent, final String baseId, final int gearLevel, final int relicLevel) {
+        this.glEvent = glEvent;
+        this.baseId = baseId;
+        this.gearLevel = gearLevel;
+        this.relicLevel = relicLevel;
+    }
+
+    public GalacticLegends getGlEvent() {
         return glEvent;
     }
 
-    public void setGlEvent(final String glEvent) {
+    public void setGlEvent(final GalacticLegends glEvent) {
         this.glEvent = glEvent;
     }
 
@@ -59,7 +74,7 @@ public class GlRequirement {
     public static GlRequirement initFromJson(final JSONObject data, final String glEvent) {
         final GlRequirement requirement = new GlRequirement();
         requirement.setBaseId(data.getString("baseId"));
-        requirement.setGlEvent(glEvent);
+        requirement.setGlEvent(GalacticLegends.getByName(glEvent));
         requirement.setGearLevel(data.getInt("gearLevel"));
         requirement.setRelicLevel(data.getInt("relicTier"));
         return requirement;

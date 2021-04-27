@@ -150,7 +150,14 @@ public class UnitImpl {
             final int relic = Math.max(-1, unitData.getInt("relic_tier") - 2);
             final int speed = unitData.getJSONObject("stats").getInt("5");
             final JSONArray abilityData = unitData.getJSONArray("ability_data");
-            final PlayerUnit playerUnit = new PlayerUnit(allycode, guildId, baseId, rarity, galacticPower, gear, relic, speed);
+            final JSONArray gearPiecesArray = unitData.getJSONArray("gear");
+            int gearPieces = 0;
+            for (int j = 0; j < gearPiecesArray.length(); j++) {
+                if (gearPiecesArray.getJSONObject(j).getBoolean("is_obtained")){
+                    gearPieces++;
+                }
+            }
+            final PlayerUnit playerUnit = new PlayerUnit(allycode, guildId, baseId, rarity, galacticPower, gear, gearPieces, relic, speed);
             for (int j = 0; j < abilityData.length(); j++) {
                 final String abilityId = abilityData.getJSONObject(j).getString("id");
                 final int level = abilityData.getJSONObject(j).getInt("ability_tier");

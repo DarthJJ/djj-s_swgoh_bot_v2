@@ -47,7 +47,7 @@ public final class StringHelper {
      * @return a LocalDateTime object.
      */
     public static LocalDateTime getCurrentDateTime() {
-        return LocalDateTime.now();
+        return LocalDateTime.now(ZoneId.of("Europe/Amsterdam"));
     }
 
     /**
@@ -56,7 +56,7 @@ public final class StringHelper {
      * @return a LocalDate object.
      */
     public static LocalDate getCurrentDate() {
-        return LocalDate.now();
+        return LocalDate.now(ZoneId.of("Europe/Amsterdam"));
     }
 
     /**

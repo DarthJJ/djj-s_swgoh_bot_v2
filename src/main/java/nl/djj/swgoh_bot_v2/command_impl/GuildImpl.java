@@ -50,7 +50,7 @@ public class GuildImpl {
             guild = dbHandler.getGuild(dbHandler.getSwgohIdByGuildId(discordId));
             swgohId = guild.getIdentifier();
             if (Duration.between(guild.getLastUpdated(), StringHelper.getCurrentDateTime()).toHours() < BotConstants.MAX_DATA_AGE) {
-                return guild.getIdentifier();
+                return swgohId;
             }
         } else {
             swgohId = swgohIdentifier;

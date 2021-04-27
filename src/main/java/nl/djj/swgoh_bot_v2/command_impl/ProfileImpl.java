@@ -1,13 +1,12 @@
 package nl.djj.swgoh_bot_v2.command_impl;
 
 import net.dv8tion.jda.api.entities.Role;
-import nl.djj.swgoh_bot_v2.config.BotConstants;
-import nl.djj.swgoh_bot_v2.config.Permission;
-import nl.djj.swgoh_bot_v2.config.SwgohConstants;
-import nl.djj.swgoh_bot_v2.config.SwgohGgEndpoint;
+import nl.djj.swgoh_bot_v2.config.*;
 import nl.djj.swgoh_bot_v2.database.DatabaseHandler;
 import nl.djj.swgoh_bot_v2.entities.Message;
 import nl.djj.swgoh_bot_v2.entities.Unit;
+import nl.djj.swgoh_bot_v2.entities.compare.GlCompare;
+import nl.djj.swgoh_bot_v2.entities.db.GlRequirement;
 import nl.djj.swgoh_bot_v2.entities.db.Player;
 import nl.djj.swgoh_bot_v2.entities.db.User;
 import nl.djj.swgoh_bot_v2.entities.swgoh.SwgohProfile;
@@ -15,13 +14,11 @@ import nl.djj.swgoh_bot_v2.exceptions.HttpRetrieveError;
 import nl.djj.swgoh_bot_v2.exceptions.SQLDeletionError;
 import nl.djj.swgoh_bot_v2.exceptions.SQLInsertionError;
 import nl.djj.swgoh_bot_v2.exceptions.SQLRetrieveError;
-import nl.djj.swgoh_bot_v2.helpers.HttpHelper;
-import nl.djj.swgoh_bot_v2.helpers.Logger;
-import nl.djj.swgoh_bot_v2.helpers.MessageHelper;
-import nl.djj.swgoh_bot_v2.helpers.StringHelper;
+import nl.djj.swgoh_bot_v2.helpers.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -64,8 +61,29 @@ public class ProfileImpl {
         }
     }
 
+    private int getAndUpdateProfileData(final Message message, final int swgohIdentifier) throws SQLRetrieveError, HttpRetrieveError, SQLInsertionError {
+        final User user;
+        final int swgohId;
+        if (swgohIdentifier == -1) {
+            user = dbHandler.getByDiscordId(message.getAuthorId());
+            swgohId = user.getAllycode();
+            if (Duration.between(user.getLastUpdated(), StringHelper.getCurrentDateTime()).toHours() < BotConstants.MAX_DATA_AGE) {
+                return swgohId;
+            }
+        } else {
+            swgohId = swgohIdentifier;
+        }
+        final JSONObject playerData = httpHelper.getJsonObject(SwgohGgEndpoint.PLAYER_ENDPOINT.getUrl() + swgohId);
+        final JSONObject playerInfo = playerData.getJSONObject("data");
+        final JSONArray playerUnits = playerData.getJSONArray("units");
+        insertProfile(playerInfo, playerInfo.getInt("guild_id"));
+        this.implHelper.getUnitImpl().insertUnits(playerUnits, swgohId, playerInfo.getInt("guild_id"));
+        return swgohId;
+    }
+
     /**
      * Gets the profile data for the given allycode.
+     *
      * @param allycode the allycode.
      * @return the profile data as JSON.
      */
@@ -87,14 +105,14 @@ public class ProfileImpl {
             message.getChannel().sendMessage("You are already registered").queue();
             return;
         }
-        final String allycode = String.join(", ", message.getArgs()).replace("-", "");
-        if (StringHelper.isInvalidAllycode(allycode) || allycode.isEmpty()) {
+        final int allycode = Integer.parseInt(String.join(", ", message.getArgs()).replace("-", ""));
+        if (StringHelper.isInvalidAllycode(String.valueOf(allycode))) {
             message.getChannel().sendMessage("Allycode validation error, syntax: <xxx-xxx-xxx>").queue();
             return;
         }
         try {
             this.httpHelper.getJsonObject(SwgohGgEndpoint.PLAYER_ENDPOINT.getUrl() + allycode);
-            this.dbHandler.insertUser(new User(allycode, Permission.USER, message.getAuthor(), message.getAuthorId()));
+            this.dbHandler.insertUser(new User(allycode, Permission.USER, message.getAuthor(), message.getAuthorId(), StringHelper.getCurrentDateTime()));
             message.getChannel().sendMessage("You are successfully registered").queue();
         } catch (final SQLInsertionError error) {
             message.getChannel().sendMessage("Something went wrong in the DB, please contact the bot Dev").queue();
@@ -204,9 +222,30 @@ public class ProfileImpl {
     }
 
     public void glStatus(final Message message) {
-        final JSONObject playerData = getProfileData(message);
-        if (playerData == null) {
+        if (message.getArgs().isEmpty()) {
+            message.error("Please provide an valid GL");
             return;
+        }
+        if (!GalacticLegends.isEvent(message.getArgs().get(0))) {
+            message.error("Invalid GL name given, please use: \n```" + GalacticLegends.getKeys() + "```");
+            return;
+        }
+        try {
+            final int allycode = getAndUpdateProfileData(message, -1);
+            final GalacticLegends glEVent = GalacticLegends.getByKey(message.getArgs().get(0));
+            final List<GlRequirement> requirements = dbHandler.getGlRequirements(glEVent);
+            final List<GlCompare> compares = new ArrayList<>();
+            double totalCompletion = 0.0;
+            for (GlRequirement requirement : requirements) {
+                final GlCompare unit = dbHandler.GetGLCompareUnitForPlayer(requirement.getBaseId(), allycode);
+                unit.setCompleteness(CalculationHelper.calculateCompletion(unit.getRarity(), unit.getGearLevel(), unit.getRelicLevel(), unit.getGearPieces(),
+                        SwgohConstants.MAX_RARITY_LEVEL, requirement.getRelicLevel(), requirement.getGearLevel()));
+                totalCompletion += unit.getCompleteness();
+                compares.add(unit);
+            }
+            message.done(MessageHelper.formatPlayerGLStatus(glEVent.getName(), totalCompletion / requirements.size(), compares));
+        } catch (final SQLRetrieveError | SQLInsertionError | HttpRetrieveError error) {
+            message.error(error.getMessage());
         }
     }
 
@@ -243,17 +282,19 @@ public class ProfileImpl {
 
     /**
      * Inserts a profile for the user.
+     *
      * @param playerData the player data.
-     * @param guildId the guild of the user.
+     * @param guildId    the guild of the user.
      * @throws SQLInsertionError when something goes wrong.
      */
-    public void insertProfile(final JSONObject playerData, final int guildId) throws SQLInsertionError{
+    public void insertProfile(final JSONObject playerData, final int guildId) throws SQLInsertionError {
         final int allycode = playerData.getInt("ally_code");
         final String name = playerData.getString("name");
         final int galacticPower = playerData.getInt("galactic_power");
         final String url = SwgohGgEndpoint.PLAYER_ENDPOINT.getUrl() + playerData.getString("url");
-        final String lastUpdated = playerData.getString("last_updated");
-        this.dbHandler.insertPlayer(new Player(allycode, name, galacticPower, url, lastUpdated, guildId));
+        final String lastUpdated = StringHelper.getCurrentDateTimeAsString();
+        final String lastUpdatedSwgoh = playerData.getString("last_updated");
+        this.dbHandler.insertPlayer(new Player(allycode, name, galacticPower, url, lastUpdated, lastUpdatedSwgoh, guildId));
 
     }
     //CHECKSTYLE.ON: NPathComplexityCheck

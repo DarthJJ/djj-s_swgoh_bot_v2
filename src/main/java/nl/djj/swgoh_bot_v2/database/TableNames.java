@@ -24,7 +24,7 @@ public class TableNames {
     //UnitInfo Table --> unit information for all the units.
     final transient DbTable UNIT_INFO = schema.addTable("unitInfo");
     final transient DbColumn UNIT_BASE_ID = UNIT_INFO.addColumn("baseId", "string", null);
-    final transient DbColumn UNIT_NAME = UNIT_INFO.addColumn(" name", "string", null);
+    final transient DbColumn UNIT_NAME = UNIT_INFO.addColumn("name", "string", null);
     final transient DbColumn UNIT_ALIGNMENT = UNIT_INFO.addColumn("alignment", "string", null);
     final transient DbColumn UNIT_IS_CHARACTER = UNIT_INFO.addColumn("isCharacter", "integer", null);
 
@@ -66,6 +66,7 @@ public class TableNames {
     final transient DbColumn PLAYER_UNIT_RARITY = PLAYER_UNIT.addColumn("rarity", "integer", null);
     final transient DbColumn PLAYER_UNIT_GP = PLAYER_UNIT.addColumn("gp", "integer", null);
     final transient DbColumn PLAYER_UNIT_GEAR = PLAYER_UNIT.addColumn("gear", "integer", null);
+    final transient DbColumn PLAYER_UNIT_GEAR_PIECES = PLAYER_UNIT.addColumn("gearPieces", "integer", null);
     final transient DbColumn PLAYER_UNIT_RELIC = PLAYER_UNIT.addColumn("relic", "integer", null);
     final transient DbColumn PLAYER_UNIT_SPEED = PLAYER_UNIT.addColumn("speed", "integer", null);
 
@@ -76,6 +77,7 @@ public class TableNames {
     final transient DbColumn PLAYER_GP = PLAYER.addColumn("gp", "integer", null);
     final transient DbColumn PLAYER_URL = PLAYER.addColumn("url", "string", null);
     final transient DbColumn PLAYER_LAST_UPDATED = PLAYER.addColumn("lastUpdated", "string", null);
+    final transient DbColumn PLAYER_LAST_UPDATED_SWGOH = PLAYER.addColumn("lastUpdatedSwgoh", "string", null);
     final transient DbColumn PLAYER_GUILD_ID = PLAYER.addColumn("guildId", "integer", null);
 
     //Guild --> Information for a certain guild.
@@ -109,6 +111,7 @@ public class TableNames {
 
     final transient DbJoin ZETA_JOIN = spec.addJoin(null, ABILITY.getName(), null, UNIT_ABILITY.getName(), ABILITY_ID.getName());
     final transient DbJoin PLAYER_UNIT_JOIN = spec.addJoin(null, PLAYER.getName(), null, PLAYER_UNIT.getName(), PLAYER_ALLYCODE.getName());
+    final transient DbJoin UNIT_NAME_JOIN = spec.addJoin(null, UNIT_INFO.getName(), null, PLAYER_UNIT.getName(), UNIT_BASE_ID.getName());
     static final transient int IS_UPDATED = 1;
 
     /**

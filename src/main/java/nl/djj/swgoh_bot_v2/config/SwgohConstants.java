@@ -14,6 +14,11 @@ public final class SwgohConstants {
     public static final int MAX_GEAR_LEVEL = 13;
 
     /**
+     * The Max Rarity level a toon can have.
+     */
+    public static final int MAX_RARITY_LEVEL = 7;
+
+    /**
      * Gear level 13.
      */
     public static final int GEAR_LEVEL_13 = 13;
@@ -58,6 +63,42 @@ public final class SwgohConstants {
             entry("GRANDMASTERLUKE", "Grand Master Luke Skywalker"),
             entry("CAPITALMALEVOLENCE", "Malevolence"),
             entry("CAPITALNEGOTIATOR", "Negotiator")
+    );
+
+    public static final Map<Integer, Double> relicScale = Map.ofEntries(
+            entry(1, 0.05),
+            entry(2, 0.1),
+            entry(3, 0.1),
+            entry(4, 0.15),
+            entry(5, 0.15),
+            entry(6, 0.2),
+            entry(7, 0.25)
+    );
+
+    public static final Map<Integer, Double> gearScale = Map.ofEntries(
+            entry(1, 0.01),
+            entry(2, 0.01),
+            entry(3, 0.01),
+            entry(4, 0.01),
+            entry(5, 0.03),
+            entry(6, 0.05),
+            entry(7, 0.07),
+            entry(8, 0.08),
+            entry(9, 0.1),
+            entry(10, 0.11),
+            entry(11, 0.13),
+            entry(12, 0.17),
+            entry(13, 0.22)
+    );
+
+    public static final Map<Integer, Double> rarityScale = Map.ofEntries(
+            entry(1, 0.03),
+            entry(2, 0.05),
+            entry(3, 0.08),
+            entry(4, 0.09),
+            entry(5, 0.2),
+            entry(6, 0.25),
+            entry(7, 0.3)
     );
 
     /**

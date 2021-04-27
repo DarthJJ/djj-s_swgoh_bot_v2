@@ -13,6 +13,7 @@ public class PlayerUnit {
     private final transient int rarity;
     private final transient int galacticPower;
     private final transient int gear;
+    private final transient int gearPieces;
     private final transient int relic;
     private final transient int speed;
     private final transient List<UnitAbility> abilities;
@@ -26,16 +27,18 @@ public class PlayerUnit {
      * @param rarity        the star level.
      * @param galacticPower the galactic power.
      * @param gear          the gear level.
+     * @param gearPieces    the amount of gearPieces.
      * @param relic         the relic level.
      * @param speed         the base speed.
      */
-    public PlayerUnit(final int allycode, final int guildId, final String baseId, final int rarity, final int galacticPower, final int gear, final int relic, final int speed) {
+    public PlayerUnit(final int allycode, final int guildId, final String baseId, final int rarity, final int galacticPower, final int gear, final int gearPieces, final int relic, final int speed) {
         this.allycode = allycode;
         this.guildId = guildId;
         this.baseId = baseId;
         this.rarity = rarity;
         this.galacticPower = galacticPower;
         this.gear = gear;
+        this.gearPieces = gearPieces;
         this.relic = relic;
         this.speed = speed;
         this.abilities = new ArrayList<>();
@@ -60,6 +63,10 @@ public class PlayerUnit {
 
     public int getGear() {
         return gear;
+    }
+
+    public int getGearPieces() {
+        return gearPieces;
     }
 
     public int getRelic() {

@@ -9,6 +9,7 @@ public class Player {
     private final transient int galacticPower;
     private final transient String url;
     private final transient String lastUpdated;
+    private final transient String lastUpdatedSwgoh;
     private final transient int guildId;
 
     /**
@@ -20,12 +21,13 @@ public class Player {
      * @param lastUpdated the lastUpdated date.
      * @param guildId the guildId.
      */
-    public Player(final int allycode, final String name, final int galacticPower, final String url, final String lastUpdated, final int guildId) {
+    public Player(final int allycode, final String name, final int galacticPower, final String url, final String lastUpdated, final String lastUpdatedSwgoh, final int guildId) {
         this.allycode = allycode;
         this.name = name;
         this.galacticPower = galacticPower;
         this.url = url;
         this.lastUpdated = lastUpdated;
+        this.lastUpdatedSwgoh = lastUpdatedSwgoh;
         this.guildId = guildId;
     }
 
@@ -47,6 +49,10 @@ public class Player {
 
     public String getLastUpdated() {
         return lastUpdated;
+    }
+
+    public String getLastUpdatedSwgoh() {
+        return lastUpdatedSwgoh;
     }
 
     public int getGuildId() {

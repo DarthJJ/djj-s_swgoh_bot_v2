@@ -1,6 +1,8 @@
 package nl.djj.swgoh_bot_v2.database;
 
 import com.healthmarketscience.sqlbuilder.*;
+import nl.djj.swgoh_bot_v2.config.GalacticLegends;
+import nl.djj.swgoh_bot_v2.entities.compare.GlCompare;
 import nl.djj.swgoh_bot_v2.entities.db.*;
 import nl.djj.swgoh_bot_v2.exceptions.SQLDeletionError;
 import nl.djj.swgoh_bot_v2.exceptions.SQLInsertionError;
@@ -144,7 +146,7 @@ public abstract class DatabaseHandler extends TableNames {
             for (final GlRequirement requirement : requirements) {
                 query = new InsertQuery(GL_REQUIREMENTS)
                         .addColumn(GL_REQ_BASE_ID, requirement.getBaseId())
-                        .addColumn(GL_REQ_EVENT, requirement.getGlEvent())
+                        .addColumn(GL_REQ_EVENT, requirement.getGlEvent().getKey())
                         .addColumn(GL_REQ_GEAR_LEVEL, requirement.getGearLevel())
                         .addColumn(GL_REQ_RELIC_LEVEL, requirement.getRelicLevel())
                         .validate().toString();
@@ -196,10 +198,10 @@ public abstract class DatabaseHandler extends TableNames {
                     .validate().toString();
             final ResultSet result = statement.executeQuery(query);
             if (result.next()) {
-                final String allycode = result.getString(USER_ALLYCODE.getName());
+                final int allycode = result.getInt(USER_ALLYCODE.getName());
                 final String username = result.getString(USER_USERNAME.getName());
                 final int permissionLevel = result.getInt(USER_PERMISSION_LEVEL.getName());
-                return new User(allycode, permissionLevel, username, discordId);
+                return new User(allycode, permissionLevel, username, discordId, StringHelper.getCurrentDateTime());
             }
             throw new SQLRetrieveError(className, "getByDiscordId", "No user found", logger);
         } catch (final SQLException exception) {
@@ -478,7 +480,7 @@ public abstract class DatabaseHandler extends TableNames {
      * @param now      the date.
      */
     public void updatePresence(final String userId, final String username, final String now) {
-        logger.debug(className, "Updating a user presence");
+        logger.debug(className, "Updating a user presence. | username: " + username);
         String query = new InsertQuery(PRESENCE)
                 .addColumn(PRESENCE_DISCORD_ID, userId)
                 .addColumn(PRESENCE_NAME, username)
@@ -519,6 +521,7 @@ public abstract class DatabaseHandler extends TableNames {
 
     /**
      * Get the GP overview for an guild.
+     *
      * @param guildId the guild ID.
      * @return a list with users and their GP.
      * @throws SQLRetrieveError when something goes wrong.
@@ -544,7 +547,8 @@ public abstract class DatabaseHandler extends TableNames {
 
     /**
      * Gets the relic overview for the guild.
-     * @param guildId the guild ID.
+     *
+     * @param guildId    the guild ID.
      * @param relicLevel the minimum relic level to filter.
      * @return a list with users and their relic count.
      * @throws SQLRetrieveError when something goes wrong.
@@ -766,6 +770,7 @@ public abstract class DatabaseHandler extends TableNames {
                 .addColumn(PLAYER_GP, player.getGalacticPower())
                 .addColumn(PLAYER_URL, player.getUrl())
                 .addColumn(PLAYER_LAST_UPDATED, player.getLastUpdated())
+                .addColumn(PLAYER_LAST_UPDATED_SWGOH, player.getLastUpdatedSwgoh())
                 .addColumn(PLAYER_GUILD_ID, player.getGuildId())
                 .validate().toString();
         query = makeReplace(query);
@@ -831,6 +836,70 @@ public abstract class DatabaseHandler extends TableNames {
             statement.executeUpdate(query);
         } catch (final SQLException exception) {
             throw new SQLInsertionError(className, "insertUnitAbility", exception.getMessage(), logger);
+        }
+    }
+
+    public List<GlRequirement> getGlRequirements(final GalacticLegends event) throws SQLRetrieveError {
+        logger.debug(className, "Getting GL Requirements for: " + event.getName());
+        final String query = new SelectQuery()
+                .addColumns(GL_REQ_BASE_ID, GL_REQ_GEAR_LEVEL, GL_REQ_RELIC_LEVEL)
+                .addCondition(BinaryCondition.equalTo(GL_REQ_EVENT, event.getKey()))
+                .validate().toString();
+        try {
+            final ResultSet result = statement.executeQuery(query);
+            final List<GlRequirement> requirements = new ArrayList<>();
+            while (result.next()) {
+                requirements.add(new GlRequirement(event, result.getString(GL_REQ_BASE_ID.getName()), result.getInt(GL_REQ_GEAR_LEVEL.getName()), result.getInt(GL_REQ_RELIC_LEVEL.getName())));
+            }
+            return requirements;
+        } catch (final SQLException exception) {
+            throw new SQLRetrieveError(className, "getGLRequiremennts", exception.getMessage(), logger);
+        }
+    }
+
+    public GlCompare GetGLCompareUnitForPlayer(final String baseId, final int allycode) throws SQLRetrieveError {
+        logger.debug(className, "Getting playerUnit: " + baseId + " | for allycode: " + allycode);
+        final String query = new SelectQuery()
+                .addColumns(PLAYER_UNIT_GEAR, PLAYER_UNIT_RELIC, PLAYER_UNIT_RARITY, PLAYER_UNIT_GEAR_PIECES)
+                .addCondition(BinaryCondition.equalTo(PLAYER_UNIT_BASE_ID, baseId))
+                .addCondition(BinaryCondition.equalTo(PLAYER_UNIT_ALLYCODE, allycode))
+                .validate().toString();
+        try {
+            final String unitName = getUnitNameForId(baseId);
+            final ResultSet result = statement.executeQuery(query);
+            if (result.next()) {
+                final int gear = result.getInt(PLAYER_UNIT_GEAR.getName());
+                final int gearPieces = result.getInt(PLAYER_UNIT_GEAR_PIECES.getName());
+                final int relic = result.getInt(PLAYER_UNIT_RELIC.getName());
+                final int rarity = result.getInt(PLAYER_UNIT_RARITY.getName());
+                return new GlCompare(unitName, gear, gearPieces, relic, rarity, getZetaCountForPlayerUnit(allycode, baseId));
+            }
+            return new GlCompare(unitName, -1, -1, -1, -1, -1);
+        } catch (final SQLException exception) {
+            throw new SQLRetrieveError(className, "getUnitForPlayer", exception.getMessage(), logger);
+        }
+    }
+
+    public int getZetaCountForPlayerUnit(final int allycode, final String unitId) throws SQLRetrieveError {
+        logger.debug(className, "Retrieving Guild Zeta Count");
+        final SelectQuery selectQuery = new SelectQuery()
+                .addCustomColumns(FunctionCall.count().addColumnParams())
+                .addCondition(BinaryCondition.equalTo(UNIT_ABILITY_ALLYCODE, allycode))
+                .addJoins(SelectQuery.JoinType.INNER, ZETA_JOIN)
+                .addCondition(BinaryCondition.equalTo(ABILITY_IS_ZETA, true))
+                .addCondition(BinaryCondition.equalTo(ABILITY_TIER_MAX, UNIT_ABILITY_LEVEL));
+        if (unitId != null) {
+            selectQuery.addCondition(BinaryCondition.equalTo(ABILITY_UNIT_ID, unitId));
+        }
+        final String query = selectQuery.validate().toString();
+        try {
+            final ResultSet result = statement.executeQuery(query);
+            if (result.next()) {
+                return result.getInt(1);
+            }
+            return -1;
+        } catch (final SQLException exception) {
+            throw new SQLRetrieveError(className, "getZetaCountForGuild", exception.getMessage(), logger);
         }
     }
     //CHECKSTYLE.ON: MultipleStringLiteralsCheck

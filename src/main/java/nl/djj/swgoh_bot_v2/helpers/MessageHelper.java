@@ -7,6 +7,7 @@ import nl.djj.swgoh_bot_v2.config.BotConstants;
 import nl.djj.swgoh_bot_v2.config.SwgohConstants;
 import nl.djj.swgoh_bot_v2.entities.Flag;
 import nl.djj.swgoh_bot_v2.entities.Message;
+import nl.djj.swgoh_bot_v2.entities.compare.GlCompare;
 import nl.djj.swgoh_bot_v2.entities.compare.GuildCompare;
 import nl.djj.swgoh_bot_v2.entities.compare.ProfileCompare;
 import nl.djj.swgoh_bot_v2.entities.compare.UnitCompare;
@@ -16,6 +17,7 @@ import nl.djj.swgoh_bot_v2.entities.swgoh.SwgohProfile;
 import org.json.JSONArray;
 
 import java.awt.*;
+import java.text.DecimalFormat;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,11 +31,16 @@ public final class MessageHelper {
     private static final String REACTION_POSITIVE = "U+1F44D";
     private static final String REACTION_ERROR = "U+274C";
     private static final String REACTION_DONE = "U+2705";
+    private static final String GEAR_ICON = "\u2699";
+    private static final String RELIC_ICON = "\uD83D\uDCDC";
+    private static final String ZETA_ICON = "\u2742";
+    private static final String RARITY_ICON = "\u2605";
     private static final String TABLE_FORMAT = "%-15s%-3s%-15s%n";
     private static final String UNIT_TABLE_FORMAT = "%-30s%-3s%-15s%n";
     private static final String HELP_TABLE_FORMAT = "%-10s%-3s%-15s%n";
     private static final String PROFILE_TABLE_FORMAT = "%-8s%-15s%-3s%-15s%n";
     private static final String GUILD_TABLE_FORMAT = "%-11s%-15s%-3s%-15s%n";
+    private static final String GL_OVERVIEW_FORMAT = "%-28s%-5s%-5s%-5s%-6s%n";
 
     /**
      * Constructor.
@@ -180,31 +187,6 @@ public final class MessageHelper {
         builder.addField(new MessageEmbed.Field("Presence Ignore role", config.getIgnoreRole(), false));
         builder.addField(new MessageEmbed.Field("BotNotifyChannel", config.getNotifyChannel(), false));
         builder.addField(new MessageEmbed.Field("BotLoggingChannel", config.getBotLoggingChannel(), false));
-        return builder.build();
-    }
-
-    /**
-     * Creates an embed for the Arena profile.
-     *
-     * @param profile the profile.
-     * @return the embed.
-     */
-    public static MessageEmbed formatArenaProfile(final SwgohProfile profile) {
-        final EmbedBuilder builder = new EmbedBuilder(baseEmbed());
-        builder.appendDescription("Arena info for: " + profile.getName());
-        final StringBuilder toonArena = new StringBuilder();
-        for (final String s : profile.getToonArenaTeam()) {
-            toonArena.append(s).append("\n");
-        }
-        builder.addField(new MessageEmbed.Field("Toon Arena Rank: ", Integer.toString(profile.getToonArenaRank()), false));
-        builder.addField(new MessageEmbed.Field("Toon Arena Team", "```" + toonArena + "```", false));
-        final StringBuilder shipArena = new StringBuilder();
-        for (final String s : profile.getShipArenaTeam()) {
-            shipArena.append(s).append("\n");
-        }
-        builder.addField(new MessageEmbed.Field("Toon Arena Rank: ", Integer.toString(profile.getShipArenaRank()), false));
-        builder.addField(new MessageEmbed.Field("Toon Arena Team", "``` " + shipArena + " ```", false));
-        builder.addField(new MessageEmbed.Field("Updated at: ", profile.getLastUpdated().toString(), false));
         return builder.build();
     }
 
@@ -389,7 +371,7 @@ public final class MessageHelper {
      * @return an embed.
      */
     public static MessageEmbed formatChangelog(final double version, final Map<String, JSONArray> changelog) {
-       final EmbedBuilder embed = new EmbedBuilder(baseEmbed());
+        final EmbedBuilder embed = new EmbedBuilder(baseEmbed());
         embed.setDescription("Changelog for version: **__" + version + "__**");
         for (final Map.Entry<String, JSONArray> entry : changelog.entrySet()) {
             final StringBuilder changeString = new StringBuilder();
@@ -398,6 +380,17 @@ public final class MessageHelper {
             }
             embed.addField(entry.getKey(), "```" + changeString + "```", false);
         }
+        return embed.build();
+    }
+
+    public static MessageEmbed formatPlayerGLStatus(final String glName, final double totalCompletion, final List<GlCompare> compares) {
+        final EmbedBuilder embed = new EmbedBuilder(baseEmbed());
+        embed.setDescription("GL Status for: " + glName + "\nTotal Completion: **" + new DecimalFormat("##.##%").format(totalCompletion)+ "**");
+        StringBuilder status = new StringBuilder(String.format(GL_OVERVIEW_FORMAT, "name", GEAR_ICON, RELIC_ICON, ZETA_ICON, "status"));
+        for (GlCompare compare : compares) {
+            status.append(String.format(GL_OVERVIEW_FORMAT, compare.getUnitName(), compare.getGearLevel(), compare.getRelicLevel(), compare.getZetas(), new DecimalFormat("##.##%").format(compare.getCompleteness())));
+        }
+        embed.addField("status", "```" + status + "```", false);
         return embed.build();
     }
 
