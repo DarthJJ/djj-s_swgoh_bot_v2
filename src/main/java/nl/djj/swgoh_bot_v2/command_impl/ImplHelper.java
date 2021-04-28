@@ -1,6 +1,5 @@
 package nl.djj.swgoh_bot_v2.command_impl;
 
-import nl.djj.swgoh_bot_v2.commands.bot.Report;
 import nl.djj.swgoh_bot_v2.database.DatabaseHandler;
 import nl.djj.swgoh_bot_v2.helpers.Logger;
 

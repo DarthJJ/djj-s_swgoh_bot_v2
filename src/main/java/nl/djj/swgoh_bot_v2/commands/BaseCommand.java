@@ -8,7 +8,6 @@ import nl.djj.swgoh_bot_v2.entities.Message;
 import nl.djj.swgoh_bot_v2.helpers.Logger;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -42,7 +41,11 @@ public abstract class BaseCommand {
         this.flags = new TreeMap<>();
     }
 
-    public void unknownFlag(final Message message){
+    /**
+     * Called when an unknown flag is passed to the command.
+     * @param message the message.
+     */
+    public void unknownFlag(final Message message) {
         message.error("This is not a valid flag, please use '" + message.getGuildPrefix() + "help " + name + "'");
     }
 

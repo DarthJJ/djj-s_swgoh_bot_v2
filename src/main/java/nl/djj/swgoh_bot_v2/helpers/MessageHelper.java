@@ -6,6 +6,7 @@ import nl.djj.swgoh_bot_v2.commands.BaseCommand;
 import nl.djj.swgoh_bot_v2.config.BotConstants;
 import nl.djj.swgoh_bot_v2.config.SwgohConstants;
 import nl.djj.swgoh_bot_v2.entities.Flag;
+import nl.djj.swgoh_bot_v2.entities.GithubIssueStatus;
 import nl.djj.swgoh_bot_v2.entities.Message;
 import nl.djj.swgoh_bot_v2.entities.compare.*;
 import nl.djj.swgoh_bot_v2.entities.db.Config;
@@ -14,7 +15,6 @@ import nl.djj.swgoh_bot_v2.entities.swgoh.SwgohProfile;
 import org.json.JSONArray;
 
 import java.awt.*;
-import java.net.URL;
 import java.text.DecimalFormat;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -423,16 +423,21 @@ public final class MessageHelper {
         return embed.build();
     }
 
-    public static MessageEmbed formatIssueOverview(final int issueId, final String state, final String assignee, final String title, final String body, final String labels, final String lastComment, final URL url) {
+    /**
+     * Creates an embed for a github issue status.
+     * @param githubIssueStatus the gitHub Issue status.
+     * @return a messageEmbed.
+     */
+    public static MessageEmbed formatIssueOverview(final GithubIssueStatus githubIssueStatus) {
         final EmbedBuilder embed = new EmbedBuilder(baseEmbed());
-        embed.setDescription("Issue overview **" + issueId + "**");
-        embed.addField("Issue Status", "```" + state + "```", false);
-        embed.addField("Assigned to", "```" + assignee + "```", false);
-        embed.addField("Issue Title", "```" + title + "```", false);
-        embed.addField("Issue Description", "```" + body + "```", false);
-        embed.addField("Issue Labels", "```" + labels + "```", false);
-        embed.addField("Last comment", "```" + lastComment + "```", false);
-        embed.addField("Issue URL", "[Link to Github](" + url + ")", false);
+        embed.setDescription("Issue overview **" + githubIssueStatus.getIssueId() + "**");
+        embed.addField("Issue Status", "```" + githubIssueStatus.getState() + "```", false);
+        embed.addField("Assigned to", "```" + githubIssueStatus.getAssignee() + "```", false);
+        embed.addField("Issue Title", "```" + githubIssueStatus.getTitle() + "```", false);
+        embed.addField("Issue Description", "```" + githubIssueStatus.getBody() + "```", false);
+        embed.addField("Issue Labels", "```" + githubIssueStatus.getLabels() + "```", false);
+        embed.addField("Last comment", "```" + githubIssueStatus.getLastComment() + "```", false);
+        embed.addField("Issue URL", "[Link to Github](" + githubIssueStatus.getUrl() + ")", false);
         return embed.build();
     }
 

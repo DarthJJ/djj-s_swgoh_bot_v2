@@ -6,7 +6,6 @@ import nl.djj.swgoh_bot_v2.config.CommandCategory;
 import nl.djj.swgoh_bot_v2.config.Permission;
 import nl.djj.swgoh_bot_v2.entities.Flag;
 import nl.djj.swgoh_bot_v2.entities.Message;
-import nl.djj.swgoh_bot_v2.helpers.HttpHelper;
 import nl.djj.swgoh_bot_v2.helpers.Logger;
 
 /**
@@ -18,15 +17,16 @@ public class Report extends BaseCommand {
 
     /**
      * Constructor.
-     * @param implHelper  the implHelper.
-     * @param logger  the logger.
+     *
+     * @param implHelper the implHelper.
+     * @param logger     the logger.
      **/
     public Report(final Logger logger, final ImplHelper implHelper) {
         super(logger, implHelper);
         name = "report";
         requiredLevel = Permission.USER;
         description = "Creates an issue or retrieves the implementation status.";
-        aliases = new String[] {
+        aliases = new String[]{
                 "rep"
         };
         category = CommandCategory.BOT;
@@ -41,9 +41,9 @@ public class Report extends BaseCommand {
 
     @Override
     public void handleMessage(final Message message) {
-        switch(message.getFlag()){
+        switch (message.getFlag()) {
             case FLAG_CREATE -> this.implHelper.getReportImpl().createIssue(message);
-            case FLAG_STATUS -> this.implHelper.getReportImpl().getIssue(message);
+            case FLAG_STATUS -> this.implHelper.getReportImpl().issueStatus(message);
             default -> unknownFlag(message);
         }
     }
