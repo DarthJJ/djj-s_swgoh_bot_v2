@@ -431,7 +431,7 @@ public final class MessageHelper {
         embed.addField("Issue Title", "```" + title + "```", false);
         embed.addField("Issue Description", "```" + body + "```", false);
         embed.addField("Issue Labels", "```" + labels + "```", false);
-        embed.addField("Issue URL", "```" + url + "```", false);
+        embed.addField("Issue URL", "[Link to Github](" + url + ")", false);
         return embed.build();
     }
 
