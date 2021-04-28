@@ -64,4 +64,14 @@ public class CommandImpl {
             message.error(error.getMessage());
         }
     }
+
+    /**
+     * Updates the command usage.
+     *
+     * @param command the command.
+     * @param flag    the flag.
+     */
+    public void updateCommandUsage(final String command, final String flag) {
+        dbHandler.updateCommandUsage(command, flag);
+    }
 }

@@ -962,6 +962,7 @@ public abstract class DatabaseHandler extends TableNames {
      * @throws SQLRetrieveError when something goes wrong.
      */
     public String getPlayerNameForAllycode(final int allycode) throws SQLRetrieveError {
+        logger.debug(className, "Getting playerName for allycode");
         final String query = new SelectQuery()
                 .addColumns(PLAYER_NAME)
                 .addCondition(BinaryCondition.equalTo(PLAYER_ALLYCODE, allycode))
@@ -984,6 +985,7 @@ public abstract class DatabaseHandler extends TableNames {
      * @throws SQLRetrieveError when something goes wrong.
      */
     public boolean isUserAllowedToCreateTicket(final String userId) throws SQLRetrieveError {
+        logger.debug(className, "Checking if the user is allowed to create an ticket");
         final String query = new SelectQuery()
                 .addColumns(USER_CAN_CREATE_TICKETS)
                 .addCondition(BinaryCondition.equalTo(USER_DISCORD_ID, userId))
@@ -1006,6 +1008,7 @@ public abstract class DatabaseHandler extends TableNames {
      * @throws SQLRetrieveError when something goes wrong.
      */
     public Permission getPermissionForUser(final String userId) throws SQLRetrieveError {
+        logger.debug(className, "Retrieving user permission level");
         final String query = new SelectQuery()
                 .addColumns(USER_PERMISSION_LEVEL)
                 .addCondition(BinaryCondition.equalTo(USER_DISCORD_ID, userId))
@@ -1026,7 +1029,8 @@ public abstract class DatabaseHandler extends TableNames {
      * @param discordId the discord ID.
      * @throws SQLInsertionError when something goes wrong.
      */
-    public void setUserDisallowed(final String discordId) throws SQLInsertionError {
+    public void setIsAllowedTicketDisabled(final String discordId) throws SQLInsertionError {
+        logger.debug(className, "Setting the user ticket create allow status to false");
         final String query = new UpdateQuery(USER)
                 .addSetClause(USER_CAN_CREATE_TICKETS, false)
                 .addCondition(BinaryCondition.equalTo(USER_DISCORD_ID, discordId))
@@ -1035,6 +1039,36 @@ public abstract class DatabaseHandler extends TableNames {
             statement.executeUpdate(query);
         } catch (final SQLException exception) {
             throw new SQLInsertionError(className, "setUserDisallowed", exception.getMessage(), logger);
+        }
+    }
+
+    /**
+     * Updates the command usage.
+     * @param command the command.
+     * @param flag the flag.
+     */
+    public void updateCommandUsage(final String command, final String flag) {
+        logger.debug(className, "Updates the command usage");
+        String query = new SelectQuery()
+                .addColumns(COMMAND_USAGE_USAGE)
+                .addCondition(BinaryCondition.equalTo(COMMAND_USAGE_NAME, command))
+                .addCondition(BinaryCondition.equalTo(COMMAND_USAGE_FLAG, flag))
+                .validate().toString();
+        try {
+            final ResultSet result = statement.executeQuery(query);
+            int usage = 1;
+            if (result.next()){
+                usage += result.getInt(COMMAND_USAGE_USAGE.getName());
+            }
+            query = new InsertQuery(COMMAND_USAGE)
+                    .addColumn(COMMAND_USAGE_NAME, command)
+                    .addColumn(COMMAND_USAGE_FLAG, flag)
+                    .addColumn(COMMAND_USAGE_USAGE, usage)
+                    .validate().toString();
+            query = makeReplace(query);
+            statement.executeUpdate(query);
+        } catch (final SQLException exception){
+            logger.error(className, "updateCommandUsage", exception.getMessage());
         }
     }
     //CHECKSTYLE.ON: MultipleStringLiteralsCheck

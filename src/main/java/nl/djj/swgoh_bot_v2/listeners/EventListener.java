@@ -68,6 +68,7 @@ public class EventListener extends ListenerAdapter {
 
         if (implHelper.getProfileImpl().isAllowed(message.getAuthorId(), command.getRequiredLevel())) {
             logger.command(message);
+            implHelper.getCommandImpl().updateCommandUsage(message.getCommand(), message.getFlag());
             command.handleMessage(message);
         } else {
             logger.permission(message);

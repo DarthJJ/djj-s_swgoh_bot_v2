@@ -124,7 +124,7 @@ public class ReportImpl {
                 return;
             }
             final String discordId = StringHelper.getDiscordIdFromTag(message.getAltArgs().get(0));
-            dbHandler.setUserDisallowed(discordId);
+            dbHandler.setIsAllowedTicketDisabled(discordId);
             message.done(String.format("User: **%s** disallowed from creating tickets", String.join(" ", message.getArgs()).replace("@", "")));
         } catch (final SQLRetrieveError | SQLInsertionError error) {
             message.error(error.getMessage());
