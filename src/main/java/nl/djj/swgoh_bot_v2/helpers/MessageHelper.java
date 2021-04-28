@@ -14,6 +14,7 @@ import nl.djj.swgoh_bot_v2.entities.swgoh.SwgohProfile;
 import org.json.JSONArray;
 
 import java.awt.*;
+import java.net.URL;
 import java.text.DecimalFormat;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -31,7 +32,7 @@ public final class MessageHelper {
     private static final String GEAR_ICON = "\u2699";
     private static final String RELIC_ICON = "\uD83D\uDCDC";
     private static final String ZETA_ICON = "\u2742";
-//    private static final String RARITY_ICON = "\u2605";
+    //    private static final String RARITY_ICON = "\u2605";
     private static final String TABLE_FORMAT = "%-15s%-3s%-15s%n";
     private static final String UNIT_TABLE_FORMAT = "%-30s%-3s%-15s%n";
     private static final String HELP_TABLE_FORMAT = "%-10s%-3s%-15s%n";
@@ -382,6 +383,7 @@ public final class MessageHelper {
 
     /**
      * Formats a message for the playerGLStatus.
+     *
      * @param playerGlStatus the playerGLStatus.
      * @return a message embed.
      */
@@ -398,7 +400,8 @@ public final class MessageHelper {
 
     /**
      * Formats a message for the Guild GL Status.
-     * @param event the event name.
+     *
+     * @param event        the event name.
      * @param playerStatus the player statussen.
      * @return a message embed.
      */
@@ -417,6 +420,18 @@ public final class MessageHelper {
                 status = new StringBuilder(String.format(TABLE_FORMAT, "Name", "", "Status"));
             }
         }
+        return embed.build();
+    }
+
+    public static MessageEmbed formatIssueOverview(final int issueId, final String state, final String assignee, final String title, final String body, final String labels, final URL url) {
+        final EmbedBuilder embed = new EmbedBuilder(baseEmbed());
+        embed.setDescription("Issue overview **" + issueId + "**");
+        embed.addField("Issue Status", "```" + state + "```", false);
+        embed.addField("Assigned to", "```" + assignee + "```", false);
+        embed.addField("Issue Title", "```" + title + "```", false);
+        embed.addField("Issue Description", "```" + body + "```", false);
+        embed.addField("Issue Labels", "```" + labels + "```", false);
+        embed.addField("Issue URL", "```" + url + "```", false);
         return embed.build();
     }
 
