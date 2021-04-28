@@ -404,13 +404,14 @@ public final class MessageHelper {
      */
     public static MessageEmbed formatGuildGLStatus(final String event, final Map<String, PlayerGLStatus> playerStatus) {
         final EmbedBuilder embed = new EmbedBuilder(baseEmbed());
+        final int maxCounter = 5;
         embed.setDescription("Guild GL Status for: " + event);
         int counter = 0;
         StringBuilder status = new StringBuilder(String.format(TABLE_FORMAT, "Name", "", "Status"));
         for (final Map.Entry<String, PlayerGLStatus> entry : playerStatus.entrySet()) {
             counter++;
             status.append(String.format(TABLE_FORMAT, entry.getKey(), ":", new DecimalFormat("##.##%").format(entry.getValue().getTotalCompleteness())));
-            if (counter == 5) {
+            if (counter == maxCounter) {
                 embed.addField(Integer.toString(embed.getFields().size()), "```" + status + "```", false);
                 counter = 0;
                 status = new StringBuilder(String.format(TABLE_FORMAT, "Name", "", "Status"));
