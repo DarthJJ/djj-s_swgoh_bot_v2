@@ -21,6 +21,12 @@ public class TableNames {
     final transient DbColumn COMMAND_NAME = COMMAND.addColumn("commandName", "string", null);
     final transient DbColumn COMMAND_ENABLED = COMMAND.addColumn("enabled", "integer", null);
 
+    //Flag Usage --> Shows the usage of
+    final transient DbTable COMMAND_USAGE = schema.addTable("commandUsage");
+    final transient DbColumn COMMAND_USAGE_NAME = COMMAND_USAGE.addColumn("commandName", "string", null);
+    final transient DbColumn COMMAND_USAGE_FLAG = COMMAND_USAGE.addColumn("commandFlag", "string", null);
+    final transient DbColumn COMMAND_USAGE_USAGE = COMMAND_USAGE.addColumn("usage", "integer", null);
+
     //UnitInfo Table --> unit information for all the units.
     final transient DbTable UNIT_INFO = schema.addTable("unitInfo");
     final transient DbColumn UNIT_BASE_ID = UNIT_INFO.addColumn("baseId", "string", null);
