@@ -14,6 +14,7 @@ import nl.djj.swgoh_bot_v2.helpers.Logger;
 public class Report extends BaseCommand {
     private static final transient String FLAG_CREATE = "create";
     private static final transient String FLAG_STATUS = "status";
+    private static final transient String FLAG_DISALLOW = "disallow";
 
     /**
      * Constructor.
@@ -37,6 +38,7 @@ public class Report extends BaseCommand {
     public void createFlags() {
         flags.put(FLAG_CREATE, new Flag(FLAG_CREATE, "Creates an issue on github", name, FLAG_CREATE, "<ticket description>"));
         flags.put(FLAG_STATUS, new Flag(FLAG_STATUS, "Gets the status of an earlier created issue", name, FLAG_STATUS, "<ticketNumber>"));
+        flags.put(FLAG_DISALLOW, new Flag(FLAG_DISALLOW, "**MODERATOR ONLY** Disallows the tagged user of creating tickets", name, FLAG_DISALLOW, "<userTag>"));
     }
 
     @Override
@@ -44,6 +46,7 @@ public class Report extends BaseCommand {
         switch (message.getFlag()) {
             case FLAG_CREATE -> this.implHelper.getReportImpl().createIssue(message);
             case FLAG_STATUS -> this.implHelper.getReportImpl().issueStatus(message);
+            case FLAG_DISALLOW -> this.implHelper.getReportImpl().disallowUser(message);
             default -> unknownFlag(message);
         }
     }

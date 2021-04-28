@@ -119,4 +119,8 @@ public final class StringHelper {
     public static String stripMessageChannel(final String channel) {
         return channel.replace("<", "").replace(">", "").replace("#", "");
     }
+
+    public static String getDiscordIdFromTag(final String tag) {
+        return tag.replace("@","").replace("!","").replace("<", "").replace(">", "");
+    }
 }

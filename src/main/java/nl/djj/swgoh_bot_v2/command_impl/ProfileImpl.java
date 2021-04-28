@@ -5,8 +5,8 @@ import nl.djj.swgoh_bot_v2.config.*;
 import nl.djj.swgoh_bot_v2.database.DatabaseHandler;
 import nl.djj.swgoh_bot_v2.entities.Message;
 import nl.djj.swgoh_bot_v2.entities.Unit;
-import nl.djj.swgoh_bot_v2.entities.compare.PlayerGLStatus;
 import nl.djj.swgoh_bot_v2.entities.compare.GLUnit;
+import nl.djj.swgoh_bot_v2.entities.compare.PlayerGLStatus;
 import nl.djj.swgoh_bot_v2.entities.db.GlRequirement;
 import nl.djj.swgoh_bot_v2.entities.db.Player;
 import nl.djj.swgoh_bot_v2.entities.db.User;
@@ -19,7 +19,6 @@ import nl.djj.swgoh_bot_v2.helpers.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -68,9 +67,6 @@ public class ProfileImpl {
         if (swgohIdentifier == -1) {
             user = dbHandler.getByDiscordId(message.getAuthorId());
             swgohId = user.getAllycode();
-            if (Duration.between(user.getLastUpdated(), StringHelper.getCurrentDateTime()).toHours() < BotConstants.MAX_DATA_AGE) {
-                return swgohId;
-            }
         } else {
             swgohId = swgohIdentifier;
         }
@@ -113,7 +109,11 @@ public class ProfileImpl {
         }
         try {
             this.httpHelper.getJsonObject(SwgohGgEndpoint.PLAYER_ENDPOINT.getUrl() + allycode);
-            this.dbHandler.insertUser(new User(allycode, Permission.USER, message.getAuthor(), message.getAuthorId(), StringHelper.getCurrentDateTime()));
+            Permission permission = Permission.USER;
+            if (message.getAuthorId().equals(BotConstants.OWNER_ID)){
+                permission = Permission.ADMINISTRATOR;
+            }
+            this.dbHandler.insertUser(new User(allycode, permission, message.getAuthor(), message.getAuthorId(), true));
             message.getChannel().sendMessage("You are successfully registered").queue();
         } catch (final SQLInsertionError error) {
             message.getChannel().sendMessage("Something went wrong in the DB, please contact the bot Dev").queue();

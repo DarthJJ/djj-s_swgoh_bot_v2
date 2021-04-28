@@ -35,7 +35,7 @@ public abstract class ImplHelper {
         this.unitImpl = new UnitImpl(dbHandler);
         this.configImpl = new ConfigImpl(dbHandler, logger);
         this.guildImpl = new GuildImpl(logger, dbHandler, this);
-        this.reportImpl = new ReportImpl(logger);
+        this.reportImpl = new ReportImpl(logger, dbHandler);
     }
 
     /**

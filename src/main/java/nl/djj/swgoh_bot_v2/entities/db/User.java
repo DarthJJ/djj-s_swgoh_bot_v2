@@ -12,38 +12,22 @@ public class User {
     private final Permission permission;
     private final String username;
     private final String discordId;
-    private final LocalDateTime lastUpdated;
-
-    /**
-     * @param allycode    the allycode of the user.
-     * @param permLevel   the permission level associated by the user.
-     * @param username    the username of the user.
-     * @param discordId   the discordId of the user.
-     * @param lastUpdated the lastUpdated date.
-     */
-    public User(final int allycode, final int permLevel, final String username, final String discordId, final LocalDateTime lastUpdated) {
-        super();
-        this.allycode = allycode;
-        this.permission = Permission.valueOf(permLevel);
-        this.username = username;
-        this.discordId = discordId;
-        this.lastUpdated = lastUpdated;
-    }
+    private final boolean isAllowedToCreateTickets;
 
     /**
      * @param allycode    the allycode of the user.
      * @param permission  the permission associated by the user.
      * @param username    the username of the user.
      * @param discordId   the discordId of the user.
-     * @param lastUpdated the lastUpdated date.
+     * @param isAllowedToCreateTickets If the user can create tickets on github.
      */
-    public User(final int allycode, final Permission permission, final String username, final String discordId, final LocalDateTime lastUpdated) {
+    public User(final int allycode, final Permission permission, final String username, final String discordId, final boolean isAllowedToCreateTickets) {
         super();
         this.allycode = allycode;
         this.permission = permission;
         this.username = username;
         this.discordId = discordId;
-        this.lastUpdated = lastUpdated;
+        this.isAllowedToCreateTickets = isAllowedToCreateTickets;
     }
 
     public int getAllycode() {
@@ -62,7 +46,7 @@ public class User {
         return discordId;
     }
 
-    public LocalDateTime getLastUpdated() {
-        return lastUpdated;
+    public boolean isAllowedToCreateTickets() {
+        return isAllowedToCreateTickets;
     }
 }
