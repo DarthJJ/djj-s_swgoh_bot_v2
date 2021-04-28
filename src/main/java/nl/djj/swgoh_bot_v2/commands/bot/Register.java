@@ -8,8 +8,6 @@ import nl.djj.swgoh_bot_v2.entities.Flag;
 import nl.djj.swgoh_bot_v2.entities.Message;
 import nl.djj.swgoh_bot_v2.helpers.Logger;
 
-import java.util.HashMap;
-
 /**
  * @author DJJ
  */
@@ -32,14 +30,13 @@ public class Register extends BaseCommand {
                 "reg"
         };
         category = CommandCategory.BOT;
-        flags = new HashMap<>();
         flagRequired = true;
     }
 
     @Override
     public void createFlags() {
-        flags.put(FLAG_ADD, new Flag(FLAG_ADD, "Register to the bot", "usage: " + name, FLAG_ADD, " <allycode: xxx-xxx-xxx / xxxxxxxxx>"));
-        flags.put(FLAG_REMOVE, new Flag(FLAG_REMOVE, "Unregister to the bot", "usage: ", name, FLAG_REMOVE));
+        flags.put(FLAG_ADD, new Flag(FLAG_ADD, "Register to the bot", name, FLAG_ADD, " <allycode: xxx-xxx-xxx / xxxxxxxxx>"));
+        flags.put(FLAG_REMOVE, new Flag(FLAG_REMOVE, "Unregister to the bot", name, FLAG_REMOVE));
     }
 
     @Override
@@ -47,7 +44,7 @@ public class Register extends BaseCommand {
         switch (message.getFlag()) {
             case FLAG_ADD -> this.implHelper.getProfileImpl().registerUser(message);
             case FLAG_REMOVE -> this.implHelper.getProfileImpl().unregisterUser(message);
-            default -> message.error("This is not a valid flag, use '" + message.getGuildPrefix() + " help " + name + "'");
+            default -> unknownFlag(message);
         }
     }
 }

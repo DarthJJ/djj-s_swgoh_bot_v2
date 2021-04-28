@@ -2,6 +2,7 @@ package nl.djj.swgoh_bot_v2.database;
 
 import com.healthmarketscience.sqlbuilder.*;
 import nl.djj.swgoh_bot_v2.config.GalacticLegends;
+import nl.djj.swgoh_bot_v2.config.Permission;
 import nl.djj.swgoh_bot_v2.entities.compare.GLUnit;
 import nl.djj.swgoh_bot_v2.entities.db.*;
 import nl.djj.swgoh_bot_v2.exceptions.SQLDeletionError;
@@ -193,15 +194,16 @@ public abstract class DatabaseHandler extends TableNames {
         logger.debug(className, "Retrieving a user by discordId");
         try {
             final String query = new SelectQuery()
-                    .addColumns(USER_ALLYCODE, USER_USERNAME, USER_PERMISSION_LEVEL)
+                    .addColumns(USER_ALLYCODE, USER_USERNAME, USER_PERMISSION_LEVEL, USER_CAN_CREATE_TICKETS)
                     .addCondition(BinaryCondition.equalTo(USER_DISCORD_ID, discordId))
                     .validate().toString();
             final ResultSet result = statement.executeQuery(query);
             if (result.next()) {
                 final int allycode = result.getInt(USER_ALLYCODE.getName());
                 final String username = result.getString(USER_USERNAME.getName());
-                final int permissionLevel = result.getInt(USER_PERMISSION_LEVEL.getName());
-                return new User(allycode, permissionLevel, username, discordId, StringHelper.getCurrentDateTime());
+                final Permission permissionLevel = Permission.valueOf(result.getInt(USER_PERMISSION_LEVEL.getName()));
+                final boolean isAllowedToCreateTickets = result.getBoolean(USER_CAN_CREATE_TICKETS.getName());
+                return new User(allycode, permissionLevel, username, discordId, isAllowedToCreateTickets);
             }
             throw new SQLRetrieveError(className, "getByDiscordId", "No user found", logger);
         } catch (final SQLException exception) {
@@ -244,6 +246,7 @@ public abstract class DatabaseHandler extends TableNames {
                     .addColumn(USER_DISCORD_ID, user.getDiscordId())
                     .addColumn(USER_USERNAME, user.getUsername())
                     .addColumn(USER_PERMISSION_LEVEL, user.getPermission().getLevel())
+                    .addColumn(USER_CAN_CREATE_TICKETS, user.isAllowedToCreateTickets())
                     .validate().toString();
             if (this.statement.executeUpdate(query) != IS_UPDATED) {
                 throw new SQLInsertionError(className, "insertUser", "Something went wrong in the DB, try again later", logger);
@@ -841,6 +844,7 @@ public abstract class DatabaseHandler extends TableNames {
 
     /**
      * Gets a list of GLRequirements.
+     *
      * @param event the event to search for.
      * @return a list of GLRequirements.
      * @throws SQLRetrieveError when something goes wrong.
@@ -865,7 +869,8 @@ public abstract class DatabaseHandler extends TableNames {
 
     /**
      * Gets the GL Unit data for a player.
-     * @param baseId the unit baseId.
+     *
+     * @param baseId   the unit baseId.
      * @param allycode the player allycode.
      * @return A GLUnit object.
      * @throws SQLRetrieveError when something goes wrong.
@@ -895,8 +900,9 @@ public abstract class DatabaseHandler extends TableNames {
 
     /**
      * Gets the amount of zetas a playerUnit has.
+     *
      * @param allycode the player allycode.
-     * @param unitId the unit baseId.
+     * @param unitId   the unit baseId.
      * @return an integer value.
      * @throws SQLRetrieveError when something goes wrong.
      */
@@ -925,6 +931,7 @@ public abstract class DatabaseHandler extends TableNames {
 
     /**
      * Get's all the members of a guild.
+     *
      * @param guildId the guild Id.
      * @return a list of members.
      * @throws SQLRetrieveError when something goes wrong.
@@ -949,6 +956,7 @@ public abstract class DatabaseHandler extends TableNames {
 
     /**
      * Gets the name for an allycode.
+     *
      * @param allycode the allycode.
      * @return a string value for the name.
      * @throws SQLRetrieveError when something goes wrong.
@@ -960,12 +968,73 @@ public abstract class DatabaseHandler extends TableNames {
                 .validate().toString();
         try {
             final ResultSet result = statement.executeQuery(query);
-            if(result.next()){
+            if (result.next()) {
                 return result.getString(PLAYER_NAME.getName());
             }
             return "N/A";
-        } catch (final SQLException exception){
+        } catch (final SQLException exception) {
             throw new SQLRetrieveError(className, "getPlayerNameForAllycode", exception.getMessage(), logger);
+        }
+    }
+
+    /**
+     * Checks whether the user is allowed to create an ticket.
+     * @param userId the user id.
+     * @return true/false/
+     * @throws SQLRetrieveError when something goes wrong.
+     */
+    public boolean isUserAllowedToCreateTicket(final String userId) throws SQLRetrieveError {
+        final String query = new SelectQuery()
+                .addColumns(USER_CAN_CREATE_TICKETS)
+                .addCondition(BinaryCondition.equalTo(USER_DISCORD_ID, userId))
+                .validate().toString();
+        try {
+            final ResultSet result = statement.executeQuery(query);
+            if (result.next()) {
+                return result.getBoolean(USER_CAN_CREATE_TICKETS.getName());
+            }
+            return false;
+        } catch (final SQLException exception) {
+            throw new SQLRetrieveError(className, "isUserAllowedToCreateTicket", exception.getMessage(), logger);
+        }
+    }
+
+    /**
+     * Retrieves the permission for a user.
+     * @param userId the user Id.
+     * @return the permission, if no user found, default USER.
+     * @throws SQLRetrieveError when something goes wrong.
+     */
+    public Permission getPermissionForUser(final String userId) throws SQLRetrieveError {
+        final String query = new SelectQuery()
+                .addColumns(USER_PERMISSION_LEVEL)
+                .addCondition(BinaryCondition.equalTo(USER_DISCORD_ID, userId))
+                .validate().toString();
+        try {
+            final ResultSet resultSet = statement.executeQuery(query);
+            if (resultSet.next()) {
+                return Permission.valueOf(resultSet.getInt(USER_PERMISSION_LEVEL.getName()));
+            }
+            return Permission.USER;
+        } catch (final SQLException exception) {
+            throw new SQLRetrieveError(className, "getPermissionForUser", exception.getMessage(), logger);
+        }
+    }
+
+    /**
+     * Updates the users disallow status.
+     * @param discordId the discord ID.
+     * @throws SQLInsertionError when something goes wrong.
+     */
+    public void setUserDisallowed(final String discordId) throws SQLInsertionError {
+        final String query = new UpdateQuery(USER)
+                .addSetClause(USER_CAN_CREATE_TICKETS, false)
+                .addCondition(BinaryCondition.equalTo(USER_DISCORD_ID, discordId))
+                .validate().toString();
+        try {
+            statement.executeUpdate(query);
+        } catch (final SQLException exception) {
+            throw new SQLInsertionError(className, "setUserDisallowed", exception.getMessage(), logger);
         }
     }
     //CHECKSTYLE.ON: MultipleStringLiteralsCheck

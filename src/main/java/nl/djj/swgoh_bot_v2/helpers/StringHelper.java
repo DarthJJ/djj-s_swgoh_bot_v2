@@ -119,4 +119,14 @@ public final class StringHelper {
     public static String stripMessageChannel(final String channel) {
         return channel.replace("<", "").replace(">", "").replace("#", "");
     }
+
+    /**
+     * Strips the Discord ID to the basic number.
+     *
+     * @param tag the tagged ID.
+     * @return a stripped String.
+     */
+    public static String getDiscordIdFromTag(final String tag) {
+        return tag.replace("@", "").replace("!", "").replace("<", "").replace(">", "");
+    }
 }

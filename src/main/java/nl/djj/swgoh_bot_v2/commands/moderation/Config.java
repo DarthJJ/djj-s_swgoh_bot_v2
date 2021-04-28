@@ -8,8 +8,6 @@ import nl.djj.swgoh_bot_v2.entities.Flag;
 import nl.djj.swgoh_bot_v2.entities.Message;
 import nl.djj.swgoh_bot_v2.helpers.Logger;
 
-import java.util.HashMap;
-
 /**
  * @author DJJ
  */
@@ -35,7 +33,6 @@ public class Config extends BaseCommand {
                 "config"
         };
         category = CommandCategory.MODERATION;
-        flags = new HashMap<>();
         flagRequired = true;
     }
 
@@ -56,7 +53,7 @@ public class Config extends BaseCommand {
             case FLAG_SET_PREFIX -> this.implHelper.getConfigImpl().setPrefix(message);
             case FLAG_SET_IGNORE_ROLE -> this.implHelper.getConfigImpl().setIgnoreRole(message);
             case FLAG_SET_NOTIFY_CHANNEL -> this.implHelper.getConfigImpl().setNotifyChannel(message);
-            default -> message.error("This is not a valid flag, use '" + message.getGuildPrefix() + "help " + name + "'");
+            default -> unknownFlag(message);
         }
     }
 }

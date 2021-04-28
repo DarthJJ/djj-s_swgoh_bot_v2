@@ -6,6 +6,7 @@ import nl.djj.swgoh_bot_v2.commands.BaseCommand;
 import nl.djj.swgoh_bot_v2.config.BotConstants;
 import nl.djj.swgoh_bot_v2.config.SwgohConstants;
 import nl.djj.swgoh_bot_v2.entities.Flag;
+import nl.djj.swgoh_bot_v2.entities.GithubIssueStatus;
 import nl.djj.swgoh_bot_v2.entities.Message;
 import nl.djj.swgoh_bot_v2.entities.compare.*;
 import nl.djj.swgoh_bot_v2.entities.db.Config;
@@ -31,7 +32,7 @@ public final class MessageHelper {
     private static final String GEAR_ICON = "\u2699";
     private static final String RELIC_ICON = "\uD83D\uDCDC";
     private static final String ZETA_ICON = "\u2742";
-//    private static final String RARITY_ICON = "\u2605";
+    //    private static final String RARITY_ICON = "\u2605";
     private static final String TABLE_FORMAT = "%-15s%-3s%-15s%n";
     private static final String UNIT_TABLE_FORMAT = "%-30s%-3s%-15s%n";
     private static final String HELP_TABLE_FORMAT = "%-10s%-3s%-15s%n";
@@ -382,6 +383,7 @@ public final class MessageHelper {
 
     /**
      * Formats a message for the playerGLStatus.
+     *
      * @param playerGlStatus the playerGLStatus.
      * @return a message embed.
      */
@@ -398,7 +400,8 @@ public final class MessageHelper {
 
     /**
      * Formats a message for the Guild GL Status.
-     * @param event the event name.
+     *
+     * @param event        the event name.
      * @param playerStatus the player statussen.
      * @return a message embed.
      */
@@ -417,6 +420,24 @@ public final class MessageHelper {
                 status = new StringBuilder(String.format(TABLE_FORMAT, "Name", "", "Status"));
             }
         }
+        return embed.build();
+    }
+
+    /**
+     * Creates an embed for a github issue status.
+     * @param githubIssueStatus the gitHub Issue status.
+     * @return a messageEmbed.
+     */
+    public static MessageEmbed formatIssueOverview(final GithubIssueStatus githubIssueStatus) {
+        final EmbedBuilder embed = new EmbedBuilder(baseEmbed());
+        embed.setDescription("Issue overview **" + githubIssueStatus.getIssueId() + "**");
+        embed.addField("Issue Status", "```" + githubIssueStatus.getState() + "```", false);
+        embed.addField("Assigned to", "```" + githubIssueStatus.getAssignee() + "```", false);
+        embed.addField("Issue Title", "```" + githubIssueStatus.getTitle() + "```", false);
+        embed.addField("Issue Description", "```" + githubIssueStatus.getBody() + "```", false);
+        embed.addField("Issue Labels", "```" + githubIssueStatus.getLabels() + "```", false);
+        embed.addField("Last comment", "```" + githubIssueStatus.getLastComment() + "```", false);
+        embed.addField("Issue URL", "[Link to Github](" + githubIssueStatus.getUrl() + ")", false);
         return embed.build();
     }
 

@@ -14,7 +14,6 @@ import org.json.JSONTokener;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -37,7 +36,6 @@ public class Changelog extends BaseCommand {
                 "cl"
         };
         category = CommandCategory.BOT;
-        flags = new HashMap<>();
         flagRequired = false;
     }
 

@@ -7,8 +7,6 @@ import nl.djj.swgoh_bot_v2.config.Permission;
 import nl.djj.swgoh_bot_v2.entities.Message;
 import nl.djj.swgoh_bot_v2.helpers.Logger;
 
-import java.util.HashMap;
-
 /**
  * @author DJJ
  */
@@ -29,7 +27,6 @@ public abstract class Help extends BaseCommand {
                 "reg"
         };
         category = CommandCategory.BOT;
-        flags = new HashMap<>();
         flagRequired = false;
     }
 

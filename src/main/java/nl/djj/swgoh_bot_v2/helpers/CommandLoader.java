@@ -8,6 +8,7 @@ import nl.djj.swgoh_bot_v2.commands.admin.Update;
 import nl.djj.swgoh_bot_v2.commands.bot.Changelog;
 import nl.djj.swgoh_bot_v2.commands.bot.Help;
 import nl.djj.swgoh_bot_v2.commands.bot.Register;
+import nl.djj.swgoh_bot_v2.commands.bot.Report;
 import nl.djj.swgoh_bot_v2.commands.moderation.Config;
 import nl.djj.swgoh_bot_v2.commands.swgoh.Guild;
 import nl.djj.swgoh_bot_v2.commands.swgoh.Profile;
@@ -35,8 +36,8 @@ public class CommandLoader {
      */
     public CommandLoader(final ImplHelper implHelper, final Logger logger) {
         super();
-        this.commands = new HashMap<>();
-        this.aliases = new HashMap<>();
+        this.commands = new TreeMap<>();
+        this.aliases = new TreeMap<>();
         this.implHelper = implHelper;
         this.logger = logger;
         initializeCommands(new ArrayList<>(Arrays.asList(
@@ -48,6 +49,7 @@ public class CommandLoader {
                 new Config(logger, implHelper),
                 new Changelog(logger, implHelper),
                 new Notify(logger, implHelper),
+                new Report(logger, implHelper),
                 new Help(logger, implHelper) {
                     @Override
                     public void handleRequest(final Message message) {
