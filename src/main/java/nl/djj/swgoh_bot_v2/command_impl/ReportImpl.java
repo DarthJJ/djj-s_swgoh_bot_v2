@@ -46,13 +46,17 @@ public class ReportImpl {
             }
             String assignee = "not assigned";
             String labels = "no labels";
+            String lastComment = "no comment";
             if (issue.getAssignee() != null){
                 assignee = issue.getAssignee().getName();
             }
             if (issue.getLabels().size() > 0){
                 labels = issue.getLabels().stream().map(GHLabel::getName).collect(Collectors.joining("\n"));
             }
-            message.done(MessageHelper.formatIssueOverview(issue.getNumber(), issue.getState().name(), assignee, issue.getTitle(), issue.getBody(), labels, issue.getUrl()));
+            if (!issue.getComments().isEmpty()){
+                lastComment = issue.getComments().get(issue.getCommentsCount() -1).getBody();
+            }
+            message.done(MessageHelper.formatIssueOverview(issue.getNumber(), issue.getState().name(), assignee, issue.getTitle(), issue.getBody(), labels, lastComment, issue.getUrl()));
         } catch (GHFileNotFoundException exception){
             message.error("This issue does not exist, please go to the following link for all issues: \n" + GithubConstants.GITHUB_ISSUES_URL);
         } catch (IOException | IllegalArgumentException error) {
@@ -62,5 +66,17 @@ public class ReportImpl {
     }
 
     public void createIssue(final Message message) {
+        if (message.getArgs().isEmpty()){
+            message.error("Please provide a description of the issue");
+            return;
+        }
+        try {
+            final long issueId = github.getRepository(GithubConstants.OWNER + "/" + GithubConstants.REPO).createIssue("Bot created issue by: " + message.getAuthor())
+                    .body(message.getArgs().stream().map(String::toString).collect(Collectors.joining(" ")))
+                    .label("BotInbox").create().getNumber();
+            message.done("Issue is created, for future reference about this issue, use ID: **" + issueId + "**\nThanks for your support and contribution");
+        } catch (final IOException exception){
+            message.error("Something went wrong creating the issue, try again later");
+        }
     }
 }

@@ -423,7 +423,7 @@ public final class MessageHelper {
         return embed.build();
     }
 
-    public static MessageEmbed formatIssueOverview(final int issueId, final String state, final String assignee, final String title, final String body, final String labels, final URL url) {
+    public static MessageEmbed formatIssueOverview(final int issueId, final String state, final String assignee, final String title, final String body, final String labels, final String lastComment, final URL url) {
         final EmbedBuilder embed = new EmbedBuilder(baseEmbed());
         embed.setDescription("Issue overview **" + issueId + "**");
         embed.addField("Issue Status", "```" + state + "```", false);
@@ -431,6 +431,7 @@ public final class MessageHelper {
         embed.addField("Issue Title", "```" + title + "```", false);
         embed.addField("Issue Description", "```" + body + "```", false);
         embed.addField("Issue Labels", "```" + labels + "```", false);
+        embed.addField("Last comment", "```" + lastComment + "```", false);
         embed.addField("Issue URL", "[Link to Github](" + url + ")", false);
         return embed.build();
     }
