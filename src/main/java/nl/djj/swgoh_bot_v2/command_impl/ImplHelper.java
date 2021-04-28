@@ -1,5 +1,6 @@
 package nl.djj.swgoh_bot_v2.command_impl;
 
+import nl.djj.swgoh_bot_v2.commands.bot.Report;
 import nl.djj.swgoh_bot_v2.database.DatabaseHandler;
 import nl.djj.swgoh_bot_v2.helpers.Logger;
 
@@ -15,6 +16,7 @@ public abstract class ImplHelper {
     private final transient UnitImpl unitImpl;
     private final transient ConfigImpl configImpl;
     private final transient GuildImpl guildImpl;
+    private final transient ReportImpl reportImpl;
 
     /**
      * @param logger    the logger.
@@ -34,6 +36,7 @@ public abstract class ImplHelper {
         this.unitImpl = new UnitImpl(dbHandler);
         this.configImpl = new ConfigImpl(dbHandler, logger);
         this.guildImpl = new GuildImpl(logger, dbHandler, this);
+        this.reportImpl = new ReportImpl(logger);
     }
 
     /**
@@ -67,5 +70,9 @@ public abstract class ImplHelper {
 
     public GuildImpl getGuildImpl() {
         return this.guildImpl;
+    }
+
+    public ReportImpl getReportImpl() {
+        return reportImpl;
     }
 }

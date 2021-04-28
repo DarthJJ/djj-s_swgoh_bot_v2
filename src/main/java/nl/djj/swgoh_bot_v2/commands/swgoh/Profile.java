@@ -36,11 +36,6 @@ public class Profile extends BaseCommand {
     }
 
     @Override
-    public boolean isFlagRequired() {
-        return flagRequired;
-    }
-
-    @Override
     public void createFlags() {
         flags.put(FLAG_GENERIC, new Flag(FLAG_GENERIC, "Fetches the SWGOH profile for the user", name, FLAG_GENERIC));
         flags.put(FLAG_RELIC, new Flag(FLAG_RELIC, "Get's relic information about the users roster. optional parameter for level select", name, FLAG_RELIC, "<level> (inclusive)"));
@@ -55,7 +50,7 @@ public class Profile extends BaseCommand {
             case FLAG_RELIC -> this.implHelper.getProfileImpl().relic(message);
             case FLAG_COMPARE ->  this.implHelper.getProfileImpl().compare(message);
             case FLAG_GL -> this.implHelper.getProfileImpl().glStatus(message);
-            default -> message.error("This is not a valid flag, use '" + message.getGuildPrefix() + " help " + name + "'");
+            default -> unknownFlag(message);
         }
     }
 }

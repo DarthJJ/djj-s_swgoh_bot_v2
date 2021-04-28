@@ -8,8 +8,6 @@ import nl.djj.swgoh_bot_v2.entities.Flag;
 import nl.djj.swgoh_bot_v2.entities.Message;
 import nl.djj.swgoh_bot_v2.helpers.Logger;
 
-import java.util.HashMap;
-
 /**
  * @author DJJ
  */
@@ -36,7 +34,6 @@ public class Control extends BaseCommand {
                 "ctrl"
         };
         category = CommandCategory.ADMIN;
-        flags = new HashMap<>();
         flagRequired = true;
     }
 

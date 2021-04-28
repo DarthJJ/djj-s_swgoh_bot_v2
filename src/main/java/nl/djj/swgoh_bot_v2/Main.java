@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import nl.djj.swgoh_bot_v2.command_impl.ImplHelper;
+import nl.djj.swgoh_bot_v2.config.GithubConstants;
 import nl.djj.swgoh_bot_v2.database.Database;
 import io.github.cdimascio.dotenv.Dotenv;
 import nl.djj.swgoh_bot_v2.helpers.CommandLoader;
@@ -42,6 +43,7 @@ public final class Main extends ListenerAdapter {
         debug = Boolean.parseBoolean(dotenv.get("DEBUG_MODE"));
         logger = new Logger(debug);
         database = new Database(logger);
+        GithubConstants.init(dotenv.get("GITHUB_OWNER"), dotenv.get("GITHUB_REPO"), dotenv.get("GITHUB_OAUTH"));
         implHelper = new ImplHelper(logger, database.getDatabaseHandler()) {
             @Override
             public void closeBot() {

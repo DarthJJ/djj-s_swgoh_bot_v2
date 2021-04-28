@@ -10,6 +10,7 @@ import nl.djj.swgoh_bot_v2.helpers.Logger;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * @author DJJ
@@ -38,7 +39,11 @@ public abstract class BaseCommand {
         super();
         this.logger = logger;
         this.implHelper = implHelper;
-        this.flags = new HashMap<>();
+        this.flags = new TreeMap<>();
+    }
+
+    public void unknownFlag(final Message message){
+        message.error("This is not a valid flag, please use '" + message.getGuildPrefix() + "help " + name + "'");
     }
 
     /**

@@ -39,8 +39,6 @@ public class HttpHelper {
         return new JSONArray(new JSONTokener(reader));
     }
 
-
-
     /**
      * Download a JSON array from the given URL.
      *
