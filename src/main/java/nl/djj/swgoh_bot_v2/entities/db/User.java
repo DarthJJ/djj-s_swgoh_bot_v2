@@ -2,8 +2,6 @@ package nl.djj.swgoh_bot_v2.entities.db;
 
 import nl.djj.swgoh_bot_v2.config.Permission;
 
-import java.time.LocalDateTime;
-
 /**
  * @author DJJ
  */
@@ -12,22 +10,22 @@ public class User {
     private final Permission permission;
     private final String username;
     private final String discordId;
-    private final boolean isAllowedToCreateTickets;
+    private final boolean allowedToCreateTickets;
 
     /**
      * @param allycode    the allycode of the user.
      * @param permission  the permission associated by the user.
      * @param username    the username of the user.
      * @param discordId   the discordId of the user.
-     * @param isAllowedToCreateTickets If the user can create tickets on github.
+     * @param allowedToCreateTickets If the user can create tickets on github.
      */
-    public User(final int allycode, final Permission permission, final String username, final String discordId, final boolean isAllowedToCreateTickets) {
+    public User(final int allycode, final Permission permission, final String username, final String discordId, final boolean allowedToCreateTickets) {
         super();
         this.allycode = allycode;
         this.permission = permission;
         this.username = username;
         this.discordId = discordId;
-        this.isAllowedToCreateTickets = isAllowedToCreateTickets;
+        this.allowedToCreateTickets = allowedToCreateTickets;
     }
 
     public int getAllycode() {
@@ -47,6 +45,6 @@ public class User {
     }
 
     public boolean isAllowedToCreateTickets() {
-        return isAllowedToCreateTickets;
+        return allowedToCreateTickets;
     }
 }

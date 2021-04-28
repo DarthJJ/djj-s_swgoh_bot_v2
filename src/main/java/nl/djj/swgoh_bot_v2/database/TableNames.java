@@ -34,7 +34,7 @@ public class TableNames {
     final transient DbColumn USER_DISCORD_ID = USER.addColumn("discordId", "string", null);
     final transient DbColumn USER_USERNAME = USER.addColumn("username", "string", null);
     final transient DbColumn USER_PERMISSION_LEVEL = USER.addColumn("permissionLevel", "string", null);
-    final transient DbColumn USER_ALLOWED_CREATE_TICKETS = USER.addColumn("allowedToCreateTickets", "string", null);
+    final transient DbColumn USER_CAN_CREATE_TICKETS = USER.addColumn("allowedToCreateTickets", "string", null);
 
     //GLRequirements Table --> GL Requirements.
     final transient DbTable GL_REQUIREMENTS = schema.addTable("glRequirements");

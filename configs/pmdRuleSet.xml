@@ -104,6 +104,11 @@
             <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['.TableNames']"/>
         </properties>
     </rule>
+    <rule ref="category/java/design.xml/ExcessiveClassLength">
+        <properties>
+            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['.DatabaseHandler']"/>
+        </properties>
+    </rule>
     <rule ref="category/java/design.xml/TooManyMethods">
         <properties>
             <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['.DatabaseHandler']"/>

@@ -110,7 +110,7 @@ public class ProfileImpl {
         try {
             this.httpHelper.getJsonObject(SwgohGgEndpoint.PLAYER_ENDPOINT.getUrl() + allycode);
             Permission permission = Permission.USER;
-            if (message.getAuthorId().equals(BotConstants.OWNER_ID)){
+            if (message.getAuthorId().equals(BotConstants.OWNER_ID)) {
                 permission = Permission.ADMINISTRATOR;
             }
             this.dbHandler.insertUser(new User(allycode, permission, message.getAuthor(), message.getAuthorId(), true));
@@ -224,6 +224,7 @@ public class ProfileImpl {
 
     /**
      * Get's the GL status for a player.
+     *
      * @param message the message.
      */
     public void glStatus(final Message message) {
@@ -247,8 +248,9 @@ public class ProfileImpl {
 
     /**
      * Formats a GL status for the player.
-     * @param eventName the GL name.
-     * @param allycode the player allycode.
+     *
+     * @param eventName    the GL name.
+     * @param allycode     the player allycode.
      * @param requirements the list of requirements.
      * @return a PlayerGLStatus object.
      * @throws SQLRetrieveError when something goes wrong .

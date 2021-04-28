@@ -2,7 +2,6 @@ package nl.djj.swgoh_bot_v2.command_impl;
 
 import nl.djj.swgoh_bot_v2.config.GithubConstants;
 import nl.djj.swgoh_bot_v2.config.Permission;
-import nl.djj.swgoh_bot_v2.database.Database;
 import nl.djj.swgoh_bot_v2.database.DatabaseHandler;
 import nl.djj.swgoh_bot_v2.entities.GithubIssueStatus;
 import nl.djj.swgoh_bot_v2.entities.Message;
@@ -29,6 +28,7 @@ public class ReportImpl {
      * Constructor.
      *
      * @param logger the logger.
+     * @param dbHandler  the DB Handler.
      **/
     public ReportImpl(final Logger logger, final DatabaseHandler dbHandler) {
         super();
@@ -109,20 +109,24 @@ public class ReportImpl {
         }
     }
 
+    /**
+     * Disallows the tagged user of creating tickets.
+     * @param message the message.
+     */
     public void disallowUser(final Message message) {
         try {
             if (dbHandler.getPermissionForUser(message.getAuthorId()) == Permission.USER) {
                 message.error("You are not allowed to run this command");
                 return;
             }
-            if (message.getArgs().isEmpty()){
+            if (message.getArgs().isEmpty()) {
                 message.error("Please tag a user to disallow");
                 return;
             }
             final String discordId = StringHelper.getDiscordIdFromTag(message.getAltArgs().get(0));
             dbHandler.setUserDisallowed(discordId);
             message.done(String.format("User: **%s** disallowed from creating tickets", String.join(" ", message.getArgs()).replace("@", "")));
-        } catch (final SQLRetrieveError | SQLInsertionError error){
+        } catch (final SQLRetrieveError | SQLInsertionError error) {
             message.error(error.getMessage());
         }
     }
