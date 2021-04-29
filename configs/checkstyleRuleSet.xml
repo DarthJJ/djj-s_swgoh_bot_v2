@@ -20,7 +20,6 @@
             <property name="offCommentFormat" value="CHECKSTYLE.OFF\: ([\w\|]+)"/>
             <property name="onCommentFormat" value="CHECKSTYLE.ON\: ([\w\|]+)"/>
         </module>
-        <!-- Imports -->
         <module name="IllegalImport" />
         <module name="RedundantImport" />
         <module name="UnusedImports" />
@@ -28,15 +27,7 @@
             <property name="allowClassImports" value="true" />
             <property name="allowStaticMemberImports" value="false" />
         </module>
-        <!--		<module name="ImportOrder">-->
-        <!--			<property name="groups" value="/^javax?\./,org,com,*" />-->
-        <!--			<property name="ordered" value="true" />-->
-        <!--			<property name="caseSensitive" value="true" />-->
-        <!--			<property name="separated" value="true" />-->
-        <!--			<property name="option" value="above" />-->
-        <!--		</module>-->
 
-        <!-- Code Structure -->
         <module name="CyclomaticComplexity">
             <property name="max" value="14" />
         </module>
@@ -53,20 +44,13 @@
             <property name="excludedClasses" value="boolean, byte, char, double, float, int, long, short, void, Boolean, Byte, Character, Double, Float, Integer, Long, Short, Void, Object, Class, String, StringBuffer, StringBuilder, ArrayIndexOutOfBoundsException, Exception, RuntimeException, IllegalArgumentException, IllegalStateException, IndexOutOfBoundsException, NullPointerException, Throwable, SecurityException, UnsupportedOperationException, List, ArrayList, Deque, Queue, LinkedList, Set, HashSet, SortedSet, TreeSet, Map, HashMap, SortedMap, TreeMap, Stack, Color, Dimension, GridBagLayout, JButton, JPanel, Point, File, BufferedInputStream, BufferedOutputStream, FileInputStream, FileOutputStream" />
             <property name="max" value="15"/>
         </module>
-        <!--<module name="ClassFanOutComplexity">
-            <property name="max" value="10" />
-        </module> disabled because it already is checked by ClassDataAbstractionCoupling -->
         <module name="EmptyStatement" />
         <module name="DefaultComesLast" />
         <module name="MissingSwitchDefault" />
-        <!--<module name="DesignForExtension" /> disabled to allow for mocking, which overwrites existing functions -->
         <module name="EmptyBlock" />
         <module name="ExecutableStatementCount" />
         <module name="ExplicitInitialization" />
-        <!--module name="IllegalCatch" /> disabled since it does not
-        seam to work properly with suppresswarnings -->
         <module name="IllegalThrows" />
-        <!--<module name="Indentation" /> disabled because of incompatibility with save formatter -->
         <module name="InnerAssignment" />
         <module name="InterfaceIsType" />
         <module name="JavaNCSS">
@@ -115,10 +99,8 @@
         <module name="SimplifyBooleanReturn" />
         <module name="VisibilityModifier" />
 
-        <!-- Methods -->
         <module name="CovariantEquals" />
         <module name="EqualsHashCode" />
-        <!--<module name="FinalClass" /> Prevents Mocking -->
         <module name="HideUtilityClassConstructor" />
         <module name="JavadocMethod">
             <property name="scope" value="package" />
@@ -130,7 +112,6 @@
         <module name="MissingOverride" />
         <module name="ModifierOrder" />
         <module name="NoClone" />
-        <!--<module name="NoFinalizer" /> disabled since it does not seem to work with suppresswarnings -->
         <module name="ParameterNumber" >
             <property name="max" value="11"/>
         </module>
@@ -148,7 +129,6 @@
         <module name="FinalParameters">
             <property name="tokens" value="CTOR_DEF,METHOD_DEF,LITERAL_CATCH" />
         </module>
-        <!--        <module name="HiddenField" />-->
         <module name="JavadocVariable">
             <property name="scope" value="public" />
             <property name="tokens" value="VARIABLE_DEF"/>
@@ -157,9 +137,7 @@
         <module name="UpperEll" />
         <module name="MagicNumber" />
 
-        <!-- Whitespaces -->
         <module name="MethodParamPad">
-            <!--			<property name="option" value="space" />-->
         </module>
         <module name="WhitespaceAfter" />
         <module name="WhitespaceAround" />
