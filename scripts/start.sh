@@ -1,5 +1,5 @@
 #!usr/bin/bash
-# exit when any command fails
+
 set -e
 
 # keep track of the last executed command
