@@ -144,6 +144,7 @@ public class UnitImpl {
         for (int i = 0; i < playerUnits.length(); i++) {
             final JSONObject unitData = playerUnits.optJSONObject(i).getJSONObject("data");
             final String baseId = unitData.getString("base_id");
+            final int level = unitData.getInt("level");
             final int rarity = unitData.getInt("rarity");
             final int galacticPower = unitData.getInt("power");
             final int gear = unitData.getInt("gear_level");
@@ -157,11 +158,13 @@ public class UnitImpl {
                     gearPieces++;
                 }
             }
-            final PlayerUnit playerUnit = new PlayerUnit(allycode, guildId, baseId, rarity, galacticPower, gear, gearPieces, relic, speed);
+            final PlayerUnit playerUnit = new PlayerUnit(allycode, level, guildId, baseId, rarity, galacticPower, gear, gearPieces, relic, speed);
             for (int j = 0; j < abilityData.length(); j++) {
                 final String abilityId = abilityData.getJSONObject(j).getString("id");
-                final int level = abilityData.getJSONObject(j).getInt("ability_tier");
-                playerUnit.addAbility(new UnitAbility(abilityId, allycode, guildId, level));
+                final int AblLevel = abilityData.getJSONObject(j).getInt("ability_tier");
+                final boolean zeta = abilityData.getJSONObject(j).getBoolean("is_zeta");
+                final boolean omega = abilityData.getJSONObject(j).getBoolean("is_omega");
+                playerUnit.addAbility(new UnitAbility(abilityId, allycode, guildId, AblLevel, zeta, omega));
             }
 //            this.dbHandler.insertPlayerUnit(playerUnit);
             units.add(playerUnit);

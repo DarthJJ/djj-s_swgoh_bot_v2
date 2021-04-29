@@ -5,7 +5,7 @@ import nl.djj.swgoh_bot_v2.config.*;
 import nl.djj.swgoh_bot_v2.database.DatabaseHandler;
 import nl.djj.swgoh_bot_v2.entities.Message;
 import nl.djj.swgoh_bot_v2.entities.Unit;
-import nl.djj.swgoh_bot_v2.entities.compare.GLUnit;
+import nl.djj.swgoh_bot_v2.entities.compare.CompareUnit;
 import nl.djj.swgoh_bot_v2.entities.compare.PlayerGLStatus;
 import nl.djj.swgoh_bot_v2.entities.db.GlRequirement;
 import nl.djj.swgoh_bot_v2.entities.db.Player;
@@ -256,10 +256,10 @@ public class ProfileImpl {
      * @throws SQLRetrieveError when something goes wrong .
      */
     public PlayerGLStatus getGlStatus(final String eventName, final int allycode, final List<GlRequirement> requirements) throws SQLRetrieveError {
-        final List<GLUnit> compares = new ArrayList<>();
+        final List<CompareUnit> compares = new ArrayList<>();
         double totalCompletion = 0.0;
         for (final GlRequirement requirement : requirements) {
-            final GLUnit unit = dbHandler.getGLCompareUnitForPlayer(requirement.getBaseId(), allycode);
+            final CompareUnit unit = dbHandler.getCompareUnitForPlayer(requirement.getBaseId(), allycode);
             unit.setCompleteness(CalculationHelper.calculateCompletion(unit.getRarity(), unit.getGearLevel(), unit.getRelicLevel(), unit.getGearPieces(),
                     SwgohConstants.MAX_RARITY_LEVEL, requirement.getRelicLevel(), requirement.getGearLevel()));
             totalCompletion += unit.getCompleteness();

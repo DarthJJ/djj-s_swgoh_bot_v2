@@ -8,6 +8,8 @@ public class UnitAbility {
     private final transient int allycode;
     private final transient int guildId;
     private final transient int level;
+    private final transient boolean zeta;
+    private final transient boolean omega;
 
     /**
      * Constructor.
@@ -16,11 +18,13 @@ public class UnitAbility {
      * @param guildId the guild of the owner of the unit.
      * @param level the level of the ability.
      */
-    public UnitAbility(final String abilityId, final int allycode, final int guildId, final int level) {
+    public UnitAbility(final String abilityId, final int allycode, final int guildId, final int level, final boolean zeta, final boolean omega) {
         this.abilityId = abilityId;
         this.allycode = allycode;
         this.guildId = guildId;
         this.level = level;
+        this.zeta = zeta;
+        this.omega = omega;
     }
 
     public String getAbilityId() {
@@ -37,5 +41,13 @@ public class UnitAbility {
 
     public int getLevel() {
         return level;
+    }
+
+    public boolean isZeta() {
+        return zeta;
+    }
+
+    public boolean isOmega() {
+        return omega;
     }
 }

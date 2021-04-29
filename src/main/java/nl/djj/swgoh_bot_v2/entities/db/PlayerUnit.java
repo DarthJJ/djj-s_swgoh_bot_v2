@@ -8,6 +8,7 @@ import java.util.List;
  */
 public class PlayerUnit {
     private final transient int allycode;
+    private final transient int level;
     private final transient int guildId;
     private final transient String baseId;
     private final transient int rarity;
@@ -17,6 +18,7 @@ public class PlayerUnit {
     private final transient int relic;
     private final transient int speed;
     private final transient List<UnitAbility> abilities;
+    private transient int zetaCount;
 
     /**
      * Constructor.
@@ -31,8 +33,9 @@ public class PlayerUnit {
      * @param relic         the relic level.
      * @param speed         the base speed.
      */
-    public PlayerUnit(final int allycode, final int guildId, final String baseId, final int rarity, final int galacticPower, final int gear, final int gearPieces, final int relic, final int speed) {
+    public PlayerUnit(final int allycode, final int level, final int guildId, final String baseId, final int rarity, final int galacticPower, final int gear, final int gearPieces, final int relic, final int speed) {
         this.allycode = allycode;
+        this.level = level;
         this.guildId = guildId;
         this.baseId = baseId;
         this.rarity = rarity;
@@ -47,6 +50,10 @@ public class PlayerUnit {
 
     public int getAllycode() {
         return allycode;
+    }
+
+    public int getLevel() {
+        return level;
     }
 
     public String getBaseId() {
@@ -91,5 +98,13 @@ public class PlayerUnit {
 
     public List<UnitAbility> getAbilities() {
         return this.abilities;
+    }
+
+    public long getZetaCount(){
+        return zetaCount;
+    }
+
+    public void setZetaCount(final int zetaCount) {
+        this.zetaCount = zetaCount;
     }
 }

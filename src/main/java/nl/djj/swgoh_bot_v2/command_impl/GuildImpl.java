@@ -7,10 +7,12 @@ import nl.djj.swgoh_bot_v2.config.SwgohConstants;
 import nl.djj.swgoh_bot_v2.config.SwgohGgEndpoint;
 import nl.djj.swgoh_bot_v2.database.DatabaseHandler;
 import nl.djj.swgoh_bot_v2.entities.Message;
+import nl.djj.swgoh_bot_v2.entities.compare.CompareUnit;
 import nl.djj.swgoh_bot_v2.entities.compare.GuildCompare;
 import nl.djj.swgoh_bot_v2.entities.compare.PlayerGLStatus;
 import nl.djj.swgoh_bot_v2.entities.db.GlRequirement;
 import nl.djj.swgoh_bot_v2.entities.db.Guild;
+import nl.djj.swgoh_bot_v2.entities.db.PlayerUnit;
 import nl.djj.swgoh_bot_v2.exceptions.HttpRetrieveError;
 import nl.djj.swgoh_bot_v2.exceptions.SQLInsertionError;
 import nl.djj.swgoh_bot_v2.exceptions.SQLRetrieveError;
@@ -23,9 +25,8 @@ import org.json.JSONObject;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author DJJ
@@ -220,5 +221,35 @@ public class GuildImpl {
             profile.addUnitProfile(entry.getKey(), new GuildCompare.UnitProfile(entry.getValue(), sevenStars, sixStars, unitG13, unitG12, unitZetas, relic5plus));
         }
         return profile;
+    }
+
+    public void unitOverview(final Message message) {
+        if (message.getArgs().isEmpty()){
+            message.error("Please provide an searchKey");
+            return;
+        }
+        try {
+            final String unitId = dbHandler.resolveUnitId(String.join(" ", message.getArgs()));
+            final int guildId = getAndUpdateGuildData(message.getGuildId(), -1, message.getChannel());
+            final List<Integer> allyCodes = dbHandler.getMembersOfGuild(guildId);
+
+            Map<String, PlayerUnit> guildData = new TreeMap<>();
+
+            for (final Integer allycode : allyCodes) {
+                final PlayerUnit unitData = dbHandler.getPlayerUnit(unitId, allycode);
+                final String playerName = dbHandler.getPlayerNameForAllycode(allycode);
+                guildData.put(playerName, unitData);
+            }
+            guildData = guildData.entrySet().stream()
+                    .sorted((e1, e2)-> Integer.compare(e2.getValue().getLevel(), e1.getValue().getLevel()))
+                    .sorted((e1, e2)-> Integer.compare(e2.getValue().getRelic(), e1.getValue().getRelic()))
+                    .sorted((e1, e2)-> Integer.compare(e2.getValue().getGear(), e1.getValue().getGear()))
+                    .sorted((e1, e2)-> Integer.compare(e2.getValue().getGearPieces(), e1.getValue().getGearPieces()))
+                    .sorted((e1, e2)-> Integer.compare(e2.getValue().getGalacticPower(), e1.getValue().getGalacticPower()))
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2)-> e1, LinkedHashMap::new));
+            message.done(MessageHelper.formatGuildUnitOver(guildData, dbHandler.getUnitNameForId(unitId)));
+        } catch (final SQLRetrieveError | HttpRetrieveError | SQLInsertionError error){
+            message.error(error.getMessage());
+        }
     }
 }

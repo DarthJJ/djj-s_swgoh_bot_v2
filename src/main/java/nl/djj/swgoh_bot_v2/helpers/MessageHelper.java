@@ -11,6 +11,7 @@ import nl.djj.swgoh_bot_v2.entities.Message;
 import nl.djj.swgoh_bot_v2.entities.compare.*;
 import nl.djj.swgoh_bot_v2.entities.db.Config;
 import nl.djj.swgoh_bot_v2.entities.db.Guild;
+import nl.djj.swgoh_bot_v2.entities.db.PlayerUnit;
 import nl.djj.swgoh_bot_v2.entities.swgoh.SwgohProfile;
 import org.json.JSONArray;
 
@@ -32,13 +33,17 @@ public final class MessageHelper {
     private static final String GEAR_ICON = "\u2699";
     private static final String RELIC_ICON = "\uD83D\uDCDC";
     private static final String ZETA_ICON = "\u2742";
-    //    private static final String RARITY_ICON = "\u2605";
+    private static final String RARITY_ICON = "\u2605";
+    private static final String LEVEL_ICON = "\u2197";
+    private static final String GEAR_PIECES_ICON = "\uD83E\uDDE9";
+    private static final String GP_ICON = "\u26A1";
     private static final String TABLE_FORMAT = "%-15s%-3s%-15s%n";
     private static final String UNIT_TABLE_FORMAT = "%-30s%-3s%-15s%n";
     private static final String HELP_TABLE_FORMAT = "%-10s%-3s%-15s%n";
     private static final String PROFILE_TABLE_FORMAT = "%-8s%-15s%-3s%-15s%n";
     private static final String GUILD_TABLE_FORMAT = "%-11s%-15s%-3s%-15s%n";
     private static final String GL_OVERVIEW_FORMAT = "%-28s%-5s%-5s%-5s%-6s%n";
+    private static final String GUILD_UNIT_FORMAT = "%-15s%-3s%-3s%-3s%-3s%-3s%-3s%-3s%n";
 
     /**
      * Constructor.
@@ -100,7 +105,7 @@ public final class MessageHelper {
             }
             helpString.append('\n');
             builder.addField(new MessageEmbed.Field(entry.getKey(), "```" + helpString + "```", false));
-            if (builder.length() >= MessageEmbed.EMBED_MAX_LENGTH_BOT - 500) {
+            if (builder.length() >= 1) {
                 returnValue.add(builder.build());
                 builder = new EmbedBuilder(baseEmbed());
             }
@@ -391,7 +396,7 @@ public final class MessageHelper {
         final EmbedBuilder embed = new EmbedBuilder(baseEmbed());
         embed.setDescription("GL Status for: " + playerGlStatus.getGlEvent() + "\nTotal Completion: **" + new DecimalFormat("##.##%").format(playerGlStatus.getTotalCompleteness()) + "**");
         final StringBuilder status = new StringBuilder(String.format(GL_OVERVIEW_FORMAT, "name", GEAR_ICON, RELIC_ICON, ZETA_ICON, "status"));
-        for (final GLUnit compare : playerGlStatus.getUnits()) {
+        for (final CompareUnit compare : playerGlStatus.getUnits()) {
             status.append(String.format(GL_OVERVIEW_FORMAT, compare.getUnitName(), compare.getGearLevel(), compare.getRelicLevel(), compare.getZetas(), new DecimalFormat("##.##%").format(compare.getCompleteness())));
         }
         embed.addField("status", "```" + status + "```", false);
@@ -425,6 +430,7 @@ public final class MessageHelper {
 
     /**
      * Creates an embed for a github issue status.
+     *
      * @param githubIssueStatus the gitHub Issue status.
      * @return a messageEmbed.
      */
@@ -439,6 +445,39 @@ public final class MessageHelper {
         embed.addField("Last comment", "```" + githubIssueStatus.getLastComment() + "```", false);
         embed.addField("Issue URL", "[Link to Github](" + githubIssueStatus.getUrl() + ")", false);
         return embed.build();
+    }
+
+    public static List<MessageEmbed> formatGuildUnitOver(final Map<String, PlayerUnit> guildData, final String unitName) {
+        EmbedBuilder embed = new EmbedBuilder(baseEmbed());
+        embed.setDescription("Unit information for: **" + unitName + "**");
+        int count = 0;
+        final int maxCount = 10;
+        final List<MessageEmbed> embeds = new ArrayList<>();
+        StringBuilder fieldData = new StringBuilder(String.format(GUILD_UNIT_FORMAT, "player", RARITY_ICON, LEVEL_ICON, GEAR_ICON, GEAR_PIECES_ICON, RELIC_ICON, ZETA_ICON, GP_ICON));
+        for (final Map.Entry<String, PlayerUnit> entry : guildData.entrySet()) {
+            count++;
+            fieldData.append(String.format(GUILD_UNIT_FORMAT,
+                    entry.getKey(),
+                    entry.getValue().getRarity(),
+                    entry.getValue().getLevel(),
+                    entry.getValue().getGear(),
+                    entry.getValue().getGearPieces(),
+                    entry.getValue().getRelic(),
+                    entry.getValue().getZetaCount(),
+                    StringHelper.formatNumber(entry.getValue().getGalacticPower())));
+            if (count == maxCount) {
+                count = 0;
+                embed.addField(Integer.toString(embed.getFields().size() + 1), "```" + fieldData + "```", false);
+                fieldData = new StringBuilder(String.format(GUILD_UNIT_FORMAT, "player", RARITY_ICON, LEVEL_ICON, GEAR_ICON, GEAR_PIECES_ICON, RELIC_ICON, ZETA_ICON, GP_ICON));
+                if (embed.length() > MessageEmbed.EMBED_MAX_LENGTH_BOT - 500) {
+                    embeds.add(embed.build());
+                    embed = new EmbedBuilder(baseEmbed());
+                }
+            }
+        }
+        embed.addField(Integer.toString(embed.getFields().size() + 1), "```" + fieldData + "```", false);
+        embeds.add(embed.build());
+        return embeds;
     }
 
 //CHECKSTYLE.ON: MultipleStringLiteralsCheck

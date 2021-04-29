@@ -3,7 +3,7 @@ package nl.djj.swgoh_bot_v2.entities.compare;
 /**
  * @author DJJ
  **/
-public class GLUnit {
+public class CompareUnit {
     private final transient String unitName;
     private final transient int gearLevel;
     private final transient int gearPieces;
@@ -22,7 +22,7 @@ public class GLUnit {
      * @param rarity     the rarity level.
      * @param zetas      the zetas.
      */
-    public GLUnit(final String unitName, final int gearLevel, final int gearPieces, final int relicLevel, final int rarity, final int zetas) {
+    public CompareUnit(final String unitName, final int gearLevel, final int gearPieces, final int relicLevel, final int rarity, final int zetas) {
         this.unitName = unitName;
         this.gearLevel = gearLevel;
         this.gearPieces = gearPieces;

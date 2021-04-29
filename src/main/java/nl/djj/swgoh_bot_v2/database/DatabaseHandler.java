@@ -3,7 +3,7 @@ package nl.djj.swgoh_bot_v2.database;
 import com.healthmarketscience.sqlbuilder.*;
 import nl.djj.swgoh_bot_v2.config.GalacticLegends;
 import nl.djj.swgoh_bot_v2.config.Permission;
-import nl.djj.swgoh_bot_v2.entities.compare.GLUnit;
+import nl.djj.swgoh_bot_v2.entities.compare.CompareUnit;
 import nl.djj.swgoh_bot_v2.entities.db.*;
 import nl.djj.swgoh_bot_v2.exceptions.SQLDeletionError;
 import nl.djj.swgoh_bot_v2.exceptions.SQLInsertionError;
@@ -16,10 +16,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author DJJ
@@ -360,6 +357,32 @@ public abstract class DatabaseHandler extends TableNames {
         }
     }
 
+    public String resolveUnitId(final String searchKey) throws SQLRetrieveError {
+        String query = new SelectQuery()
+                .addColumns(ABBREVIATION_BASE_ID)
+                .addCondition(BinaryCondition.equalTo(ABBREVIATION_NAME, searchKey.toLowerCase(Locale.ROOT)))
+                .validate().toString();
+        try {
+            ResultSet result = statement.executeQuery(query);
+            if (result.next()) {
+                return result.getString(ABBREVIATION_BASE_ID.getName());
+            }
+            query = new SelectQuery()
+                    .addColumns(UNIT_BASE_ID)
+                    .addCondition(new ComboCondition(ComboCondition.Op.OR,
+                            BinaryCondition.equalTo(UNIT_BASE_ID, searchKey.toUpperCase(Locale.ROOT)),
+                            BinaryCondition.equalTo(UNIT_NAME, StringHelper.capitalizeEveryWord(searchKey))))
+                    .validate().toString();
+            result = statement.executeQuery(query);
+            if (result.next()) {
+                return result.getString(UNIT_BASE_ID.getName());
+            }
+            throw new SQLRetrieveError(className, "resolveUnitId", "Not a valid search key", logger);
+        } catch (final SQLException exception) {
+            throw new SQLRetrieveError(className, "resolveUnitId", exception.getMessage(), logger);
+        }
+    }
+
     /**
      * Retrieves the config for the guildId.
      *
@@ -623,7 +646,7 @@ public abstract class DatabaseHandler extends TableNames {
                 final LocalDateTime lastUpdated = StringHelper.stringToLocalDateTime(result.getString(GUILD_LAST_UPDATED.getName()));
                 return new Guild(name, guildId, galacticPower, members, lastUpdated);
             }
-            throw new SQLRetrieveError(className, "getGuild", "Something went wrong retrieving the guild information", logger);
+            return new Guild("", guildId, -1, -1, StringHelper.getCurrentDateTime().minusHours(25));
         } catch (final SQLException exception) {
             throw new SQLRetrieveError(className, "getGuild", exception.getMessage(), logger);
         }
@@ -800,10 +823,12 @@ public abstract class DatabaseHandler extends TableNames {
                 String query = new InsertQuery(PLAYER_UNIT)
                         .addColumn(PLAYER_UNIT_ALLYCODE, playerUnit.getAllycode())
                         .addColumn(PLAYER_UNIT_GUILD_ID, playerUnit.getGuildId())
+                        .addColumn(PLAYER_UNIT_LEVEL, playerUnit.getLevel())
                         .addColumn(PLAYER_UNIT_BASE_ID, playerUnit.getBaseId())
                         .addColumn(PLAYER_UNIT_RARITY, playerUnit.getRarity())
                         .addColumn(PLAYER_UNIT_GP, playerUnit.getGalacticPower())
                         .addColumn(PLAYER_UNIT_GEAR, playerUnit.getGear())
+                        .addColumn(PLAYER_UNIT_GEAR_PIECES, playerUnit.getGearPieces())
                         .addColumn(PLAYER_UNIT_RELIC, playerUnit.getRelic())
                         .addColumn(PLAYER_UNIT_SPEED, playerUnit.getSpeed())
                         .validate().toString();
@@ -875,7 +900,7 @@ public abstract class DatabaseHandler extends TableNames {
      * @return A GLUnit object.
      * @throws SQLRetrieveError when something goes wrong.
      */
-    public GLUnit getGLCompareUnitForPlayer(final String baseId, final int allycode) throws SQLRetrieveError {
+    public CompareUnit getCompareUnitForPlayer(final String baseId, final int allycode) throws SQLRetrieveError {
         logger.debug(className, "Getting playerUnit: " + baseId + " | for allycode: " + allycode);
         final String query = new SelectQuery()
                 .addColumns(PLAYER_UNIT_GEAR, PLAYER_UNIT_RELIC, PLAYER_UNIT_RARITY, PLAYER_UNIT_GEAR_PIECES)
@@ -890,9 +915,9 @@ public abstract class DatabaseHandler extends TableNames {
                 final int gearPieces = result.getInt(PLAYER_UNIT_GEAR_PIECES.getName());
                 final int relic = result.getInt(PLAYER_UNIT_RELIC.getName());
                 final int rarity = result.getInt(PLAYER_UNIT_RARITY.getName());
-                return new GLUnit(unitName, gear, gearPieces, relic, rarity, getZetaCountForPlayerUnit(allycode, baseId));
+                return new CompareUnit(unitName, gear, gearPieces, relic, rarity, getZetaCountForPlayerUnit(allycode, baseId));
             }
-            return new GLUnit(unitName, -1, -1, -1, -1, -1);
+            return new CompareUnit(unitName, -1, -1, -1, -1, -1);
         } catch (final SQLException exception) {
             throw new SQLRetrieveError(className, "getUnitForPlayer", exception.getMessage(), logger);
         }
@@ -980,6 +1005,7 @@ public abstract class DatabaseHandler extends TableNames {
 
     /**
      * Checks whether the user is allowed to create an ticket.
+     *
      * @param userId the user id.
      * @return true/false/
      * @throws SQLRetrieveError when something goes wrong.
@@ -1003,6 +1029,7 @@ public abstract class DatabaseHandler extends TableNames {
 
     /**
      * Retrieves the permission for a user.
+     *
      * @param userId the user Id.
      * @return the permission, if no user found, default USER.
      * @throws SQLRetrieveError when something goes wrong.
@@ -1026,6 +1053,7 @@ public abstract class DatabaseHandler extends TableNames {
 
     /**
      * Updates the users disallow status.
+     *
      * @param discordId the discord ID.
      * @throws SQLInsertionError when something goes wrong.
      */
@@ -1044,8 +1072,9 @@ public abstract class DatabaseHandler extends TableNames {
 
     /**
      * Updates the command usage.
+     *
      * @param command the command.
-     * @param flag the flag.
+     * @param flag    the flag.
      */
     public void updateCommandUsage(final String command, final String flag) {
         logger.debug(className, "Updates the command usage");
@@ -1057,7 +1086,7 @@ public abstract class DatabaseHandler extends TableNames {
         try {
             final ResultSet result = statement.executeQuery(query);
             int usage = 1;
-            if (result.next()){
+            if (result.next()) {
                 usage += result.getInt(COMMAND_USAGE_USAGE.getName());
             }
             query = new InsertQuery(COMMAND_USAGE)
@@ -1067,8 +1096,58 @@ public abstract class DatabaseHandler extends TableNames {
                     .validate().toString();
             query = makeReplace(query);
             statement.executeUpdate(query);
-        } catch (final SQLException exception){
+        } catch (final SQLException exception) {
             logger.error(className, "updateCommandUsage", exception.getMessage());
+        }
+    }
+
+    public PlayerUnit getPlayerUnit(final String unitId, final Integer allycode) throws SQLRetrieveError {
+        logger.debug(className, "Retrieves a player unit");
+        final String query = new SelectQuery()
+                .addColumns(PLAYER_UNIT_LEVEL, PLAYER_UNIT_GUILD_ID, PLAYER_UNIT_RARITY, PLAYER_UNIT_GP, PLAYER_UNIT_GEAR, PLAYER_UNIT_GEAR_PIECES, PLAYER_UNIT_RELIC, PLAYER_UNIT_SPEED)
+                .addCondition(BinaryCondition.equalTo(PLAYER_UNIT_ALLYCODE, allycode))
+                .addCondition(BinaryCondition.equalTo(PLAYER_UNIT_BASE_ID, unitId))
+                .validate().toString();
+        try {
+            final ResultSet result = statement.executeQuery(query);
+            if (result.next()) {
+                final int level = result.getInt(PLAYER_UNIT_LEVEL.getName());
+                final int guildId = result.getInt(PLAYER_UNIT_GUILD_ID.getName());
+                final int rarity = result.getInt(PLAYER_UNIT_RARITY.getName());
+                final int galacticPower = result.getInt(PLAYER_UNIT_GP.getName());
+                final int gear = result.getInt(PLAYER_UNIT_GEAR.getName());
+                final int gearPieces = result.getInt(PLAYER_UNIT_GEAR_PIECES.getName());
+                final int relic = result.getInt(PLAYER_UNIT_RELIC.getName());
+                final int speed = result.getInt(PLAYER_UNIT_SPEED.getName());
+                final PlayerUnit unit = new PlayerUnit(allycode, level, guildId, unitId, rarity, galacticPower, gear, gearPieces, relic, speed);
+                unit.setZetaCount(this.getZetaCountForUnit(unitId, allycode));
+                return unit;
+            }
+            return new PlayerUnit(allycode, -1, -1, unitId, -1, -1, -1, -1, -1, -1);
+        } catch (final SQLException exception) {
+            throw new SQLRetrieveError(className, "getPlayerUnit", exception.getMessage(), logger);
+        }
+    }
+
+    public int getZetaCountForUnit(final String unitId, final int allycode) {
+        logger.debug(className, "Retrieving abilities for unit");
+        final String query = new SelectQuery()
+                .addCustomColumns(FunctionCall.count().addColumnParams())
+                .addCondition(BinaryCondition.equalTo(UNIT_ABILITY_ALLYCODE, allycode))
+                .addCondition(BinaryCondition.equalTo(UNIT_ABILITY_ABILITY_ID, ABILITY_ID))
+                .addCondition(BinaryCondition.equalTo(ABILITY_UNIT_ID, unitId))
+                .addCondition(BinaryCondition.equalTo(ABILITY_IS_ZETA, true))
+                .addJoins(SelectQuery.JoinType.INNER, ABILITY_JOIN)
+                .validate().toString();
+        try {
+            final ResultSet resultSet = statement.executeQuery(query);
+            if (resultSet.next()) {
+                return resultSet.getInt(1);
+            }
+            return 0;
+        } catch (final SQLException exception) {
+            logger.error(className, "getAbillitiesForUnit", exception.getMessage());
+            return 0;
         }
     }
     //CHECKSTYLE.ON: MultipleStringLiteralsCheck

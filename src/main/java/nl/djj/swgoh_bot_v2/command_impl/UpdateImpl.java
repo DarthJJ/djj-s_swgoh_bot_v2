@@ -17,6 +17,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * @author DJJ
@@ -126,7 +127,7 @@ public class UpdateImpl {
                 continue;
             }
             final String[] splitted = abbrString.split(";");
-            abbreviations.add(new Abbreviation(splitted[0], splitted[1]));
+            abbreviations.add(new Abbreviation(splitted[0], splitted[1].toLowerCase(Locale.ROOT)));
         }
         try {
             dbHandler.updateAbbreviations(abbreviations);

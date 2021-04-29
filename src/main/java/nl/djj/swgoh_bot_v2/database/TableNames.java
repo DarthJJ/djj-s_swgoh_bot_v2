@@ -69,6 +69,7 @@ public class TableNames {
     final transient DbTable PLAYER_UNIT = schema.addTable("playerUnit");
     final transient DbColumn PLAYER_UNIT_ALLYCODE = PLAYER_UNIT.addColumn("allycode", "string", null);
     final transient DbColumn PLAYER_UNIT_BASE_ID = PLAYER_UNIT.addColumn("baseId", "string", null);
+    final transient DbColumn PLAYER_UNIT_LEVEL = PLAYER_UNIT.addColumn("level", "string", null);
     final transient DbColumn PLAYER_UNIT_GUILD_ID = PLAYER_UNIT.addColumn("guildId", "integer", null);
     final transient DbColumn PLAYER_UNIT_RARITY = PLAYER_UNIT.addColumn("rarity", "integer", null);
     final transient DbColumn PLAYER_UNIT_GP = PLAYER_UNIT.addColumn("gp", "integer", null);
@@ -119,6 +120,7 @@ public class TableNames {
     final transient DbJoin ZETA_JOIN = spec.addJoin(null, ABILITY.getName(), null, UNIT_ABILITY.getName(), ABILITY_ID.getName());
     final transient DbJoin PLAYER_UNIT_JOIN = spec.addJoin(null, PLAYER.getName(), null, PLAYER_UNIT.getName(), PLAYER_ALLYCODE.getName());
     final transient DbJoin UNIT_NAME_JOIN = spec.addJoin(null, UNIT_INFO.getName(), null, PLAYER_UNIT.getName(), UNIT_BASE_ID.getName());
+    final transient DbJoin ABILITY_JOIN = spec.addJoin(null, ABILITY.getName(), null, UNIT_ABILITY.getName(), ABILITY_ID.getName());
     static final transient int IS_UPDATED = 1;
 
     /**
