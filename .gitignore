@@ -15,7 +15,7 @@ bin/
 .project
 .settings/org.eclipse.buildship.core.prefs
 tasks.json
-
+LIVE/
 # Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
 !gradle-wrapper.jar
 
