@@ -2,8 +2,8 @@
 Description="DJJ Swgoh bot"
 
 [Service]
-ExecStart=/uhome/njanssen/discodiscordbotv2/scripts/start.sh
-WorkingDirectory=/home/njanssen/discordbotv2
+ExecStart=/uhome/njanssen/swgohbot/scripts/start.sh
+WorkingDirectory=/home/njanssen/swgohbot
 Restart=always
 RestartSec=10
 User=njanssen

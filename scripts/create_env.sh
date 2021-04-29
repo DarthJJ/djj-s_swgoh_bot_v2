@@ -1,13 +1,13 @@
 #!/bin/bash
-DIR=../live/
+DIR=../LIVE/
 if [ ! -d "$DIR" ]; then
   mkdir "$DIR"
 fi
-DIR=../live/database/
+DIR=../LIVE/database/
 if [ ! -d "$DIR" ]; then
   mkdir "$DIR"
 fi
-DIR=../live/log/
+DIR=../LIVE/log/
 if [ ! -d "$DIR" ]; then
   mkdir "$DIR"
 fi
