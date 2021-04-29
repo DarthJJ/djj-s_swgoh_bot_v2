@@ -7,4 +7,4 @@ trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
 # echo an error message before exiting
 trap 'echo "\"${last_command}\" command filed with exit code $?."' EXIT
 cd LIVE
-nohup java -jar /bot.jar &
+nohup java -jar bot.jar &
