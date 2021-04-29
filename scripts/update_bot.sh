@@ -5,7 +5,7 @@ set -e
 # keep track of the last executed command
 trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
 # echo an error message before exiting
-trap 'echo "\"${last_command}\" command filed with exit code $?."' EXIT
+trap 'echo "\"${last_command}\" command failed with exit code $?."' EXIT
 echo "=============================================================="
 echo "Fetching latest changes from Github"
 echo "=============================================================="
@@ -22,7 +22,7 @@ echo "=============================================================="
 echo "Replacing Jar file"
 echo "=============================================================="
 BOT_FILE=./LIVE/bot.jar
-if [ ! -f "$BOT_FILE" ]; then
+if [ -f "$BOT_FILE" ]; then
 rm "$BOT_FILE"
 fi
 cp build/libs/swgoh_bot_v2-?.?-SNAPSHOT-all.jar $BOT_FILE
@@ -30,7 +30,7 @@ echo "=============================================================="
 echo "updating changelog"
 echo "=============================================================="
 CHANGELOG_FILE=./LIVE/changelog.json
-if [ ! -f "$CHANGELOG_FILE" ]; then
+if [ -f "$CHANGELOG_FILE" ]; then
 rm "$CHANGELOG_FILE"
 fi
 cp changelog.json $CHANGELOG_FILE
