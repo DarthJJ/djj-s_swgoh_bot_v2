@@ -29,8 +29,11 @@ cp build/libs/swgoh_bot_v2-?.?-SNAPSHOT-all.jar $BOT_FILE
 echo "=============================================================="
 echo "updating changelog"
 echo "=============================================================="
-rm LIVE/changelog.json
-cp changelog.json LIVE/changelog.json
+CHANGELOG_FILE=./LIVE/changelog.json
+if [ ! -f "$CHANGELOG_FILE" ]; then
+rm "$CHANGELOG_FILE"
+fi
+cp changelog.json $CHANGELOG_FILE
 echo "=============================================================="
 echo "starting bot"
 echo "=============================================================="
