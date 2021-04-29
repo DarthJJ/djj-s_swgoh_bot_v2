@@ -105,7 +105,7 @@ public final class MessageHelper {
             }
             helpString.append('\n');
             builder.addField(new MessageEmbed.Field(entry.getKey(), "```" + helpString + "```", false));
-            if (builder.length() >= 1) {
+            if (builder.length() >= MessageEmbed.EMBED_MAX_LENGTH_BOT - 500) {
                 returnValue.add(builder.build());
                 builder = new EmbedBuilder(baseEmbed());
             }
@@ -447,6 +447,12 @@ public final class MessageHelper {
         return embed.build();
     }
 
+    /**
+     * Formats the guild Unit overview.
+     * @param guildData the guild data.
+     * @param unitName the unit.
+     * @return a list of embeds.
+     */
     public static List<MessageEmbed> formatGuildUnitOver(final Map<String, PlayerUnit> guildData, final String unitName) {
         EmbedBuilder embed = new EmbedBuilder(baseEmbed());
         embed.setDescription("Unit information for: **" + unitName + "**");

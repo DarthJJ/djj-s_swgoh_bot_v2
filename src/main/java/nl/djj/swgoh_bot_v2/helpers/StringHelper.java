@@ -132,20 +132,20 @@ public final class StringHelper {
 
     /**
      * Converts every first char of a word to a capital.
+     *
      * @param toCapitalize the string to capitalize.
      * @return a proper capitalized string.
      */
     public static String capitalizeEveryWord(final String toCapitalize) {
-        char[] charArray = toCapitalize.toCharArray();
+        final char[] charArray = toCapitalize.toCharArray();
         boolean foundSpace = true;
-        for(int i = 0; i < charArray.length; i++) {
-            if(Character.isLetter(charArray[i])) {
-                if(foundSpace) {
+        for (int i = 0; i < charArray.length; i++) {
+            if (Character.isLetter(charArray[i])) {
+                if (foundSpace) {
                     charArray[i] = Character.toUpperCase(charArray[i]);
                     foundSpace = false;
                 }
-            }
-            else {
+            } else {
                 foundSpace = true;
             }
         }

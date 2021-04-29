@@ -357,6 +357,12 @@ public abstract class DatabaseHandler extends TableNames {
         }
     }
 
+    /**
+     * Resolves the given searchKey to a unitId (if present)/
+     * @param searchKey the searchKey.
+     * @return the unitId.
+     * @throws SQLRetrieveError when something goes wrong.
+     */
     public String resolveUnitId(final String searchKey) throws SQLRetrieveError {
         String query = new SelectQuery()
                 .addColumns(ABBREVIATION_BASE_ID)
@@ -1101,6 +1107,13 @@ public abstract class DatabaseHandler extends TableNames {
         }
     }
 
+    /**
+     * Gets a playerUnit object for a player.
+     * @param unitId the id.
+     * @param allycode the allycode.
+     * @return a playerUnit object.
+     * @throws SQLRetrieveError when something goes wrong.
+     */
     public PlayerUnit getPlayerUnit(final String unitId, final Integer allycode) throws SQLRetrieveError {
         logger.debug(className, "Retrieves a player unit");
         final String query = new SelectQuery()
@@ -1129,6 +1142,12 @@ public abstract class DatabaseHandler extends TableNames {
         }
     }
 
+    /**
+     * Gets the zeta count for an unit.
+     * @param unitId the unit id.
+     * @param allycode the allycode.
+     * @return an int.
+     */
     public int getZetaCountForUnit(final String unitId, final int allycode) {
         logger.debug(className, "Retrieving abilities for unit");
         final String query = new SelectQuery()

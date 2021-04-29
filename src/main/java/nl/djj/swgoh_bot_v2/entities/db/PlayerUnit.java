@@ -24,6 +24,7 @@ public class PlayerUnit {
      * Constructor.
      *
      * @param allycode      allycode.
+     * @param level         the level of the unit.
      * @param guildId       guild id.
      * @param baseId        the base id.
      * @param rarity        the star level.
@@ -90,6 +91,7 @@ public class PlayerUnit {
 
     /**
      * Add an ability to this unit.
+     *
      * @param ability the ability to add.
      */
     public void addAbility(final UnitAbility ability) {
@@ -100,7 +102,7 @@ public class PlayerUnit {
         return this.abilities;
     }
 
-    public long getZetaCount(){
+    public long getZetaCount() {
         return zetaCount;
     }
 

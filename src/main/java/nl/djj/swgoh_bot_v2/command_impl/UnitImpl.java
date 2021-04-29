@@ -161,12 +161,9 @@ public class UnitImpl {
             final PlayerUnit playerUnit = new PlayerUnit(allycode, level, guildId, baseId, rarity, galacticPower, gear, gearPieces, relic, speed);
             for (int j = 0; j < abilityData.length(); j++) {
                 final String abilityId = abilityData.getJSONObject(j).getString("id");
-                final int AblLevel = abilityData.getJSONObject(j).getInt("ability_tier");
-                final boolean zeta = abilityData.getJSONObject(j).getBoolean("is_zeta");
-                final boolean omega = abilityData.getJSONObject(j).getBoolean("is_omega");
-                playerUnit.addAbility(new UnitAbility(abilityId, allycode, guildId, AblLevel, zeta, omega));
+                final int ablLevel = abilityData.getJSONObject(j).getInt("ability_tier");
+                playerUnit.addAbility(new UnitAbility(abilityId, allycode, guildId, ablLevel));
             }
-//            this.dbHandler.insertPlayerUnit(playerUnit);
             units.add(playerUnit);
         }
         this.dbHandler.insertPlayerUnits(units);
