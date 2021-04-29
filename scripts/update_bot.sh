@@ -21,8 +21,11 @@ stopBotV2
 echo "=============================================================="
 echo "Replacing Jar file"
 echo "=============================================================="
-rm LIVE/bot.jar
-cp build/libs/swgoh_bot_v2-?.?-SNAPSHOT-all.jar LIVE/bot.jar
+BOT_FILE=./LIVE/bot.jar/
+if [ ! -f "$BOT_FILE" ]; then
+rm "$BOT_FILE"
+fi
+cp build/libs/swgoh_bot_v2-?.?-SNAPSHOT-all.jar $BOT_FILE
 echo "=============================================================="
 echo "updating changelog"
 echo "=============================================================="
@@ -31,7 +34,7 @@ cp changelog.json LIVE/changelog.json
 echo "=============================================================="
 echo "starting bot"
 echo "=============================================================="
-startBotv2
+startBotV2
 echo "=============================================================="
 echo "bot started, update done"
 echo "=============================================================="
