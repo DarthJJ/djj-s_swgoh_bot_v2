@@ -1,4 +1,4 @@
-#!usr/bin/bash
+#!/usr/bin/bash
 DIR=../LIVE/
 if [ ! -d "$DIR" ]; then
   mkdir "$DIR"
