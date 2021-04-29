@@ -39,7 +39,7 @@ public final class Main extends ListenerAdapter {
 
     private Main() {
         super();
-        final Dotenv dotenv = Dotenv.load();
+        final Dotenv dotenv = Dotenv.configure().filename(".env").load();
         debug = Boolean.parseBoolean(dotenv.get("DEBUG_MODE"));
         logger = new Logger(debug);
         database = new Database(logger);
