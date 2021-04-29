@@ -74,11 +74,6 @@
             <property name="minimum" value="12"/>
         </properties>
     </rule>
-    <rule ref="category/java/errorprone.xml/DoNotCallSystemExit">
-        <properties>
-            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['Main']"/>
-        </properties>
-    </rule>
     <rule ref="category/java/errorprone.xml/DoNotTerminateVM">
         <properties>
             <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['Main']"/>
