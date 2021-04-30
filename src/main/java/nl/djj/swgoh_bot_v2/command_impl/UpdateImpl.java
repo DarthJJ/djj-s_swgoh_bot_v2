@@ -124,12 +124,14 @@ public class UpdateImpl {
                 continue;
             }
             final String[] splitted = locDataString.split(";");
-            final boolean isPreferred = splitted[3].toLowerCase(Locale.ROOT).equals("yes");
+            //CHECKSTYLE.OFF: MagicNumber
+            final boolean isPreferred = "yes".equals(splitted[3].toLowerCase(Locale.ROOT));
             locations.add(new FarmingLocation(splitted[0].replace("'", "''"),
                     splitted[1].replace("'", "''"),
                     splitted[2].replace("'", "''"),
                     splitted[3].replace("'", "''"),
                     isPreferred));
+            //CHECKSTYLE.ON: MagicNumber
         }
         try {
             dbHandler.updateFarmingLocations(locations);
