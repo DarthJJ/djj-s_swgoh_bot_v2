@@ -2,8 +2,8 @@ package nl.djj.swgoh_bot_v2.commands.admin;
 
 import nl.djj.swgoh_bot_v2.command_impl.ImplHelper;
 import nl.djj.swgoh_bot_v2.commands.BaseCommand;
-import nl.djj.swgoh_bot_v2.config.CommandCategory;
-import nl.djj.swgoh_bot_v2.config.Permission;
+import nl.djj.swgoh_bot_v2.config.enums.CommandCategory;
+import nl.djj.swgoh_bot_v2.config.enums.Permission;
 import nl.djj.swgoh_bot_v2.entities.Flag;
 import nl.djj.swgoh_bot_v2.entities.Message;
 import nl.djj.swgoh_bot_v2.helpers.Logger;
@@ -16,6 +16,7 @@ public class Update extends BaseCommand {
     private static final transient String FLAG_ABBREVIATIONS = "abbreviations";
     private static final transient String FLAG_GL_REQUIREMENTS = "glRequirements";
     private static final transient String FLAG_ABILITIES = "abilities";
+    private static final transient String FLAG_LOCATIONS = "locations";
 
     /**
      * The constructor.
@@ -42,6 +43,7 @@ public class Update extends BaseCommand {
         flags.put(FLAG_ABBREVIATIONS, new Flag(FLAG_ABBREVIATIONS, "Updates the unit abbreviations", name, FLAG_ABBREVIATIONS));
         flags.put(FLAG_GL_REQUIREMENTS, new Flag(FLAG_GL_REQUIREMENTS, "Updates the GL Requirements", name, FLAG_GL_REQUIREMENTS));
         flags.put(FLAG_ABILITIES, new Flag(FLAG_ABILITIES, "Updates the unit abilities", name, FLAG_ABILITIES));
+        flags.put(FLAG_LOCATIONS, new Flag(FLAG_LOCATIONS, "Updates the farming and shop locations of units", name, FLAG_LOCATIONS, "<location>"));
     }
 
     @Override
@@ -51,6 +53,7 @@ public class Update extends BaseCommand {
             case FLAG_ABBREVIATIONS -> this.implHelper.getUpdateImpl().updateAbbreviations(message);
             case FLAG_GL_REQUIREMENTS -> this.implHelper.getUpdateImpl().updateGlRequirements(message);
             case FLAG_ABILITIES -> this.implHelper.getUpdateImpl().updateAbilities(message);
+            case FLAG_LOCATIONS ->  this.implHelper.getUpdateImpl().updateLocations(message);
             default -> message.error("This is not a valid flag, use '" + message.getGuildPrefix() + "help " + name + "'");
         }
     }

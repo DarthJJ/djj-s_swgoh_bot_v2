@@ -2,7 +2,7 @@ package nl.djj.swgoh_bot_v2.command_impl;
 
 import net.dv8tion.jda.api.entities.MessageChannel;
 import nl.djj.swgoh_bot_v2.config.BotConstants;
-import nl.djj.swgoh_bot_v2.config.GalacticLegends;
+import nl.djj.swgoh_bot_v2.config.enums.GalacticLegends;
 import nl.djj.swgoh_bot_v2.config.SwgohConstants;
 import nl.djj.swgoh_bot_v2.config.SwgohGgEndpoint;
 import nl.djj.swgoh_bot_v2.database.DatabaseHandler;

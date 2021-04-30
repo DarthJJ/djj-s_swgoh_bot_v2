@@ -4,10 +4,7 @@ import nl.djj.swgoh_bot_v2.config.BotConstants;
 import nl.djj.swgoh_bot_v2.config.SwgohGgEndpoint;
 import nl.djj.swgoh_bot_v2.database.DatabaseHandler;
 import nl.djj.swgoh_bot_v2.entities.Message;
-import nl.djj.swgoh_bot_v2.entities.db.Abbreviation;
-import nl.djj.swgoh_bot_v2.entities.db.GlRequirement;
-import nl.djj.swgoh_bot_v2.entities.db.Ability;
-import nl.djj.swgoh_bot_v2.entities.db.UnitInfo;
+import nl.djj.swgoh_bot_v2.entities.db.*;
 import nl.djj.swgoh_bot_v2.exceptions.HttpRetrieveError;
 import nl.djj.swgoh_bot_v2.exceptions.SQLInsertionError;
 import nl.djj.swgoh_bot_v2.helpers.HttpHelper;
@@ -17,6 +14,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * @author DJJ
@@ -101,6 +99,41 @@ public class UpdateImpl {
         try {
             dbHandler.updateGlRequirements(requirements);
             message.done("GL Requirements updated");
+        } catch (final SQLInsertionError error) {
+            message.error(error.getMessage());
+        }
+    }
+
+    /**
+     * Updates the farming locations.
+     *
+     * @param message message.
+     */
+    public void updateLocations(final Message message) {
+        logger.info(className, "Updating the locations");
+        final List<String> locationData;
+        try {
+            locationData = httpHelper.getCsv(BotConstants.FARMING_LOCATIONS_LINK);
+        } catch (final HttpRetrieveError error) {
+            message.error(error.getMessage());
+            return;
+        }
+        final List<FarmingLocation> locations = new ArrayList<>();
+        for (final String locDataString : locationData) {
+            if (locDataString.contains("Unit")) {
+                continue;
+            }
+            final String[] splitted = locDataString.split(";");
+            final boolean isPreferred = splitted[3].toLowerCase(Locale.ROOT).equals("yes");
+            locations.add(new FarmingLocation(splitted[0].replace("'", "''"),
+                    splitted[1].replace("'", "''"),
+                    splitted[2].replace("'", "''"),
+                    splitted[3].replace("'", "''"),
+                    isPreferred));
+        }
+        try {
+            dbHandler.updateFarmingLocations(locations);
+            message.done("Farming locations updated");
         } catch (final SQLInsertionError error) {
             message.error(error.getMessage());
         }

@@ -95,7 +95,7 @@ public class TableNames {
     final transient DbColumn GUILD_MEMBERS = GUILD.addColumn("members", "integer", null);
     final transient DbColumn GUILD_LAST_UPDATED = GUILD.addColumn("lastUpdated", "string", null);
 
-    //Ability
+    //Ability --> Ability data for the unit.
     final transient DbTable ABILITY = schema.addTable("ability");
     final transient DbColumn ABILITY_ID = ABILITY.addColumn("abilityId", "string", null);
     final transient DbColumn ABILITY_NAME = ABILITY.addColumn("name", "string", null);
@@ -104,12 +104,20 @@ public class TableNames {
     final transient DbColumn ABILITY_IS_OMEGA = ABILITY.addColumn("isOmega", "integer", null);
     final transient DbColumn ABILITY_UNIT_ID = ABILITY.addColumn("unitId", "string", null);
 
-    //UnitAbility
+    //UnitAbility --> Ability data for the playerUnit (aka equipped)
     final transient DbTable UNIT_ABILITY = schema.addTable("unitAbility");
     final transient DbColumn UNIT_ABILITY_ABILITY_ID = UNIT_ABILITY.addColumn("abilityId", "string", null);
     final transient DbColumn UNIT_ABILITY_ALLYCODE = UNIT_ABILITY.addColumn("allycode", "integer", null);
     final transient DbColumn UNIT_ABILITY_GUILD_ID = UNIT_ABILITY.addColumn("guildId", "integer", null);
     final transient DbColumn UNIT_ABILITY_LEVEL = UNIT_ABILITY.addColumn("level", "integer", null);
+
+    //FarmingLocations --> the places where a certain unit can be found.
+    final transient DbTable LOCATION = schema.addTable("location");
+    final transient DbColumn LOCATION_BASE_ID = LOCATION.addColumn("baseId", "string", null);
+    final transient DbColumn LOCATION_TYPE = LOCATION.addColumn("type", "string", null);
+    final transient DbColumn LOCATION_LOCATION = LOCATION.addColumn("location", "string", null);
+    final transient DbColumn LOCATION_NODE = LOCATION.addColumn("node", "string", null);
+    final transient DbColumn LOCATION_PREFERRED = LOCATION.addColumn("preferred", "integer", null);
 
     //Master Table
     final transient DbTable SQLITE_MASTER = schema.addTable("sqlite_master");

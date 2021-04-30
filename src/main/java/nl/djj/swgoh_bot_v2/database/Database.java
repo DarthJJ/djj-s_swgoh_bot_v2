@@ -118,18 +118,21 @@ public class Database extends TableNames {
                 this.connection.createStatement().executeUpdate(new CreateTableQuery(GUILD, true).validate().toString());
             }
             //Ability
-            if(checkIfTableExists(ABILITY.getName())){
+            if (checkIfTableExists(ABILITY.getName())) {
                 ABILITY.addConstraint(new DbConstraint(ABILITY, "AbilityPK", Constraint.Type.PRIMARY_KEY, ABILITY_ID));
                 this.connection.createStatement().executeUpdate(new CreateTableQuery(ABILITY, true).validate().toString());
             }
             //UnitAbility
-            if(checkIfTableExists(UNIT_ABILITY.getName())){
+            if (checkIfTableExists(UNIT_ABILITY.getName())) {
                 UNIT_ABILITY.addConstraint(new DbConstraint(UNIT_ABILITY, "UnitAbilityPK", Constraint.Type.PRIMARY_KEY, UNIT_ABILITY_ABILITY_ID, UNIT_ABILITY_ALLYCODE));
                 this.connection.createStatement().executeUpdate(new CreateTableQuery(UNIT_ABILITY, true).validate().toString());
             }
-            if(checkIfTableExists(COMMAND_USAGE.getName())){
+            if (checkIfTableExists(COMMAND_USAGE.getName())) {
                 COMMAND_USAGE.addConstraint(new DbConstraint(COMMAND_USAGE, "CommandUsagePK", Constraint.Type.PRIMARY_KEY, COMMAND_USAGE_NAME, COMMAND_USAGE_FLAG));
                 this.connection.createStatement().executeUpdate(new CreateTableQuery(COMMAND_USAGE, true).validate().toString());
+            }
+            if (checkIfTableExists(LOCATION.getName())) {
+                this.connection.createStatement().executeUpdate(new CreateTableQuery(LOCATION, true).validate().toString());
             }
         } catch (final SQLException exception) {
             logger.error(className, "createDatabase", exception.getMessage());
@@ -171,6 +174,7 @@ public class Database extends TableNames {
             this.connection.createStatement().executeUpdate(new DropQuery(DropQuery.Type.TABLE, ABILITY.getName()).validate().toString());
             this.connection.createStatement().executeUpdate(new DropQuery(DropQuery.Type.TABLE, UNIT_ABILITY.getName()).validate().toString());
             this.connection.createStatement().executeUpdate(new DropQuery(DropQuery.Type.TABLE, COMMAND_USAGE.getName()).validate().toString());
+            this.connection.createStatement().executeUpdate(new DropQuery(DropQuery.Type.TABLE, LOCATION.getName()).validate().toString());
         } catch (final SQLException exception) {
             logger.error(className, "deleteDatabase", exception.getMessage());
         }

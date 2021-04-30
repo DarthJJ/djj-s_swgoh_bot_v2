@@ -1,6 +1,6 @@
 package nl.djj.swgoh_bot_v2.entities.db;
 
-import nl.djj.swgoh_bot_v2.config.GalacticLegends;
+import nl.djj.swgoh_bot_v2.config.enums.GalacticLegends;
 import org.json.JSONObject;
 
 /**

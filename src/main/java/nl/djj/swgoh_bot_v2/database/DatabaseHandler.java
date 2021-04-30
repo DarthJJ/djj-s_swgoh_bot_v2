@@ -1,8 +1,8 @@
 package nl.djj.swgoh_bot_v2.database;
 
 import com.healthmarketscience.sqlbuilder.*;
-import nl.djj.swgoh_bot_v2.config.GalacticLegends;
-import nl.djj.swgoh_bot_v2.config.Permission;
+import nl.djj.swgoh_bot_v2.config.enums.GalacticLegends;
+import nl.djj.swgoh_bot_v2.config.enums.Permission;
 import nl.djj.swgoh_bot_v2.entities.compare.GLUnit;
 import nl.djj.swgoh_bot_v2.entities.db.*;
 import nl.djj.swgoh_bot_v2.exceptions.SQLDeletionError;
@@ -73,6 +73,34 @@ public abstract class DatabaseHandler extends TableNames {
         } catch (final SQLException exception) {
             logger.error(className, "getCommandEnabledStatus", exception.getMessage());
             return false;
+        }
+    }
+
+    /**
+     * Update the farming location table.
+     *
+     * @param locations the farming locations
+     * @throws SQLInsertionError when something goes wrong.
+     */
+    public void updateFarmingLocations(final List<FarmingLocation> locations) throws SQLInsertionError {
+        String query;
+        try {
+            query = new DeleteQuery(LOCATION)
+                    .addCondition(BinaryCondition.equalTo(1, 1))
+                    .validate().toString();
+            statement.executeUpdate(query);
+            for (final FarmingLocation location : locations) {
+                query = new InsertQuery(LOCATION)
+                        .addColumn(LOCATION_BASE_ID, location.getUnitId())
+                        .addColumn(LOCATION_TYPE, location.getType())
+                        .addColumn(LOCATION_LOCATION, location.getLocation())
+                        .addColumn(LOCATION_NODE, location.getNode())
+                        .addColumn(LOCATION_PREFERRED, location.isPreferred())
+                        .validate().toString();
+                statement.executeUpdate(query);
+            }
+        } catch (final SQLException exception) {
+            throw new SQLInsertionError(className, "UpdateFarmingLocations", exception.getMessage(), logger);
         }
     }
 
@@ -980,6 +1008,7 @@ public abstract class DatabaseHandler extends TableNames {
 
     /**
      * Checks whether the user is allowed to create an ticket.
+     *
      * @param userId the user id.
      * @return true/false/
      * @throws SQLRetrieveError when something goes wrong.
@@ -1003,6 +1032,7 @@ public abstract class DatabaseHandler extends TableNames {
 
     /**
      * Retrieves the permission for a user.
+     *
      * @param userId the user Id.
      * @return the permission, if no user found, default USER.
      * @throws SQLRetrieveError when something goes wrong.
@@ -1026,6 +1056,7 @@ public abstract class DatabaseHandler extends TableNames {
 
     /**
      * Updates the users disallow status.
+     *
      * @param discordId the discord ID.
      * @throws SQLInsertionError when something goes wrong.
      */
@@ -1044,8 +1075,9 @@ public abstract class DatabaseHandler extends TableNames {
 
     /**
      * Updates the command usage.
+     *
      * @param command the command.
-     * @param flag the flag.
+     * @param flag    the flag.
      */
     public void updateCommandUsage(final String command, final String flag) {
         logger.debug(className, "Updates the command usage");
@@ -1057,7 +1089,7 @@ public abstract class DatabaseHandler extends TableNames {
         try {
             final ResultSet result = statement.executeQuery(query);
             int usage = 1;
-            if (result.next()){
+            if (result.next()) {
                 usage += result.getInt(COMMAND_USAGE_USAGE.getName());
             }
             query = new InsertQuery(COMMAND_USAGE)
@@ -1067,9 +1099,11 @@ public abstract class DatabaseHandler extends TableNames {
                     .validate().toString();
             query = makeReplace(query);
             statement.executeUpdate(query);
-        } catch (final SQLException exception){
+        } catch (final SQLException exception) {
             logger.error(className, "updateCommandUsage", exception.getMessage());
         }
     }
+
+
     //CHECKSTYLE.ON: MultipleStringLiteralsCheck
 }

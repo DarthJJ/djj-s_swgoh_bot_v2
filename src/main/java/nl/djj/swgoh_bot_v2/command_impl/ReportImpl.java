@@ -1,7 +1,7 @@
 package nl.djj.swgoh_bot_v2.command_impl;
 
 import nl.djj.swgoh_bot_v2.config.GithubConstants;
-import nl.djj.swgoh_bot_v2.config.Permission;
+import nl.djj.swgoh_bot_v2.config.enums.Permission;
 import nl.djj.swgoh_bot_v2.database.DatabaseHandler;
 import nl.djj.swgoh_bot_v2.entities.GithubIssueStatus;
 import nl.djj.swgoh_bot_v2.entities.Message;

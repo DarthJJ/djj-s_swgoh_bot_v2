@@ -2,6 +2,8 @@ package nl.djj.swgoh_bot_v2.command_impl;
 
 import net.dv8tion.jda.api.entities.Role;
 import nl.djj.swgoh_bot_v2.config.*;
+import nl.djj.swgoh_bot_v2.config.enums.GalacticLegends;
+import nl.djj.swgoh_bot_v2.config.enums.Permission;
 import nl.djj.swgoh_bot_v2.database.DatabaseHandler;
 import nl.djj.swgoh_bot_v2.entities.Message;
 import nl.djj.swgoh_bot_v2.entities.Unit;
