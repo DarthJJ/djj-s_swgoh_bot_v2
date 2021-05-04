@@ -1,25 +1,35 @@
 package nl.djj.swgoh_bot_v2.entities.db;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+import nl.djj.swgoh_bot_v2.database.daos.AbbreviationDaoImpl;
+
 /**
  * @author DJJ
- */
+ **/
+@DatabaseTable(tableName = "abbreviations", daoClass = AbbreviationDaoImpl.class)
 public class Abbreviation {
-    private final transient String baseId;
-    private final transient String abbreviation;
+    @DatabaseField(generatedId = true)
+    private transient int identifier;
+    @DatabaseField(canBeNull = false, foreign = true, uniqueCombo = true)
+    private transient Unit unit;
+    @DatabaseField(uniqueCombo = true)
+    private transient String abbreviation;
 
     /**
      * Constructor.
-     * @param baseId the unit Id.
-     * @param abbreviation the abbreviation.
-     */
-    public Abbreviation(final String baseId, final String abbreviation) {
-        super();
-        this.baseId = baseId;
+     **/
+    public Abbreviation() {
+
+    }
+
+    public Abbreviation(final Unit unit, final String abbreviation) {
+        this.unit = unit;
         this.abbreviation = abbreviation;
     }
 
-    public String getBaseId() {
-        return baseId;
+    public Unit getUnit() {
+        return unit;
     }
 
     public String getAbbreviation() {

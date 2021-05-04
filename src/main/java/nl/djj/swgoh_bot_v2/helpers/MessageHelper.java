@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import nl.djj.swgoh_bot_v2.commands.BaseCommand;
 import nl.djj.swgoh_bot_v2.config.BotConstants;
+import nl.djj.swgoh_bot_v2.config.Permission;
 import nl.djj.swgoh_bot_v2.config.SwgohConstants;
 import nl.djj.swgoh_bot_v2.entities.Flag;
 import nl.djj.swgoh_bot_v2.entities.GithubIssueStatus;
@@ -11,7 +12,7 @@ import nl.djj.swgoh_bot_v2.entities.Message;
 import nl.djj.swgoh_bot_v2.entities.compare.*;
 import nl.djj.swgoh_bot_v2.entities.db.Config;
 import nl.djj.swgoh_bot_v2.entities.db.Guild;
-import nl.djj.swgoh_bot_v2.entities.swgoh.SwgohProfile;
+import nl.djj.swgoh_bot_v2.entities.db.Player;
 import org.json.JSONArray;
 
 import java.awt.*;
@@ -126,25 +127,20 @@ public final class MessageHelper {
     /**
      * Formats the info to an embed.
      *
-     * @param profile the profile.
+     * @param player the player.
      * @return a message embed.
      */
-    public static MessageEmbed formatSwgohProfile(final SwgohProfile profile) {
+    public static MessageEmbed formatSwgohProfile(final Player player) {
         final EmbedBuilder builder = new EmbedBuilder(baseEmbed());
-        builder.appendDescription("Generic Profile info for: " + profile.getName());
-        final String generic = String.format(TABLE_FORMAT, "Level", "=", profile.getLevel()) +
-                String.format(TABLE_FORMAT, "Guild", "=", profile.getGuild());
+        builder.appendDescription("Generic Profile info for: " + player.getName());
+        final String generic = String.format(TABLE_FORMAT, "Level", "=", player.getPermission()) +
+                String.format(TABLE_FORMAT, "Guild", "=", player.getGuild());
         builder.addField(new MessageEmbed.Field("Generic", "```" + generic + "```", false));
-        final String galacticPower = String.format(TABLE_FORMAT, "GP_total", "=", profile.getGpTotal()) +
-                String.format(TABLE_FORMAT, "GP toons", "=", profile.getGpToons()) +
-                String.format(TABLE_FORMAT, "GP ships", "=", profile.getGpShips());
+        final String galacticPower = String.format(TABLE_FORMAT, "GP_total", "=", player.getGalacticPower());
         builder.addField(new MessageEmbed.Field("GP", "```" + galacticPower + "```", false));
-        final String arena = String.format(TABLE_FORMAT, "Toon Arena", "=", profile.getToonRank()) +
-                String.format(TABLE_FORMAT, "Ship Arena", "=", profile.getShipRank());
-        builder.addField(new MessageEmbed.Field("Arena", "```" + arena + "```", false));
-        final String profileLink = String.format(TABLE_FORMAT, "SWGOH profile", "", "[Link](" + profile.getProfileUrl() + ")");
+        final String profileLink = String.format(TABLE_FORMAT, "SWGOH player", "", "[Link](" + player.getUrl() + ")");
         builder.addField(new MessageEmbed.Field("SWGOH", profileLink, false));
-        builder.addField(new MessageEmbed.Field("Updated:", profile.getLastUpdated().toString(), false));
+        builder.addField(new MessageEmbed.Field("Updated:", player.getLastUpdated().toString(), false));
         return builder.build();
     }
 
@@ -179,7 +175,7 @@ public final class MessageHelper {
     public static MessageEmbed formatConfig(final Config config) {
         final EmbedBuilder builder = new EmbedBuilder(baseEmbed());
         builder.appendDescription("Bot configuration");
-        builder.addField(new MessageEmbed.Field("SWGOH ID", config.getSwgohId(), false));
+        builder.addField(new MessageEmbed.Field("SWGOH ID", Integer.toString(config.getSwgohId()), false));
         builder.addField(new MessageEmbed.Field("Prefix", config.getPrefix(), false));
         builder.addField(new MessageEmbed.Field("ModRole", config.getModerationRole(), false));
         builder.addField(new MessageEmbed.Field("Presence Ignore role", config.getIgnoreRole(), false));
@@ -425,6 +421,7 @@ public final class MessageHelper {
 
     /**
      * Creates an embed for a github issue status.
+     *
      * @param githubIssueStatus the gitHub Issue status.
      * @return a messageEmbed.
      */

@@ -80,6 +80,10 @@ public final class StringHelper {
         return result.toLocalDate();
     }
 
+    public static LocalDateTime parseSwgohDate(final String dateString){
+        return LocalDateTime.parse(dateString, DateTimeFormatter.ISO_DATE_TIME);
+    }
+
     /**
      * Formats the given DateTime to a string.
      *

@@ -1,6 +1,6 @@
 package nl.djj.swgoh_bot_v2.commands.moderation;
 
-import nl.djj.swgoh_bot_v2.command_impl.ImplHelper;
+import nl.djj.swgoh_bot_v2.helpers.ImplHelper;
 import nl.djj.swgoh_bot_v2.commands.BaseCommand;
 import nl.djj.swgoh_bot_v2.config.CommandCategory;
 import nl.djj.swgoh_bot_v2.config.Permission;
@@ -38,11 +38,11 @@ public class Config extends BaseCommand {
 
     @Override
     public void createFlags() {
-        flags.put(FLAG_SET_GUILD, new Flag(FLAG_SET_GUILD, "Sets the SWGOH guild id for the discord Guild", name, FLAG_SET_GUILD, "<guildId>"));
-        flags.put(FLAG_GET_CONFIG, new Flag(FLAG_GET_CONFIG, "Gets the config for the discord Guild", name, FLAG_GET_CONFIG));
-        flags.put(FLAG_SET_PREFIX, new Flag(FLAG_SET_PREFIX, "Sets the prefix for the current guild", name, FLAG_SET_PREFIX, "<prefix>"));
-        flags.put(FLAG_SET_IGNORE_ROLE, new Flag(FLAG_SET_IGNORE_ROLE, "Sets the ignore role for the bot presence functionality.", name, FLAG_SET_IGNORE_ROLE, "<@RoleTag>"));
-        flags.put(FLAG_SET_NOTIFY_CHANNEL, new Flag(FLAG_SET_NOTIFY_CHANNEL, "Sets the notify channel for the bot", name, FLAG_SET_NOTIFY_CHANNEL, "<#ChannelTag>"));
+        flags.put(FLAG_SET_GUILD, new Flag(FLAG_SET_GUILD, "Sets the SWGOH guild id for the discord Guild", true, name, FLAG_SET_GUILD, "<guildId>"));
+        flags.put(FLAG_GET_CONFIG, new Flag(FLAG_GET_CONFIG, "Gets the config for the discord Guild", true, name, FLAG_GET_CONFIG));
+        flags.put(FLAG_SET_PREFIX, new Flag(FLAG_SET_PREFIX, "Sets the prefix for the current guild", true, name, FLAG_SET_PREFIX, "<prefix>"));
+        flags.put(FLAG_SET_IGNORE_ROLE, new Flag(FLAG_SET_IGNORE_ROLE, "Sets the ignore role for the bot presence functionality.", true, name, FLAG_SET_IGNORE_ROLE, "<@RoleTag>"));
+        flags.put(FLAG_SET_NOTIFY_CHANNEL, new Flag(FLAG_SET_NOTIFY_CHANNEL, "Sets the notify channel for the bot", true, name, FLAG_SET_NOTIFY_CHANNEL, "<#ChannelTag>"));
     }
 
     @Override

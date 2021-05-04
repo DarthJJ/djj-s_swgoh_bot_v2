@@ -1,11 +1,12 @@
 package nl.djj.swgoh_bot_v2.exceptions;
 
+import nl.djj.swgoh_bot_v2.Main;
 import nl.djj.swgoh_bot_v2.helpers.Logger;
 
 /**
  * @author DJJ
  */
-public class SQLInsertionError extends Exception {
+public class DeletionError extends Exception {
 
     /**
      * Constructor.
@@ -13,10 +14,9 @@ public class SQLInsertionError extends Exception {
      * @param className the className.
      * @param methodName the method name.
      * @param message   the error.
-     * @param logger    the logger.
      */
-    public SQLInsertionError(final String className, final String methodName, final String message, final Logger logger) {
+    public DeletionError(final String className, final String methodName, final String message) {
         super(message);
-        logger.error(className, methodName, message);
+        Main.getLogger().error(className, methodName, message);
     }
 }

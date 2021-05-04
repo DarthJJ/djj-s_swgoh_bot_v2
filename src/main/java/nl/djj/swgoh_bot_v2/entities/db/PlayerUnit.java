@@ -1,56 +1,72 @@
 package nl.djj.swgoh_bot_v2.entities.db;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.j256.ormlite.dao.ForeignCollection;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
+import com.j256.ormlite.table.DatabaseTable;
+import nl.djj.swgoh_bot_v2.database.daos.PlayerUnitDaoImpl;
 
 /**
  * @author DJJ
- */
+ **/
+@DatabaseTable(tableName = "playerUnits", daoClass = PlayerUnitDaoImpl.class)
 public class PlayerUnit {
-    private final transient int allycode;
-    private final transient int guildId;
-    private final transient String baseId;
-    private final transient int rarity;
-    private final transient int galacticPower;
-    private final transient int gear;
-    private final transient int gearPieces;
-    private final transient int relic;
-    private final transient int speed;
-    private final transient List<UnitAbility> abilities;
+    @DatabaseField(generatedId = true)
+    private transient int identifier;
+    @DatabaseField(foreign = true, uniqueCombo = true, foreignAutoRefresh = true)
+    private transient Player player;
+    @DatabaseField(foreign = true, uniqueCombo = true, foreignAutoRefresh = true)
+    private transient Unit unit;
+    @DatabaseField
+    private transient int rarity;
+    @DatabaseField
+    private transient int galacticPower;
+    @DatabaseField
+    private transient int gear;
+    @DatabaseField
+    private transient int gearPieces;
+    @DatabaseField
+    private transient int relic;
+    @DatabaseField
+    private transient int speed;
+    @ForeignCollectionField()
+    private transient ForeignCollection<UnitAbility> abilities;
 
     /**
      * Constructor.
-     *
-     * @param allycode      allycode.
-     * @param guildId       guild id.
-     * @param baseId        the base id.
-     * @param rarity        the star level.
-     * @param galacticPower the galactic power.
-     * @param gear          the gear level.
-     * @param gearPieces    the amount of gearPieces.
-     * @param relic         the relic level.
-     * @param speed         the base speed.
+     **/
+    public PlayerUnit() {
+
+    }
+
+    /**
+     * Constructor.
+     * @param player the owner.
+     * @param unit the base unit.
+     * @param rarity the rarity level.
+     * @param galacticPower the GP.
+     * @param gear the gear level.
+     * @param gearPieces the equipped gear pieces.
+     * @param relic the relic level.
+     * @param speed the speed.
      */
-    public PlayerUnit(final int allycode, final int guildId, final String baseId, final int rarity, final int galacticPower, final int gear, final int gearPieces, final int relic, final int speed) {
-        this.allycode = allycode;
-        this.guildId = guildId;
-        this.baseId = baseId;
+    public PlayerUnit(final Player player, final Unit unit, final int rarity, final int galacticPower, final int gear, final int gearPieces, final int relic, final int speed) {
+        this.player = player;
+        this.unit = unit;
         this.rarity = rarity;
         this.galacticPower = galacticPower;
         this.gear = gear;
         this.gearPieces = gearPieces;
         this.relic = relic;
         this.speed = speed;
-        this.abilities = new ArrayList<>();
     }
 
-
-    public int getAllycode() {
-        return allycode;
+    public Player getPlayer() {
+        return player;
     }
 
-    public String getBaseId() {
-        return baseId;
+    public Unit getUnit() {
+        return unit;
     }
 
     public int getRarity() {
@@ -77,19 +93,15 @@ public class PlayerUnit {
         return speed;
     }
 
-    public int getGuildId() {
-        return guildId;
+    public ForeignCollection<UnitAbility> getAbilities() {
+        return abilities;
     }
 
-    /**
-     * Add an ability to this unit.
-     * @param ability the ability to add.
-     */
-    public void addAbility(final UnitAbility ability) {
-        this.abilities.add(ability);
+    public void setIdentifier(final int identifier) {
+        this.identifier = identifier;
     }
 
-    public List<UnitAbility> getAbilities() {
-        return this.abilities;
+    public int getIdentifier() {
+        return identifier;
     }
 }

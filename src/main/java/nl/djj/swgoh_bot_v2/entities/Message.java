@@ -3,8 +3,10 @@ package nl.djj.swgoh_bot_v2.entities;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import nl.djj.swgoh_bot_v2.database.DAO;
 import nl.djj.swgoh_bot_v2.helpers.MessageHelper;
 
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,6 +18,7 @@ public final class Message {
 
     private final String messageId;
     private final String authorId;
+    private int allycode;
     private final String author;
     private final String guildPrefix;
     private final String guildId;
@@ -149,6 +152,14 @@ public final class Message {
         return this.guildId;
     }
 
+    public int getAllycode() {
+        return allycode;
+    }
+
+    public void setAllycode(final int allycode) {
+        this.allycode = allycode;
+    }
+
     /**
      * Inits a message from the messageEvent.
      *
@@ -163,7 +174,6 @@ public final class Message {
         final String guildId = event.getGuild().getId();
         final String messageContent = event.getMessage().getContentDisplay().replace(guildPrefix, "");
         final String rawMessageContent = event.getMessage().getContentRaw().replace(guildPrefix, "");
-
         final List<String> args = new LinkedList<>(Arrays.asList(messageContent.split(" ")));
         final List<String> altArgs = new LinkedList<>(Arrays.asList(rawMessageContent.split(" ")));
         final String commandName;
