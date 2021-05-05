@@ -9,6 +9,7 @@ import nl.djj.swgoh_bot_v2.exceptions.RetrieveError;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * @author DJJ
@@ -27,7 +28,7 @@ public class GLRequirementDaoImpl extends BaseDaoImpl<GLRequirement, Integer> im
     @Override
     public List<GLRequirement> getForEvent(final String eventId) throws RetrieveError {
         try {
-            return this.queryForEq("glEvent", eventId);
+            return this.queryForEq("glEvent", eventId.toUpperCase(Locale.ROOT));
         } catch (final SQLException exception) {
             throw new RetrieveError(className, "getForEvent", exception.getMessage());
         }

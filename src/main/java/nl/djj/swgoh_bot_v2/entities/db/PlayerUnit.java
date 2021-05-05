@@ -11,8 +11,8 @@ import nl.djj.swgoh_bot_v2.database.daos.PlayerUnitDaoImpl;
  **/
 @DatabaseTable(tableName = "playerUnits", daoClass = PlayerUnitDaoImpl.class)
 public class PlayerUnit {
-    @DatabaseField(generatedId = true)
-    private transient int identifier;
+    @DatabaseField(id = true)
+    private transient String identifier;
     @DatabaseField(foreign = true, uniqueCombo = true, foreignAutoRefresh = true)
     private transient Player player;
     @DatabaseField(foreign = true, uniqueCombo = true, foreignAutoRefresh = true)
@@ -51,6 +51,7 @@ public class PlayerUnit {
      * @param speed the speed.
      */
     public PlayerUnit(final Player player, final Unit unit, final int rarity, final int galacticPower, final int gear, final int gearPieces, final int relic, final int speed) {
+        this.identifier = unit.getBaseId() + "_" + player.getAllycode();
         this.player = player;
         this.unit = unit;
         this.rarity = rarity;
@@ -97,11 +98,11 @@ public class PlayerUnit {
         return abilities;
     }
 
-    public void setIdentifier(final int identifier) {
+    public void setIdentifier(final String identifier) {
         this.identifier = identifier;
     }
 
-    public int getIdentifier() {
+    public String getIdentifier() {
         return identifier;
     }
 }

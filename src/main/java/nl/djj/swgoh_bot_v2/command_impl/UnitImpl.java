@@ -68,7 +68,7 @@ public class UnitImpl {
         } catch (final RetrieveError exception) {
             logger.error(className, "checkRelicLevel", exception.getMessage());
         }
-        return unitsBelow.entrySet().stream().sorted((e1,e2)->
+        return unitsBelow.entrySet().stream().sorted((e1, e2) ->
                 e2.getValue().compareTo(e1.getValue()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
                         (e1, e2) -> e1, LinkedHashMap::new));
@@ -81,47 +81,36 @@ public class UnitImpl {
      * @param rivalId  the data of the rival.
      * @return an array of profileCompares.
      */
-    public ProfileCompare[] compareProfiles(final int playerId, final int rivalId) {
-        final ProfileCompare player = new ProfileCompare();
-        final ProfileCompare rival = new ProfileCompare();
-//        final JSONObject playerJson = playerData.getJSONObject("data");
-//        player.setGalacticPower(playerJson.getInt("galactic_power"));
-//        player.setShipGp(playerJson.getInt("ship_galactic_power"));
-//        player.setToonGp(playerJson.getInt("character_galactic_power"));
-//        player.setName(playerJson.getString("name"));
-//        player.setGuild(playerJson.getString("guild_name"));
-//        final JSONObject rivalJson = rivalData.getJSONObject("data");
-//        rival.setGalacticPower(rivalJson.getInt("galactic_power"));
-//        rival.setShipGp(rivalJson.getInt("ship_galactic_power"));
-//        rival.setToonGp(rivalJson.getInt("character_galactic_power"));
-//        rival.setName(rivalJson.getString("name"));
-//        rival.setGuild(rivalJson.getString("guild_name"));
-//        createUnitProfile(playerData.getJSONArray("units"), player);
-//        createUnitProfile(rivalData.getJSONArray("units"), rival);
-        return new ProfileCompare[]{player, rival};
+    public ProfileCompare[] compareProfiles(final int playerId, final int rivalId) throws RetrieveError {
+        final ProfileCompare playerCompare = new ProfileCompare();
+        final ProfileCompare rivalCompare = new ProfileCompare();
+        final Player player = dao.playerDao().getById(playerId);
+        final Player rival = dao.playerDao().getById(rivalId);
+        playerCompare.setGalacticPower(player.getGalacticPower());
+        playerCompare.setName(player.getName());
+//        playerCompare.setGuild(player.getGuild().getName()); //TODO: re-enable after the guild has been incorporated
+        rivalCompare.setGalacticPower(rival.getGalacticPower());
+        rivalCompare.setName(rival.getName());
+//        rivalCompare.setGuild(rival.getGuild().getName()); //TODO: See previous comment
+        createUnitProfile(player, playerCompare);
+        createUnitProfile(rival, rivalCompare);
+        return new ProfileCompare[]{playerCompare, rivalCompare};
     }
 
     /**
      * Creates a unit profile.
      *
-     * @param unitData the data.
-     * @param profile  the profile.
+     * @param player  the allycode.
+     * @param profile the profile.
      */
-    public void createUnitProfile(final JSONArray unitData, final ProfileCompare profile) {
-        for (int i = 0; i < unitData.length(); i++) {
-            final JSONObject unitJson = unitData.getJSONObject(i).getJSONObject("data");
-            if (SwgohConstants.COMPARE_TOONS.containsKey(unitJson.getString("base_id"))) {
-                profile.addUnit(unitJson);
-            }
-            profile.addZeta(unitJson.getJSONArray("zeta_abilities").length());
-            if (unitJson.getInt("gear_level") == SwgohConstants.GEAR_LEVEL_13) {
-                profile.addG13();
-            }
-            if (unitJson.getInt("gear_level") == SwgohConstants.GEAR_LEVEL_12) {
-                profile.addG12();
-            }
-            profile.addRelic(unitJson.getInt("relic_tier"));
+    public void createUnitProfile(final Player player, final ProfileCompare profile) throws RetrieveError {
+        for (Map.Entry<String, String> entry : SwgohConstants.COMPARE_TOONS.entrySet()) {
+            profile.addUnit(dao.playerUnitDao().getForPlayer(player, entry.getKey()), entry.getKey());
         }
+        profile.setG13(dao.playerUnitDao().getGearCount(player, SwgohConstants.GEAR_LEVEL_13));
+        profile.setG12(dao.playerUnitDao().getGearCount(player, SwgohConstants.GEAR_LEVEL_12));
+        profile.setZetas(dao.playerUnitDao().getZetaCount(player));
+        profile.setRelics(dao.playerUnitDao().getRelics(player));
     }
 
     /**
@@ -133,6 +122,7 @@ public class UnitImpl {
      * @throws InsertionError When storing in the DB goes wrong.
      */
     public void insertUnits(final JSONArray playerUnits, final Player player) throws RetrieveError, InsertionError {
+        logger.debug(className, "Inserting playerUnits in the DB");
         for (int i = 0; i < playerUnits.length(); i++) {
             final JSONObject unitData = playerUnits.optJSONObject(i).getJSONObject("data");
             final String baseId = unitData.getString("base_id");
@@ -149,15 +139,15 @@ public class UnitImpl {
                     gearPieces++;
                 }
             }
-            dao.playerUnitDao().save(new PlayerUnit(player, dao.unitDao().getById(baseId), rarity, galacticPower, gear, gearPieces, relic, speed));
-            final PlayerUnit unit = dao.playerUnitDao().getForPlayer(player, baseId);
+            final PlayerUnit playerUnit = new PlayerUnit(player, dao.unitDao().getById(baseId), rarity, galacticPower, gear, gearPieces, relic, speed);
+            dao.playerUnitDao().save(playerUnit);
             for (int j = 0; j < abilityData.length(); j++) {
                 String abilityId = abilityData.getJSONObject(j).getString("id");
-                if ("uniqueskill_GALACTICLEGEND01".equals(abilityId)){
-                    abilityId+= "_" + baseId;
+                if ("uniqueskill_GALACTICLEGEND01".equals(abilityId)) {
+                    abilityId += "_" + baseId;
                 }
                 final int level = abilityData.getJSONObject(j).getInt("ability_tier");
-                dao.unitAbilityDao().save(new UnitAbility(unit, dao.abilityDao().getById(abilityId), level));
+                dao.unitAbilityDao().save(new UnitAbility(playerUnit, dao.abilityDao().getById(abilityId), level));
             }
         }
     }

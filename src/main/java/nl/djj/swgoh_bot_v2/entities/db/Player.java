@@ -32,7 +32,7 @@ public class Player {
     private transient LocalDateTime lastUpdatedSwgoh;
     @ForeignCollectionField()
     private transient ForeignCollection<PlayerUnit> playerUnits;
-    @DatabaseField(foreign = true)
+    @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private transient Guild guild;
     @DatabaseField(persisterClass = PermissionPersister.class)
     private Permission permission;

@@ -153,7 +153,7 @@ public class ProfileImpl {
             }
             final int swgohId = getAndUpdateProfileData(message, -1);
             final int rivalId = getAndUpdateProfileData(null, Integer.parseInt(message.getArgs().get(0)));
-//            message.done(MessageHelper.formatProfileCompare(implHelper.getUnitImpl().compareProfiles(playerData, rivalData))); //TODO: implement
+            message.done(MessageHelper.formatProfileCompare(implHelper.getUnitImpl().compareProfiles(swgohId, rivalId)));
         } catch (final InsertionError | RetrieveError | HttpRetrieveError exception) {
             message.error(exception.getMessage());
         }
@@ -194,7 +194,7 @@ public class ProfileImpl {
         try {
             final int allycode = getAndUpdateProfileData(message, -1);
             final GalacticLegends glEvent = GalacticLegends.getByKey(message.getArgs().get(0));
-            final List<GLRequirement> requirements = dao.glRequirementDao().getForEvent(glEvent.getName());
+            final List<GLRequirement> requirements = dao.glRequirementDao().getForEvent(glEvent.getKey());
             message.done(MessageHelper.formatPlayerGLStatus(getGlStatus(glEvent.getName(), dao.playerDao().getById(allycode), requirements)));
         } catch (final RetrieveError | InsertionError | HttpRetrieveError error) {
             message.error(error.getMessage());
@@ -251,6 +251,7 @@ public class ProfileImpl {
      * @throws RetrieveError  When the created object couldn't be retrieved from the DB.
      */
     public Player insertProfile(final JSONObject playerData) throws InsertionError, RetrieveError {
+        logger.debug(className, "Inserting player in the DB");
         final int allycode = playerData.getInt("ally_code");
         final String name = playerData.getString("name");
         final int galacticPower = playerData.getInt("galactic_power");

@@ -2,6 +2,8 @@ package nl.djj.swgoh_bot_v2.helpers;
 
 import nl.djj.swgoh_bot_v2.config.SwgohConstants;
 
+import java.util.Map;
+
 /**
  * @author DJJ
  **/
@@ -16,13 +18,14 @@ public final class CalculationHelper {
 
     /**
      * Calculates the completion based on the given values.
+     *
      * @param rarityLevel the rarity of the unit.
-     * @param gearLevel the gear of the unit.
-     * @param relicLevel the relic of the unit.
-     * @param gearPieces the amount of equipped gear pieces.
-     * @param rarityReq the required rarity.
-     * @param relicReq the required relic.
-     * @param gearReq the required gear.
+     * @param gearLevel   the gear of the unit.
+     * @param relicLevel  the relic of the unit.
+     * @param gearPieces  the amount of equipped gear pieces.
+     * @param rarityReq   the required rarity.
+     * @param relicReq    the required relic.
+     * @param gearReq     the required gear.
      * @return a double value as completion percentage.
      */
     public static double calculateCompletion(final int rarityLevel, final int gearLevel, final int relicLevel, final int gearPieces, final int rarityReq, final int relicReq, final int gearReq) {
@@ -41,8 +44,8 @@ public final class CalculationHelper {
         if (gearLevel == -1) {
             return 0;
         }
-        final double reqValue = SwgohConstants.GEAR_SCALE.get(gearReq);
-        final double levelValue = SwgohConstants.GEAR_SCALE.get(gearLevel) + (1.0 / (6.0 / gearPieces));
+        final double reqValue = getGearValue(gearReq);
+        final double levelValue = getGearValue(gearLevel + (1.0 / (6.0 / gearPieces)));
         final double calcValue = gearWeight * (levelValue / reqValue);
         return Math.min(calcValue, gearWeight);
     }
@@ -51,8 +54,8 @@ public final class CalculationHelper {
         if (rarity == -1) {
             return 0;
         }
-        final double reqValue = SwgohConstants.RARITY_SCALE.get(rarityReq);
-        final double levelValue = SwgohConstants.RARITY_SCALE.get(rarity);
+        final double reqValue = getRarityValue(rarityReq);
+        final double levelValue = getRarityValue(rarity);
         final double calcValue = rarityWeight * (levelValue / reqValue);
         return Math.min(calcValue, rarityWeight);
     }
@@ -61,8 +64,8 @@ public final class CalculationHelper {
         if (relicLevel == -1) {
             return 0;
         }
-        final double reqValue = SwgohConstants.RELIC_SCALE.get(relicReq);
-        final double levelValue = SwgohConstants.RELIC_SCALE.get(relicLevel);
+        final double reqValue = getRelicValue(relicReq);
+        final double levelValue = getRelicValue(relicLevel);
         final double calcValue = relicWeight * (levelValue / reqValue);
         return Math.min(calcValue, relicWeight);
     }
@@ -83,5 +86,33 @@ public final class CalculationHelper {
     }
     //CHECKSTYLE.ON: MagicNumberCheck
 
-//    public static calculate
+    private static double getGearValue(final double gearLevel) {
+        double returnValue = 0.0;
+        for (Map.Entry<Integer, Double> entry : SwgohConstants.GEAR_SCALE.entrySet()) {
+            if (entry.getKey() <= gearLevel) {
+                returnValue += entry.getValue();
+            }
+        }
+        return returnValue;
+    }
+
+    private static double getRelicValue(final double relicLevel) {
+        double returnValue = 0.0;
+        for (Map.Entry<Integer, Double> entry : SwgohConstants.RELIC_SCALE.entrySet()) {
+            if (entry.getKey() <= relicLevel) {
+                returnValue += entry.getValue();
+            }
+        }
+        return returnValue;
+    }
+
+    private static double getRarityValue(final double rarityLevel) {
+        double returnValue = 0.0;
+        for (Map.Entry<Integer, Double> entry : SwgohConstants.RARITY_SCALE.entrySet()) {
+            if (entry.getKey() <= rarityLevel) {
+                returnValue += entry.getValue();
+            }
+        }
+        return returnValue;
+    }
 }

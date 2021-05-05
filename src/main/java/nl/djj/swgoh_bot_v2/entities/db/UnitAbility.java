@@ -11,9 +11,9 @@ import nl.djj.swgoh_bot_v2.database.daos.UnitAbilityDaoImpl;
 public class UnitAbility {
     @DatabaseField(generatedId = true)
     private transient int identifier;
-    @DatabaseField(foreign = true, uniqueCombo = true)
+    @DatabaseField(foreign = true, uniqueCombo = true, foreignAutoRefresh = true)
     private transient PlayerUnit playerUnit;
-    @DatabaseField(foreign = true, uniqueCombo = true)
+    @DatabaseField(foreign = true, uniqueCombo = true, foreignAutoRefresh = true)
     private transient Ability baseAbility;
     @DatabaseField
     private transient int level;

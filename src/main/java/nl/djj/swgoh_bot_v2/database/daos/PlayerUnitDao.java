@@ -7,11 +7,12 @@ import nl.djj.swgoh_bot_v2.exceptions.InsertionError;
 import nl.djj.swgoh_bot_v2.exceptions.RetrieveError;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author DJJ
  **/
-public interface PlayerUnitDao extends Dao<PlayerUnit, Integer> {
+public interface PlayerUnitDao extends Dao<PlayerUnit, String> {
     String className = PlayerUnitDao.class.getName();
 
     void save(final PlayerUnit playerUnit) throws InsertionError;
@@ -19,4 +20,10 @@ public interface PlayerUnitDao extends Dao<PlayerUnit, Integer> {
     List<PlayerUnit> getAllForPlayer(final Player player) throws RetrieveError;
 
     PlayerUnit getForPlayer(final Player player, final String baseId) throws RetrieveError;
+
+    int getGearCount(final Player player, final int gearLevel) throws RetrieveError;
+
+    int getZetaCount(final Player player) throws RetrieveError;
+
+    Map<Integer, Integer> getRelics(final Player player) throws RetrieveError;
 }

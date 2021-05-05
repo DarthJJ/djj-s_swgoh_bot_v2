@@ -4,7 +4,6 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import nl.djj.swgoh_bot_v2.commands.BaseCommand;
 import nl.djj.swgoh_bot_v2.config.BotConstants;
-import nl.djj.swgoh_bot_v2.config.Permission;
 import nl.djj.swgoh_bot_v2.config.SwgohConstants;
 import nl.djj.swgoh_bot_v2.entities.Flag;
 import nl.djj.swgoh_bot_v2.entities.GithubIssueStatus;
@@ -316,9 +315,7 @@ public final class MessageHelper {
         embed.setDescription("Profile comparison");
         final String profileString = String.format(PROFILE_TABLE_FORMAT, "name:", compareProfiles[0].getName(), ":", compareProfiles[1].getName()) +
                 String.format(PROFILE_TABLE_FORMAT, "guild:", compareProfiles[0].getGuild(), ":", compareProfiles[1].getGuild()) +
-                String.format(PROFILE_TABLE_FORMAT, "GP:", StringHelper.formatNumber(compareProfiles[0].getGalacticPower()), ":", StringHelper.formatNumber(compareProfiles[1].getGalacticPower())) +
-                String.format(PROFILE_TABLE_FORMAT, "ToonGP:", StringHelper.formatNumber(compareProfiles[0].getToonGp()), ":", StringHelper.formatNumber(compareProfiles[1].getToonGp())) +
-                String.format(PROFILE_TABLE_FORMAT, "ShipGP:", StringHelper.formatNumber(compareProfiles[0].getShipGp()), ":", StringHelper.formatNumber(compareProfiles[1].getShipGp()));
+                String.format(PROFILE_TABLE_FORMAT, "GP:", StringHelper.formatNumber(compareProfiles[0].getGalacticPower()), ":", StringHelper.formatNumber(compareProfiles[1].getGalacticPower()));
         embed.addField("Profile", "```" + profileString + "```", false);
         final String rosterString = String.format(PROFILE_TABLE_FORMAT, "Zetas:", compareProfiles[0].getZetas(), ":", compareProfiles[1].getZetas()) +
                 String.format(PROFILE_TABLE_FORMAT, "G13:", compareProfiles[0].getG13(), ":", compareProfiles[1].getG13()) +
