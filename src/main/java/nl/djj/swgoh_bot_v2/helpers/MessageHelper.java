@@ -110,20 +110,6 @@ public final class MessageHelper {
     }
 
     /**
-     * Formats the generic info for an embed.
-     *
-     * @param guild the guild.
-     * @return a message embed.
-     */
-    public static MessageEmbed formatGuildSwgohProfile(final Guild guild) {
-        final EmbedBuilder builder = new EmbedBuilder(baseEmbed());
-        builder.appendDescription("Guild information for: " + guild.getName());
-        builder.addField(new MessageEmbed.Field("Members:", Integer.toString(guild.getMembers()), false));
-        builder.addField(new MessageEmbed.Field("GP:", StringHelper.formatNumber(guild.getGalacticPower()), false));
-        return builder.build();
-    }
-
-    /**
      * Formats the info to an embed.
      *
      * @param player the player.

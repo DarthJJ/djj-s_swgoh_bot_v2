@@ -6,10 +6,7 @@ import nl.djj.swgoh_bot_v2.database.DAO;
 import nl.djj.swgoh_bot_v2.entities.Message;
 import nl.djj.swgoh_bot_v2.entities.compare.GLUnit;
 import nl.djj.swgoh_bot_v2.entities.compare.PlayerGLStatus;
-import nl.djj.swgoh_bot_v2.entities.db.GLRequirement;
-import nl.djj.swgoh_bot_v2.entities.db.Player;
-import nl.djj.swgoh_bot_v2.entities.db.PlayerUnit;
-import nl.djj.swgoh_bot_v2.entities.db.Presence;
+import nl.djj.swgoh_bot_v2.entities.db.*;
 import nl.djj.swgoh_bot_v2.exceptions.DeletionError;
 import nl.djj.swgoh_bot_v2.exceptions.HttpRetrieveError;
 import nl.djj.swgoh_bot_v2.exceptions.InsertionError;
@@ -65,7 +62,7 @@ public class ProfileImpl {
         final JSONObject playerData = httpHelper.getJsonObject(SwgohGgEndpoint.PLAYER_ENDPOINT.getUrl() + swgohId);
         final JSONObject playerInfo = playerData.getJSONObject("data");
         final JSONArray playerUnits = playerData.getJSONArray("units");
-        final Player player = insertProfile(playerInfo);
+        final Player player = insertProfile(playerInfo, null);
         this.implHelper.getUnitImpl().insertUnits(playerUnits, player);
         return swgohId;
     }
@@ -250,7 +247,7 @@ public class ProfileImpl {
      * @throws InsertionError When the player object couldn't be inserted into the DB.
      * @throws RetrieveError  When the created object couldn't be retrieved from the DB.
      */
-    public Player insertProfile(final JSONObject playerData) throws InsertionError, RetrieveError {
+    public Player insertProfile(final JSONObject playerData, final Guild guild) throws InsertionError, RetrieveError {
         logger.debug(className, "Inserting player in the DB");
         final int allycode = playerData.getInt("ally_code");
         final String name = playerData.getString("name");
@@ -258,7 +255,18 @@ public class ProfileImpl {
         final String url = SwgohGgEndpoint.PLAYER_ENDPOINT.getUrl() + playerData.getString("url");
         final LocalDateTime lastUpdated = StringHelper.getCurrentDateTime();
         final LocalDateTime lastUpdatedSwgoh = StringHelper.parseSwgohDate(playerData.getString("last_updated"));
-        final Player player = dao.playerDao().getById(allycode);
+        Player player = dao.playerDao().getById(allycode);
+        if (player == null){
+            player = new Player(allycode, name);
+        }
+        if (playerData.has("guild_id")) {
+            player.setGuild(dao.guildDao().getById(playerData.getInt("guild_id")));
+        }else {
+            player.setGuild(guild);
+        }
+        if (playerData.has("guild_name")) {
+            player.setGuildName(playerData.getString("guild_name"));
+        }
         player.setGalacticPower(galacticPower);
         player.setUrl(url);
         player.setName(name);

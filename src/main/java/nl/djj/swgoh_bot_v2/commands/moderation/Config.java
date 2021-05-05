@@ -12,7 +12,7 @@ import nl.djj.swgoh_bot_v2.helpers.Logger;
  * @author DJJ
  */
 public class Config extends BaseCommand {
-    private static final transient String FLAG_SET_GUILD = "setSwgohGuild";
+    private static final transient String FLAG_SET_GUILD = "setSwgohId";
     private static final transient String FLAG_GET_CONFIG = "getConfig";
     private static final transient String FLAG_SET_PREFIX = "setPrefix";
     private static final transient String FLAG_SET_IGNORE_ROLE = "setIgnoreRole";

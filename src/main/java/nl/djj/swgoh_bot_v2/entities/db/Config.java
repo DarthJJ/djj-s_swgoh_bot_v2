@@ -3,11 +3,12 @@ package nl.djj.swgoh_bot_v2.entities.db;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import nl.djj.swgoh_bot_v2.config.BotConstants;
+import nl.djj.swgoh_bot_v2.database.daos.ConfigDaoImpl;
 
 /**
  * @author DJJ
  **/
-@DatabaseTable(tableName = "config")
+@DatabaseTable(tableName = "config", daoClass = ConfigDaoImpl.class)
 public class Config {
     @DatabaseField(id = true)
     private transient String guildId;

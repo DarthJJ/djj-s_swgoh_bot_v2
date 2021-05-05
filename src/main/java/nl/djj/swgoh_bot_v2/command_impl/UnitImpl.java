@@ -88,10 +88,10 @@ public class UnitImpl {
         final Player rival = dao.playerDao().getById(rivalId);
         playerCompare.setGalacticPower(player.getGalacticPower());
         playerCompare.setName(player.getName());
-//        playerCompare.setGuild(player.getGuild().getName()); //TODO: re-enable after the guild has been incorporated
+        playerCompare.setGuild(player.getGuildName());
         rivalCompare.setGalacticPower(rival.getGalacticPower());
         rivalCompare.setName(rival.getName());
-//        rivalCompare.setGuild(rival.getGuild().getName()); //TODO: See previous comment
+        rivalCompare.setGuild(rival.getGuildName());
         createUnitProfile(player, playerCompare);
         createUnitProfile(rival, rivalCompare);
         return new ProfileCompare[]{playerCompare, rivalCompare};
@@ -141,6 +141,7 @@ public class UnitImpl {
             }
             final PlayerUnit playerUnit = new PlayerUnit(player, dao.unitDao().getById(baseId), rarity, galacticPower, gear, gearPieces, relic, speed);
             dao.playerUnitDao().save(playerUnit);
+            logger.debug(className, "Inserting unit ability in the DB");
             for (int j = 0; j < abilityData.length(); j++) {
                 String abilityId = abilityData.getJSONObject(j).getString("id");
                 if ("uniqueskill_GALACTICLEGEND01".equals(abilityId)) {

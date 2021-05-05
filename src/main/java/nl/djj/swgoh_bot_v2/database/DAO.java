@@ -4,7 +4,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
 import nl.djj.swgoh_bot_v2.database.daos.*;
-import nl.djj.swgoh_bot_v2.entities.db.*;
+import nl.djj.swgoh_bot_v2.entities.db.Config;
 
 import java.sql.SQLException;
 
@@ -16,11 +16,11 @@ public class DAO {
     private final transient UnitDao unitDao;
     private final transient AbbreviationDao abbreviationDao;
     private final transient FarmingLocationDao farmingLocationDao;
-    private final transient Dao<Guild, Integer> guildDao;
+    private final transient GuildDao guildDao;
     private final transient PlayerDao playerDao;
     private final transient PlayerUnitDao playerUnitDao;
     private final transient UnitAbilityDao unitAbilityDao;
-    private final transient Dao<Config, String> configDao;
+    private final transient ConfigDao configDao;
     private final transient PresenceDao presenceDao;
     private final transient GLRequirementDao glRequirementDao;
     private final transient CommandDao commandDao;
@@ -36,11 +36,11 @@ public class DAO {
         unitDao = new UnitDaoImpl(connection);
         abbreviationDao = new AbbreviationDaoImpl(connection);
         farmingLocationDao = new FarmingLocationDaoImpl(connection);
-        guildDao = DaoManager.createDao(connection, Guild.class);
+        guildDao = new GuildDaoImpl(connection);
         playerDao = new PlayerDaoImpl(connection);
         playerUnitDao = new PlayerUnitDaoImpl(connection);
         unitAbilityDao = new UnitAbilityDaoImpl(connection);
-        configDao = DaoManager.createDao(connection, Config.class);
+        configDao = new ConfigDaoImpl(connection);
         presenceDao = new PresenceDaoImpl(connection);
         glRequirementDao = new GLRequirementDaoImpl(connection);
         commandDao = new CommandDaoImpl(connection);
@@ -79,7 +79,7 @@ public class DAO {
     /**
      * @return the Guild DAO.
      */
-    public Dao<Guild, Integer> GuildDao() {
+    public GuildDao guildDao() {
         return guildDao;
     }
 
@@ -107,7 +107,7 @@ public class DAO {
     /**
      * @return the Config DAO.
      */
-    public Dao<Config, String> ConfigDao() {
+    public ConfigDao configDao() {
         return configDao;
     }
 

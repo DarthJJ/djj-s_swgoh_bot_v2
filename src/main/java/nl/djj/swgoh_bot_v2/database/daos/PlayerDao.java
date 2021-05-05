@@ -6,6 +6,8 @@ import nl.djj.swgoh_bot_v2.exceptions.DeletionError;
 import nl.djj.swgoh_bot_v2.exceptions.InsertionError;
 import nl.djj.swgoh_bot_v2.exceptions.RetrieveError;
 
+import java.util.Map;
+
 /**
  * @author DJJ
  **/
@@ -21,4 +23,8 @@ public interface PlayerDao extends Dao<Player, Integer> {
     boolean exists(final int allycode) throws RetrieveError;
 
     void delete(final int allycode) throws DeletionError;
+
+    Map<String, Integer> getGpForGuild(int guildId) throws RetrieveError;
+
+    Map<String, Integer> getRelicForGuild(int guildId, int relicLevel) throws RetrieveError;
 }

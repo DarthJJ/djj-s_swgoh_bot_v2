@@ -6,6 +6,8 @@ import nl.djj.swgoh_bot_v2.database.DAO;
 import nl.djj.swgoh_bot_v2.entities.Message;
 import nl.djj.swgoh_bot_v2.entities.db.Config;
 import nl.djj.swgoh_bot_v2.exceptions.HttpRetrieveError;
+import nl.djj.swgoh_bot_v2.exceptions.InsertionError;
+import nl.djj.swgoh_bot_v2.exceptions.RetrieveError;
 import nl.djj.swgoh_bot_v2.helpers.HttpHelper;
 import nl.djj.swgoh_bot_v2.helpers.Logger;
 import nl.djj.swgoh_bot_v2.helpers.MessageHelper;
@@ -43,8 +45,8 @@ public class ConfigImpl {
      */
     public String getIgnoreRole(final String guildId) {
         try {
-            return dao.ConfigDao().queryForId(guildId).getIgnoreRole();
-        } catch (final SQLException error) {
+            return dao.configDao().getById(guildId).getIgnoreRole();
+        } catch (final RetrieveError error) {
             return "";
         }
     }
@@ -62,18 +64,20 @@ public class ConfigImpl {
         try {
             Config config = getConfig(message.getGuildId());
             config.setPrefix(message.getArgs().get(0));
-            dao.ConfigDao().update(config);
+            dao.configDao().save(config);
             message.done("Prefix updated to: " + config.getPrefix());
-        } catch (final SQLException exception) {
+        } catch (final InsertionError | RetrieveError exception) {
             logger.error(className, "setPrefix", exception.getMessage());
         }
     }
 
-    private Config getConfig(final String discordId) throws SQLException {
-        if (!dao.ConfigDao().idExists(discordId)) {
-            dao.ConfigDao().create(new Config(discordId));
+    private Config getConfig(final String discordId) throws RetrieveError, InsertionError {
+        Config config = dao.configDao().getById(discordId);
+        if (config == null){
+            config = new Config(discordId);
+            dao.configDao().save(config);
         }
-        return dao.ConfigDao().queryForId(discordId);
+        return config;
     }
 
     /**
@@ -85,7 +89,7 @@ public class ConfigImpl {
     public String getPrefix(final String guildId) {
         try {
             return getConfig(guildId).getPrefix();
-        } catch (final SQLException exception) {
+        } catch (final RetrieveError | InsertionError exception) {
             logger.error(className, "getPrefix", exception.getMessage());
             return BotConstants.DEFAULT_PREFIX;
         }
@@ -106,9 +110,9 @@ public class ConfigImpl {
             final Config config = getConfig(message.getGuildId());
             config.setSwgohId(Integer.parseInt(message.getArgs().get(0)));
             message.getChannel().sendMessage("Verifying the guild with SWGOH\nPlease wait.").queue();
-            dao.ConfigDao().update(config);
+            dao.configDao().save(config);
             message.done("Guild ID set");
-        } catch (final HttpRetrieveError | SQLException exception) {
+        } catch (final HttpRetrieveError | InsertionError | RetrieveError exception) {
             logger.error(className, "setGuildId", exception.getMessage());
             message.error(exception.getMessage());
         }
@@ -127,9 +131,9 @@ public class ConfigImpl {
         try {
             final Config config = getConfig(message.getGuildId());
             config.setIgnoreRole(message.getArgs().get(0).replace("@", ""));
-            dao.ConfigDao().update(config);
+            dao.configDao().save(config);
             message.done("Updated the Ignore role");
-        } catch (final SQLException exception) {
+        } catch (final InsertionError | RetrieveError exception) {
             logger.error(className, "setIgnoreRole", exception.getMessage());
             message.error(exception.getMessage());
         }
@@ -143,7 +147,7 @@ public class ConfigImpl {
     public void showConfig(final Message message) {
         try {
             message.done(MessageHelper.formatConfig(getConfig(message.getGuildId())));
-        } catch (final SQLException error) {
+        } catch (final InsertionError | RetrieveError error) {
             message.error(error.getMessage());
         }
     }
@@ -161,9 +165,9 @@ public class ConfigImpl {
         try {
             final Config config = getConfig(message.getGuildId());
             config.setNotifyChannel(StringHelper.stripMessageChannel(message.getAltArgs().get(0)));
-            dao.ConfigDao().update(config);
+            dao.configDao().save(config);
             message.done("Notification Channel updated");
-        } catch (final SQLException exception){
+        } catch (final InsertionError | RetrieveError exception){
             logger.error(className, "setNotifyChannel", exception.getMessage());
             message.error(exception.getMessage());
         }

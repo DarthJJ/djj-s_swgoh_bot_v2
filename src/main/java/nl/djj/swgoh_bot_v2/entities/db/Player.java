@@ -34,6 +34,8 @@ public class Player {
     private transient ForeignCollection<PlayerUnit> playerUnits;
     @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private transient Guild guild;
+    @DatabaseField
+    private transient String guildName;
     @DatabaseField(persisterClass = PermissionPersister.class)
     private Permission permission;
     @DatabaseField
@@ -46,6 +48,13 @@ public class Player {
      **/
     public Player() {
         super();
+    }
+
+    public Player(final int allycode, final String username) {
+        this.allycode = allycode;
+        this.username = username;
+        this.permission = Permission.USER;
+        this.allowedToCreateTickets = true;
     }
 
     public Player(final int allycode, final String username, final String discordId, final Permission permission) {
@@ -162,5 +171,13 @@ public class Player {
 
     public void setAllowedToCreateTickets(final boolean allowedToCreateTickets) {
         this.allowedToCreateTickets = allowedToCreateTickets;
+    }
+
+    public String getGuildName() {
+        return guildName;
+    }
+
+    public void setGuildName(final String guildName) {
+        this.guildName = guildName;
     }
 }

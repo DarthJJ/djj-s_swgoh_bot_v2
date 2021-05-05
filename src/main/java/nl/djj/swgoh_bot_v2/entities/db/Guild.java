@@ -4,6 +4,7 @@ import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
+import nl.djj.swgoh_bot_v2.command_impl.GuildImpl;
 import nl.djj.swgoh_bot_v2.database.customPersistors.LocalDateTimePersister;
 
 import java.time.LocalDateTime;
@@ -11,10 +12,12 @@ import java.time.LocalDateTime;
 /**
  * @author DJJ
  **/
-@DatabaseTable(tableName = "guilds")
+@DatabaseTable(tableName = "guilds", daoClass = GuildImpl.class)
 public class Guild {
     @DatabaseField(id = true)
     private transient int identifier;
+    @DatabaseField(unique = true)
+    private transient String discordId;
     @DatabaseField
     private transient String name;
     @DatabaseField
@@ -23,7 +26,9 @@ public class Guild {
     private transient int members;
     @DatabaseField(persisterClass = LocalDateTimePersister.class)
     private transient LocalDateTime lastUpdated;
-    @ForeignCollectionField(eager = false)
+    @DatabaseField(persisterClass = LocalDateTimePersister.class)
+    private transient LocalDateTime lastSwgohUpdated;
+    @ForeignCollectionField()
     private transient ForeignCollection<Player> players;
 
     /**
@@ -41,16 +46,22 @@ public class Guild {
      * @param members the amount of members.
      * @param lastUpdated the last time it was updated on SWGOH.
      */
-    public Guild(final int identifier, final String name, final int galacticPower, final int members, final LocalDateTime lastUpdated) {
+    public Guild(final int identifier, final String discordId, final String name, final int galacticPower, final int members, final LocalDateTime lastUpdated, final LocalDateTime lastSwgohUpdated) {
         this.identifier = identifier;
+        this.discordId = discordId;
         this.name = name;
         this.galacticPower = galacticPower;
         this.members = members;
         this.lastUpdated = lastUpdated;
+        this.lastSwgohUpdated = lastSwgohUpdated;
     }
 
     public int getIdentifier() {
         return identifier;
+    }
+
+    public String getDiscordId() {
+        return discordId;
     }
 
     public String getName() {
@@ -67,6 +78,10 @@ public class Guild {
 
     public LocalDateTime getLastUpdated() {
         return lastUpdated;
+    }
+
+    public LocalDateTime getLastSwgohUpdated() {
+        return lastSwgohUpdated;
     }
 
     public ForeignCollection<Player> getPlayers() {
