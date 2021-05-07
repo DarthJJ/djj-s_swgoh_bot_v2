@@ -256,12 +256,12 @@ public class ProfileImpl {
         final LocalDateTime lastUpdated = StringHelper.getCurrentDateTime();
         final LocalDateTime lastUpdatedSwgoh = StringHelper.parseSwgohDate(playerData.getString("last_updated"));
         Player player = dao.playerDao().getById(allycode);
-        if (player == null){
+        if (player == null) {
             player = new Player(allycode, name);
         }
         if (playerData.has("guild_id")) {
             player.setGuild(dao.guildDao().getById(playerData.getInt("guild_id")));
-        }else {
+        } else {
             player.setGuild(guild);
         }
         if (playerData.has("guild_name")) {

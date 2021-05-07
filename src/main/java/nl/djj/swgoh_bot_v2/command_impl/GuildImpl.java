@@ -3,9 +3,11 @@ package nl.djj.swgoh_bot_v2.command_impl;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import nl.djj.swgoh_bot_v2.config.BotConstants;
 import nl.djj.swgoh_bot_v2.config.GalacticLegends;
+import nl.djj.swgoh_bot_v2.config.SwgohConstants;
 import nl.djj.swgoh_bot_v2.config.SwgohGgEndpoint;
 import nl.djj.swgoh_bot_v2.database.DAO;
 import nl.djj.swgoh_bot_v2.entities.Message;
+import nl.djj.swgoh_bot_v2.entities.compare.GuildCompare;
 import nl.djj.swgoh_bot_v2.entities.compare.PlayerGLStatus;
 import nl.djj.swgoh_bot_v2.entities.db.GLRequirement;
 import nl.djj.swgoh_bot_v2.entities.db.Guild;
@@ -160,55 +162,54 @@ public class GuildImpl {
      */
     //CHECKSTYLE.OFF: NPathComplexity
     public void compare(final Message message) {
-//        if (message.getArgs().isEmpty()) {
-//            message.error("Provide an allycode or guild id to compare to.");
-//            return;
-//        }
-//        String code = message.getArgs().get(0);
-//        if (code.length() >= SwgohConstants.ALLYCODE_LENGTH) {
-//            if (StringHelper.isInvalidAllycode(code)) {
-//                message.error("Please use the proper format <xxx-xxx-xxx>");
-//                return;
-//            }
-//            final JSONObject userData = this.implHelper.getProfileImpl().getProfileData(code);
-//            if (userData == null) {
-//                message.error("Invalid allycode, not a SWGOH profile");
-//                return;
-//            } else {
-//                code = Integer.toString(userData.getJSONObject("data").getInt("guild_id"));
-//            }
-//        }
-//        try {
-//            final int playerGuildId = getAndUpdateGuildData(message.getGuildId(), -1, message.getChannel());
-//            final GuildCompare playerGuild = createProfile(playerGuildId);
-//            final int rivalGuildId = getAndUpdateGuildData(null, Integer.parseInt(code), null);
-//            final GuildCompare rivalGuild = createProfile(rivalGuildId);
-//            message.done(MessageHelper.formatGuildCompare(playerGuild, rivalGuild));
-//        } catch (final SQLInsertionError | SQLException | SQLRetrieveError | HttpRetrieveError error) {
-//            message.error(error.getMessage());
-//        }
+        if (message.getArgs().isEmpty()) {
+            message.error("Provide an allycode or guild id to compare to.");
+            return;
+        }
+        String code = message.getArgs().get(0);
+        try {
+            if (code.length() >= SwgohConstants.ALLYCODE_LENGTH) {
+                if (StringHelper.isInvalidAllycode(code)) {
+                    message.error("Please use the proper format <xxx-xxx-xxx>");
+                    return;
+                }
+                final JSONObject userData = this.httpHelper.getJsonObject(SwgohGgEndpoint.PLAYER_ENDPOINT.getUrl() + Integer.parseInt(code));
+                if (userData == null) {
+                    message.error("Invalid allycode, not a SWGOH profile");
+                    return;
+                } else {
+                    code = Integer.toString(userData.getJSONObject("data").getInt("guild_id"));
+                }
+            }
+
+            final int playerGuildId = getAndUpdateGuildData(message.getGuildId(), -1, message.getChannel());
+            final GuildCompare playerGuild = createProfile(playerGuildId);
+            final int rivalGuildId = getAndUpdateGuildData(null, Integer.parseInt(code), null);
+            final GuildCompare rivalGuild = createProfile(rivalGuildId);
+            message.done(MessageHelper.formatGuildCompare(playerGuild, rivalGuild));
+        } catch (final InsertionError | RetrieveError | HttpRetrieveError error) {
+            message.error(error.getMessage());
+        }
     }
     //CHECKSTYLE.ON: NPathComplexity
 
-//    private GuildCompare createProfile(final int guildId) throws SQLRetrieveError {
-//        final Guild guild = this.dbHandler.getGuild(guildId);
-//        final int g13 = this.dbHandler.getGearLevelCountForGuild(guild.getIdentifier(), 13, null);
-//        final int g12 = this.dbHandler.getGearLevelCountForGuild(guild.getIdentifier(), 12, null);
-//        final int zetas = this.dbHandler.getZetaCountForGuild(guild.getIdentifier(), null);
-//        final GuildCompare profile = new GuildCompare(guild, g13, g12, zetas);
-//        for (int i = 0; i < SwgohConstants.RELIC_LEVELS.length; i++) {
-//            final int level = SwgohConstants.RELIC_LEVELS[i];
-//            profile.addRelic(level, this.dbHandler.getRelicLevelCountForGuild(guild.getIdentifier(), level, true, null));
-//        }
-//        for (final Map.Entry<String, String> entry : SwgohConstants.COMPARE_TOONS.entrySet()) {
-//            final int sevenStars = this.dbHandler.getStarLevelCountForGuild(guild.getIdentifier(), 7, entry.getKey());
-//            final int sixStars = this.dbHandler.getStarLevelCountForGuild(guild.getIdentifier(), 6, entry.getKey());
-//            final int unitG13 = this.dbHandler.getGearLevelCountForGuild(guild.getIdentifier(), 13, entry.getKey());
-//            final int unitG12 = this.dbHandler.getGearLevelCountForGuild(guild.getIdentifier(), 12, entry.getKey());
-//            final int unitZetas = this.dbHandler.getZetaCountForGuild(guild.getIdentifier(), entry.getKey());
-//            final int relic5plus = this.dbHandler.getRelicLevelCountForGuild(guild.getIdentifier(), 5, false, entry.getKey());
-//            profile.addUnitProfile(entry.getKey(), new GuildCompare.UnitProfile(entry.getValue(), sevenStars, sixStars, unitG13, unitG12, unitZetas, relic5plus));
-//        }
-//        return profile;
-//    }
+    private GuildCompare createProfile(final int guildId) throws RetrieveError {
+        final Guild guild = this.dao.guildDao().getById(guildId);
+        final int g13 = this.dao.playerUnitDao().getGearCount(guild, SwgohConstants.GEAR_LEVEL_13, null);
+        final int g12 = this.dao.playerUnitDao().getGearCount(guild, SwgohConstants.GEAR_LEVEL_12, null);
+        final int zetas = this.dao.playerUnitDao().getZetaCount(guild, null);
+        final GuildCompare profile = new GuildCompare(guild, g13, g12, zetas);
+        profile.setRelics(this.dao.playerUnitDao().getRelics(guild));
+
+        for (final Map.Entry<String, String> entry : SwgohConstants.COMPARE_TOONS.entrySet()) {
+            final int sevenStars = this.dao.playerUnitDao().getRarityCountForUnit(guild, 7, entry.getKey());
+            final int sixStars = this.dao.playerUnitDao().getRarityCountForUnit(guild, 6, entry.getKey());
+            final int unitG13 = this.dao.playerUnitDao().getGearCount(guild, SwgohConstants.GEAR_LEVEL_13, entry.getKey());
+            final int unitG12 = this.dao.playerUnitDao().getGearCount(guild, SwgohConstants.GEAR_LEVEL_12, entry.getKey());
+            final int unitZetas = this.dao.playerUnitDao().getZetaCount(guild, entry.getKey());
+            final int relic5plus = this.dao.playerUnitDao().getRelicCountForUnit(guild, 5, entry.getKey());
+            profile.addUnitProfile(entry.getKey(), new GuildCompare.UnitProfile(entry.getValue(), sevenStars, sixStars, unitG13, unitG12, unitZetas, relic5plus));
+        }
+        return profile;
+    }
 }
