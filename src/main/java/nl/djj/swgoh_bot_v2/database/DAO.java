@@ -1,10 +1,7 @@
 package nl.djj.swgoh_bot_v2.database;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
 import nl.djj.swgoh_bot_v2.database.daos.*;
-import nl.djj.swgoh_bot_v2.entities.db.Config;
 
 import java.sql.SQLException;
 
@@ -12,19 +9,19 @@ import java.sql.SQLException;
  * @author DJJ
  **/
 public class DAO {
-    private final transient AbilityDao abilityDao;
-    private final transient UnitDao unitDao;
-    private final transient AbbreviationDao abbreviationDao;
-    private final transient FarmingLocationDao farmingLocationDao;
-    private final transient GuildDao guildDao;
-    private final transient PlayerDao playerDao;
-    private final transient PlayerUnitDao playerUnitDao;
-    private final transient UnitAbilityDao unitAbilityDao;
-    private final transient ConfigDao configDao;
-    private final transient PresenceDao presenceDao;
-    private final transient GLRequirementDao glRequirementDao;
-    private final transient CommandDao commandDao;
-    private final transient CommandUsageDao commandUsageDao;
+    private final transient AbilityDao ability;
+    private final transient UnitDao unit;
+    private final transient AbbreviationDao abbreviation;
+    private final transient FarmingLocationDao farmingLocation;
+    private final transient GuildDao guild;
+    private final transient PlayerDao player;
+    private final transient PlayerUnitDao playerUnit;
+    private final transient UnitAbilityDao unitAbility;
+    private final transient ConfigDao config;
+    private final transient PresenceDao presence;
+    private final transient GLRequirementDao glRequirement;
+    private final transient CommandDao command;
+    private final transient CommandUsageDao commandUsage;
 
     /**
      * Constructor.
@@ -32,19 +29,19 @@ public class DAO {
      * @param connection the connectionSource.
      **/
     public DAO(final ConnectionSource connection) throws SQLException {
-        abilityDao = new AbilityDaoImpl(connection);
-        unitDao = new UnitDaoImpl(connection);
-        abbreviationDao = new AbbreviationDaoImpl(connection);
-        farmingLocationDao = new FarmingLocationDaoImpl(connection);
-        guildDao = new GuildDaoImpl(connection);
-        playerDao = new PlayerDaoImpl(connection);
-        playerUnitDao = new PlayerUnitDaoImpl(connection);
-        unitAbilityDao = new UnitAbilityDaoImpl(connection);
-        configDao = new ConfigDaoImpl(connection);
-        presenceDao = new PresenceDaoImpl(connection);
-        glRequirementDao = new GLRequirementDaoImpl(connection);
-        commandDao = new CommandDaoImpl(connection);
-        commandUsageDao = new CommandUsageDaoImpl(connection);
+        ability = new AbilityDaoImpl(connection);
+        unit = new UnitDaoImpl(connection);
+        abbreviation = new AbbreviationDaoImpl(connection);
+        farmingLocation = new FarmingLocationDaoImpl(connection);
+        guild = new GuildDaoImpl(connection);
+        player = new PlayerDaoImpl(connection);
+        playerUnit = new PlayerUnitDaoImpl(connection);
+        unitAbility = new UnitAbilityDaoImpl(connection);
+        config = new ConfigDaoImpl(connection);
+        presence = new PresenceDaoImpl(connection);
+        glRequirement = new GLRequirementDaoImpl(connection);
+        command = new CommandDaoImpl(connection);
+        commandUsage = new CommandUsageDaoImpl(connection);
 
     }
 
@@ -52,90 +49,90 @@ public class DAO {
      * @return the Ability DAO.
      */
     public AbilityDao abilityDao() {
-        return abilityDao;
+        return ability;
     }
 
     /**
      * @return the Unit DAO.
      */
     public UnitDao unitDao() {
-        return unitDao;
+        return unit;
     }
 
     /**
      * @return the Abbreviation DAO.
      */
     public AbbreviationDao abbreviationDao() {
-        return abbreviationDao;
+        return abbreviation;
     }
 
     /**
      * @return the FarmingLocation DAO.
      */
     public FarmingLocationDao farmingLocationDao() {
-        return farmingLocationDao;
+        return farmingLocation;
     }
 
     /**
      * @return the Guild DAO.
      */
     public GuildDao guildDao() {
-        return guildDao;
+        return guild;
     }
 
     /**
      * @return the Player DAO.
      */
     public PlayerDao playerDao() {
-        return playerDao;
+        return player;
     }
 
     /**
      * @return the PlayerUnit DAO.
      */
     public PlayerUnitDao playerUnitDao() {
-        return playerUnitDao;
+        return playerUnit;
     }
 
     /**
      * @return the UnitAbility DAO.
      */
     public UnitAbilityDao unitAbilityDao() {
-        return unitAbilityDao;
+        return unitAbility;
     }
 
     /**
      * @return the Config DAO.
      */
     public ConfigDao configDao() {
-        return configDao;
+        return config;
     }
 
     /**
      * @return the Presence DAO.
      */
     public PresenceDao presenceDao() {
-        return presenceDao;
+        return presence;
     }
 
     /**
      * @return the GL Requirement DAO.
      */
     public GLRequirementDao glRequirementDao() {
-        return glRequirementDao;
+        return glRequirement;
     }
 
     /**
      * @return the Command DAO.
      */
     public CommandDao commandDao() {
-        return commandDao;
+        return command;
     }
 
     /**
      * @return the CommandUsage DAO.
      */
     public CommandUsageDao commandUsageDao() {
-        return commandUsageDao;
+        return commandUsage;
     }
 }

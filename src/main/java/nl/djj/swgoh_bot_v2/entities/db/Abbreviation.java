@@ -23,6 +23,11 @@ public class Abbreviation {
 
     }
 
+    /**
+     * Constructor.
+     * @param unit the unit.
+     * @param abbreviation the abbreviation for the unit.
+     */
     public Abbreviation(final Unit unit, final String abbreviation) {
         this.unit = unit;
         this.abbreviation = abbreviation;
@@ -34,5 +39,9 @@ public class Abbreviation {
 
     public String getAbbreviation() {
         return abbreviation;
+    }
+
+    public int getIdentifier() {
+        return identifier;
     }
 }

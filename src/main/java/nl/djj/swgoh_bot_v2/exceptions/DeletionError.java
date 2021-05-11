@@ -1,7 +1,6 @@
 package nl.djj.swgoh_bot_v2.exceptions;
 
 import nl.djj.swgoh_bot_v2.Main;
-import nl.djj.swgoh_bot_v2.helpers.Logger;
 
 /**
  * @author DJJ

@@ -42,4 +42,24 @@ public class FarmingLocation {
         this.node = node;
         this.preferred = preferred;
     }
+
+    public int getIdentifier() {
+        return identifier;
+    }
+
+    public Unit getUnit() {
+        return unit;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public String getNode() {
+        return node;
+    }
+
+    public boolean isPreferred() {
+        return preferred;
+    }
 }

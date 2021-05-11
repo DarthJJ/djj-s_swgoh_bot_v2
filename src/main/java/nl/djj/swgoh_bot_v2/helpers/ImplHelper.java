@@ -11,14 +11,15 @@ public class ImplHelper {
     private final transient ProfileImpl profileImpl;
     private final transient CommandImpl commandImpl;
     private final transient UpdateImpl updateImpl;
-//    private final transient ControlImpl controlImpl;
+    //    private final transient ControlImpl controlImpl;
     private final transient UnitImpl unitImpl;
     private final transient ConfigImpl configImpl;
     private final transient GuildImpl guildImpl;
 //    private final transient ReportImpl reportImpl;
 
     /**
-     * @param logger    the logger.
+     * @param logger the logger.
+     * @param dao    the DB connection.
      */
     public ImplHelper(final Logger logger, final DAO dao) {
         super();

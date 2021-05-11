@@ -1,29 +1,27 @@
 package nl.djj.swgoh_bot_v2;
 
 import ch.qos.logback.classic.Level;
+import io.github.cdimascio.dotenv.Dotenv;
+import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
-import nl.djj.swgoh_bot_v2.exceptions.InitializationError;
-import nl.djj.swgoh_bot_v2.helpers.ImplHelper;
 import nl.djj.swgoh_bot_v2.config.GithubConstants;
-import io.github.cdimascio.dotenv.Dotenv;
 import nl.djj.swgoh_bot_v2.database.Database;
+import nl.djj.swgoh_bot_v2.exceptions.InitializationError;
 import nl.djj.swgoh_bot_v2.helpers.CommandLoader;
+import nl.djj.swgoh_bot_v2.helpers.ImplHelper;
 import nl.djj.swgoh_bot_v2.helpers.Logger;
 import nl.djj.swgoh_bot_v2.listeners.EventListener;
 import nl.djj.swgoh_bot_v2.listeners.ReadyListener;
-import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.LoginException;
-import java.sql.SQLException;
 
 /**
  * @author DJJ
  */
-public final class Main extends ListenerAdapter {
+public final class Main {
     private final transient boolean debug;
     private static transient Logger logger;
     private transient CommandLoader commandLoader;
@@ -47,22 +45,22 @@ public final class Main extends ListenerAdapter {
         debug = Boolean.parseBoolean(dotenv.get("DEBUG_MODE"));
         logger = new Logger(debug);
         try {
-            Database database = new Database(logger);
+            final Database database = new Database(logger);
             database.createDatabase();
-            implHelper = new ImplHelper(logger, database.DAO());
-            commandLoader = new CommandLoader(implHelper, logger, database.DAO());
+            implHelper = new ImplHelper(logger, database.dao());
+            commandLoader = new CommandLoader(implHelper, logger, database.dao());
             if (debug) {
                 initializeDiscord(dotenv.get("BETA_DISCORD_TOKEN"));
             } else {
                 initializeDiscord(dotenv.get("PUBLIC_DISCORD_TOKEN"));
             }
             logger.info(className, "Bot Ready!");
-        } catch (InitializationError exception) {
+        } catch (final InitializationError exception) {
             logger.error(className, "Main", exception.getMessage());
         }
     }
 
-    private void initializeDiscord(final String token) throws InitializationError{
+    private void initializeDiscord(final String token) throws InitializationError {
         try {
             final JDABuilder builder = JDABuilder.createDefault(token);
             builder.addEventListeners(new EventListener(commandLoader, implHelper), new ReadyListener());
@@ -74,7 +72,7 @@ public final class Main extends ListenerAdapter {
             builder.setMemberCachePolicy(MemberCachePolicy.ALL);
             builder.enableIntents(GatewayIntent.GUILD_PRESENCES, GatewayIntent.GUILD_MEMBERS);
             builder.build();
-            ((ch.qos.logback.classic.Logger)LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME)).setLevel(Level.ERROR);
+            ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME)).setLevel(Level.ERROR);
         } catch (final LoginException exception) {
             throw new InitializationError(className, "InitializeDiscord", exception.getMessage());
         }

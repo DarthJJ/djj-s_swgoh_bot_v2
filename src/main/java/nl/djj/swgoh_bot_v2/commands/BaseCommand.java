@@ -50,6 +50,10 @@ public abstract class BaseCommand {
         message.error("This is not a valid flag, please use '**" + message.getGuildPrefix() + "help " + name + "**'");
     }
 
+    /**
+     * Called when an user isn't registered and the command requires it.
+     * @param message the message.
+     */
     public void missingRegistration(final Message message) {
         message.error("You need to be registered with the bot to use this command. please use: '**" + message.getGuildPrefix() + "help register**'");
     }

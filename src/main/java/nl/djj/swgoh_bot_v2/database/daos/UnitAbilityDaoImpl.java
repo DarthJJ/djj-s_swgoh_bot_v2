@@ -1,7 +1,6 @@
 package nl.djj.swgoh_bot_v2.database.daos;
 
 import com.j256.ormlite.dao.BaseDaoImpl;
-import com.j256.ormlite.misc.TransactionManager;
 import com.j256.ormlite.support.ConnectionSource;
 import nl.djj.swgoh_bot_v2.entities.db.UnitAbility;
 import nl.djj.swgoh_bot_v2.exceptions.InsertionError;
@@ -16,14 +15,14 @@ import java.util.concurrent.Callable;
  * @author DJJ
  **/
 public class UnitAbilityDaoImpl extends BaseDaoImpl<UnitAbility, Integer> implements UnitAbilityDao {
-    final transient ConnectionSource connection;
 
     /**
      * Constructor.
+     *
+     * @param connection the DB connection.
      **/
     public UnitAbilityDaoImpl(final ConnectionSource connection) throws SQLException {
         super(connection, UnitAbility.class);
-        this.connection = connection;
     }
 
     @Override
@@ -31,7 +30,7 @@ public class UnitAbilityDaoImpl extends BaseDaoImpl<UnitAbility, Integer> implem
         try {
             return this.queryForEq("playerUnit_id", unitId);
         } catch (final SQLException exception) {
-            throw new RetrieveError(className, "getForUnit", exception.getMessage());
+            throw new RetrieveError(CLASS_NAME, "getForUnit", exception.getMessage());
         }
     }
 
@@ -42,12 +41,12 @@ public class UnitAbilityDaoImpl extends BaseDaoImpl<UnitAbility, Integer> implem
                     "playerUnit_id", ability.getPlayerUnit().getIdentifier(),
                     "baseAbility_id", ability.getBaseAbility().getIdentifier()
             ));
-            if (found.size() > 0) {
+            if (!found.isEmpty()) {
                 ability.setIdentifier(found.get(0).getIdentifier());
             }
             this.createOrUpdate(ability);
         } catch (final SQLException exception) {
-            throw new InsertionError(className, "save", exception.getMessage());
+            throw new InsertionError(CLASS_NAME, "save", exception.getMessage());
         }
     }
 
@@ -56,12 +55,12 @@ public class UnitAbilityDaoImpl extends BaseDaoImpl<UnitAbility, Integer> implem
         try {
             this.callBatchTasks((Callable<Void>) () -> {
                 for (final UnitAbility ability : abilities) {
-                    UnitAbilityDaoImpl.this.save(ability);
+                    this.save(ability);
                 }
                 return null;
             });
         } catch (final SQLException exception) {
-            throw new InsertionError(className, "saveAll", exception.getMessage());
+            throw new InsertionError(CLASS_NAME, "saveAll", exception.getMessage());
         }
     }
 }

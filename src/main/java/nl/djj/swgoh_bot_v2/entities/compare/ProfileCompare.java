@@ -1,7 +1,6 @@
 package nl.djj.swgoh_bot_v2.entities.compare;
 
 import nl.djj.swgoh_bot_v2.entities.db.PlayerUnit;
-import nl.djj.swgoh_bot_v2.entities.db.Unit;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -59,11 +58,12 @@ public class ProfileCompare {
      * Adds a unit to the compare list.
      *
      * @param unitData the data of the unit.
+     * @param baseId   the unit baseId.
      */
     public void addUnit(final PlayerUnit unitData, final String baseId) {
         final UnitCompare compare;
-        if (unitData == null){
-            compare = new UnitCompare("", baseId, -1,-1,-1,-1,-1,-1);
+        if (unitData == null) {
+            compare = new UnitCompare("", baseId, -1, -1, -1, -1, -1, -1);
         } else {
             compare = new UnitCompare(unitData.getUnit().getName(),
                     unitData.getUnit().getBaseId(),

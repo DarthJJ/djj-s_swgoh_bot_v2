@@ -5,7 +5,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 import nl.djj.swgoh_bot_v2.command_impl.GuildImpl;
-import nl.djj.swgoh_bot_v2.database.customPersistors.LocalDateTimePersister;
+import nl.djj.swgoh_bot_v2.database.custom_persistors.LocalDateTimePersister;
 
 import java.time.LocalDateTime;
 
@@ -40,11 +40,14 @@ public class Guild {
 
     /**
      * Constructor.
-     * @param identifier the guild ID.
-     * @param name the guild name.
-     * @param galacticPower the total GP.
-     * @param members the amount of members.
-     * @param lastUpdated the last time it was updated on SWGOH.
+     *
+     * @param identifier       the guild ID.
+     * @param name             the guild name.
+     * @param galacticPower    the total GP.
+     * @param members          the amount of members.
+     * @param lastUpdated      the last time it was updated on SWGOH.
+     * @param discordId        the discordId.
+     * @param lastSwgohUpdated when last updated on SWGOH.gg.
      */
     public Guild(final int identifier, final String discordId, final String name, final int galacticPower, final int members, final LocalDateTime lastUpdated, final LocalDateTime lastSwgohUpdated) {
         this.identifier = identifier;

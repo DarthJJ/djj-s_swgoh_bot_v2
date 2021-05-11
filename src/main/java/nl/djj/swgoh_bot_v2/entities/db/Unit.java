@@ -4,7 +4,6 @@ import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
-import nl.djj.swgoh_bot_v2.database.daos.UnitAbilityDaoImpl;
 import nl.djj.swgoh_bot_v2.database.daos.UnitDaoImpl;
 
 /**

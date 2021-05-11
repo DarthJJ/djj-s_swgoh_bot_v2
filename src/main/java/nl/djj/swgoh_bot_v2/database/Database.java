@@ -21,12 +21,13 @@ public class Database {
 
     /**
      * Constructor.
+     * @param logger the logger.
      **/
     public Database(final Logger logger) throws InitializationError {
         try {
             this.logger = logger;
             com.j256.ormlite.logger.Logger.setGlobalLogLevel(Log.Level.ERROR);
-            String databaseUrl = "jdbc:sqlite:database/data2.sqlite";
+            final String databaseUrl = "jdbc:sqlite:database/data.sqlite";
             connection = new JdbcConnectionSource(databaseUrl);
             dao = new DAO(connection);
         } catch (final SQLException exception) {
@@ -34,6 +35,9 @@ public class Database {
         }
     }
 
+    /**
+     * Called to created the database.
+     */
     public void createDatabase() {
         logger.info(className, "creating Database");
         try {
@@ -50,7 +54,7 @@ public class Database {
             TableUtils.createTableIfNotExists(connection, Presence.class);
             TableUtils.createTableIfNotExists(connection, Unit.class);
             TableUtils.createTableIfNotExists(connection, UnitAbility.class);
-        } catch (SQLException exception) {
+        } catch (final SQLException exception) {
             logger.error(className, "createDatabase", exception.getMessage());
         }
     }
@@ -58,7 +62,7 @@ public class Database {
     /**
      * @return the DAO Reference.
      */
-    public DAO DAO() {
+    public DAO dao() {
         return dao;
     }
 }

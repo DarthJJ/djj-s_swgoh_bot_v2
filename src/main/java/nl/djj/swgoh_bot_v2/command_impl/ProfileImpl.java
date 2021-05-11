@@ -32,6 +32,7 @@ public class ProfileImpl {
 
     /**
      * @param logger     the logger.
+     * @param dao        the DAO.
      * @param implHelper the ImplHelper.
      */
     public ProfileImpl(final Logger logger, final DAO dao, final ImplHelper implHelper) {
@@ -42,10 +43,14 @@ public class ProfileImpl {
         this.implHelper = implHelper;
     }
 
+    /**
+     * @param discordId the discordId to search for.
+     * @return the found allycode.
+     */
     public int getAllycodeByDiscord(final String discordId) {
         try {
             return this.dao.playerDao().getByDiscordId(discordId).getAllycode();
-        } catch (RetrieveError retrieveError) {
+        } catch (final RetrieveError retrieveError) {
             return -1;
         }
     }
@@ -244,6 +249,8 @@ public class ProfileImpl {
      * Inserts a profile for the user.
      *
      * @param playerData the player data.
+     * @param guild      the guild.
+     * @return a player object.
      * @throws InsertionError When the player object couldn't be inserted into the DB.
      * @throws RetrieveError  When the created object couldn't be retrieved from the DB.
      */
@@ -276,6 +283,10 @@ public class ProfileImpl {
         return dao.playerDao().getById(allycode);
     }
 
+    /**
+     * Get's the speedmods for an user.
+     * @param message the message.
+     */
     public void speedMods(final Message message) {
         try {
             final JSONObject modData = httpHelper.getJsonObject(String.format(SwgohGgEndpoint.MOD_ENDPOINT.getUrl(), message.getAllycode()));
@@ -290,15 +301,19 @@ public class ProfileImpl {
                 final JSONArray secondaryStats = mod.getJSONArray("secondary_stats");
                 for (int j = 0; j < secondaryStats.length(); j++) {
                     final JSONObject secondaryStat = secondaryStats.getJSONObject(j);
-                    if (secondaryStat.getString("name").equals("Speed")) {
+                    if ("Speed".equals(secondaryStat.getString("name"))) {
                         final int speed = Integer.parseInt(secondaryStat.getString("display_value"));
-                        if (speed < 10) {
+                        final int speed10 = 10;
+                        final int speed15 = 15;
+                        final int speed20 = 20;
+                        final int speed25 = 25;
+                        if (speed < speed10) {
                             garbage++;
-                        } else if (speed < 15) {
+                        } else if (speed < speed15) {
                             plus10++;
-                        } else if (speed < 20) {
+                        } else if (speed < speed20) {
                             plus15++;
-                        } else if (speed < 25) {
+                        } else if (speed < speed25) {
                             plus20++;
                         } else {
                             plus25++;
@@ -307,8 +322,8 @@ public class ProfileImpl {
                 }
             }
             message.done(MessageHelper.formatModMessage(garbage, plus10, plus15, plus20, plus25));
-        } catch (HttpRetrieveError error) {
-            message.error(error.getMessage());
+        } catch (final HttpRetrieveError exception) {
+            message.error(exception.getMessage());
         }
     }
 }

@@ -54,10 +54,8 @@ public class GuildImpl {
         if (swgohIdentifier == -1) {
             swgohId = dao.configDao().getById(discordId).getSwgohId();
             guild = dao.guildDao().getById(swgohId);
-            if (guild != null) {
-                if (Duration.between(guild.getLastUpdated(), StringHelper.getCurrentDateTime()).toHours() < BotConstants.MAX_DATA_AGE) {
-                    return swgohId;
-                }
+            if (guild != null && Duration.between(guild.getLastUpdated(), StringHelper.getCurrentDateTime()).toHours() < BotConstants.MAX_DATA_AGE) {
+                return swgohId;
             }
         } else {
             swgohId = swgohIdentifier;

@@ -399,6 +399,15 @@ public final class MessageHelper {
         return embed.build();
     }
 
+    /**
+     * Creates an embed for the mod speed overview.
+     * @param garbage the amount of garbage mods.
+     * @param plus10 the amount of mods with +10;
+     * @param plus15 the amount of mods with +15;
+     * @param plus20 the amount of mods with +20;
+     * @param plus25 the amount of mods with +25;
+     * @return a messageEmbed.
+     */
     public static MessageEmbed formatModMessage(final int garbage, final int plus10, final int plus15, final int plus20, final int plus25) {
         final EmbedBuilder embed = new EmbedBuilder(baseEmbed());
         embed.setDescription("Speed mods");

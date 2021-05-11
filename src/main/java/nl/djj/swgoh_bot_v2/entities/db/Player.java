@@ -5,8 +5,8 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 import nl.djj.swgoh_bot_v2.config.Permission;
-import nl.djj.swgoh_bot_v2.database.customPersistors.LocalDateTimePersister;
-import nl.djj.swgoh_bot_v2.database.customPersistors.PermissionPersister;
+import nl.djj.swgoh_bot_v2.database.custom_persistors.LocalDateTimePersister;
+import nl.djj.swgoh_bot_v2.database.custom_persistors.PermissionPersister;
 import nl.djj.swgoh_bot_v2.database.daos.PlayerDaoImpl;
 
 import java.time.LocalDateTime;
@@ -19,7 +19,7 @@ public class Player {
     @DatabaseField(id = true)
     private transient int allycode;
     @DatabaseField(unique = true)
-    private String discordId;
+    private transient String discordId;
     @DatabaseField
     private transient String name;
     @DatabaseField
@@ -37,11 +37,11 @@ public class Player {
     @DatabaseField
     private transient String guildName;
     @DatabaseField(persisterClass = PermissionPersister.class)
-    private Permission permission;
+    private transient Permission permission;
     @DatabaseField
-    private String username;
+    private transient String username;
     @DatabaseField
-    private boolean allowedToCreateTickets;
+    private transient boolean allowedToCreateTickets;
 
     /**
      * Constructor.
@@ -50,6 +50,11 @@ public class Player {
         super();
     }
 
+    /**
+     * Constructor.
+     * @param allycode allycode of the user.
+     * @param username the username of the user.
+     */
     public Player(final int allycode, final String username) {
         this.allycode = allycode;
         this.username = username;
@@ -57,6 +62,13 @@ public class Player {
         this.allowedToCreateTickets = true;
     }
 
+    /**
+     * Constructor.
+     * @param allycode the allycode of the user.
+     * @param username the username of the user.
+     * @param discordId the discord id of the user.
+     * @param permission the permission level of the user.
+     */
     public Player(final int allycode, final String username, final String discordId, final Permission permission) {
         super();
         this.allycode = allycode;
@@ -67,6 +79,15 @@ public class Player {
 
     }
 
+    /**
+     * Constructor.
+     * @param allycode the allycode of the user.
+     * @param name the name of the user.
+     * @param galacticPower the GP of the user.
+     * @param url the swgoh url of the user.
+     * @param lastUpdated the last updated in DB.
+     * @param lastUpdatedSwgoh the last updated on swgoh.gg.
+     */
     public Player(final int allycode, final String name, final int galacticPower, final String url, final LocalDateTime lastUpdated, final LocalDateTime lastUpdatedSwgoh) {
         super();
         this.allycode = allycode;

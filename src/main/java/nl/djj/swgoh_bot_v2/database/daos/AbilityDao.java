@@ -11,11 +11,31 @@ import java.util.List;
  * @author DJJ
  **/
 public interface AbilityDao extends Dao<Ability, String> {
-    String className = AbilityDao.class.getName();
+    /**
+     * The name of the implementation.
+     */
+    String CLASS_NAME = AbilityDao.class.getName();
 
+    /**
+     * gets an ability for the given id.
+     * @param identifier the id.
+     * @return the ability.
+     * @throws RetrieveError when something goes wrong.
+     */
     Ability getById(final String identifier) throws RetrieveError;
 
+    /**
+     * Gets all the abilities for the given unit.
+     * @param unitId the unit id to search for.
+     * @return a list with abilities.
+     * @throws RetrieveError when something goes wrong.
+     */
     List<Ability> getByUnitId(final String unitId) throws RetrieveError;
 
+    /**
+     * Saves the unit ability to the DB.
+     * @param ability the ability to save.
+     * @throws InsertionError when something goes wrong.
+     */
     void save(final Ability ability) throws InsertionError;
 }

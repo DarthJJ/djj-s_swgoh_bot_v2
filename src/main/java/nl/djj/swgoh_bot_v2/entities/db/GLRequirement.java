@@ -3,8 +3,7 @@ package nl.djj.swgoh_bot_v2.entities.db;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import nl.djj.swgoh_bot_v2.config.GalacticLegends;
-import nl.djj.swgoh_bot_v2.database.customPersistors.GalacticLegendsPersister;
-import nl.djj.swgoh_bot_v2.database.customPersistors.PermissionPersister;
+import nl.djj.swgoh_bot_v2.database.custom_persistors.GalacticLegendsPersister;
 import nl.djj.swgoh_bot_v2.database.daos.GLRequirementDaoImpl;
 
 /**
@@ -12,16 +11,16 @@ import nl.djj.swgoh_bot_v2.database.daos.GLRequirementDaoImpl;
  **/
 @DatabaseTable(tableName = "glRequirements", daoClass = GLRequirementDaoImpl.class)
 public class GLRequirement {
-    @DatabaseField(generatedId = true)
-    private int id;
+    @DatabaseField(columnName = "id", generatedId = true)
+    private transient int identifier;
     @DatabaseField(uniqueCombo = true, persisterClass = GalacticLegendsPersister.class)
-    private GalacticLegends glEvent;
+    private transient GalacticLegends glEvent;
     @DatabaseField(uniqueCombo = true)
-    private String baseId;
+    private transient String baseId;
     @DatabaseField
-    private int gearLevel;
+    private transient int gearLevel;
     @DatabaseField
-    private int relicLevel;
+    private transient int relicLevel;
 
     /**
      * Constructor.
@@ -58,5 +57,9 @@ public class GLRequirement {
 
     public int getRelicLevel() {
         return relicLevel;
+    }
+
+    public int getIdentifier() {
+        return identifier;
     }
 }

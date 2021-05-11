@@ -31,7 +31,7 @@ public class PlayerDaoImpl extends BaseDaoImpl<Player, Integer> implements Playe
         try {
             return this.queryForId(allycode);
         } catch (final SQLException exception) {
-            throw new RetrieveError(className, "getById", exception.getMessage());
+            throw new RetrieveError(CLASS_NAME, "getById", exception.getMessage());
         }
     }
 
@@ -40,7 +40,7 @@ public class PlayerDaoImpl extends BaseDaoImpl<Player, Integer> implements Playe
         try {
             this.createOrUpdate(player);
         } catch (final SQLException exception) {
-            throw new InsertionError(className, "save", exception.getMessage());
+            throw new InsertionError(CLASS_NAME, "save", exception.getMessage());
         }
     }
 
@@ -49,7 +49,7 @@ public class PlayerDaoImpl extends BaseDaoImpl<Player, Integer> implements Playe
         try {
             return this.queryForEq("discordId", discordId).get(0);
         } catch (final SQLException | IndexOutOfBoundsException exception) {
-            throw new RetrieveError(className, "getByDiscordId", exception.getMessage());
+            throw new RetrieveError(CLASS_NAME, "getByDiscordId", exception.getMessage());
         }
     }
 
@@ -58,7 +58,7 @@ public class PlayerDaoImpl extends BaseDaoImpl<Player, Integer> implements Playe
         try {
             return this.idExists(allycode);
         } catch (final SQLException exception) {
-            throw new RetrieveError(className, "userExists", exception.getMessage());
+            throw new RetrieveError(CLASS_NAME, "userExists", exception.getMessage());
         }
     }
 
@@ -67,48 +67,47 @@ public class PlayerDaoImpl extends BaseDaoImpl<Player, Integer> implements Playe
         try {
             this.deleteById(allycode);
         } catch (final SQLException exception) {
-            throw new DeletionError(className, "delete", exception.getMessage());
+            throw new DeletionError(CLASS_NAME, "delete", exception.getMessage());
         }
     }
 
     @Override
-    public Map<String, Integer> getGpForGuild(final int guildId) throws RetrieveError{
+    public Map<String, Integer> getGpForGuild(final int guildId) throws RetrieveError {
         try {
-            String query = "SELECT name, galacticPower ";
-            query += "FROM players ";
-            query += "WHERE guild_id = ? ";
-            query += "ORDER BY galacticPower DESC";
-            final GenericRawResults<String[]> results = this.queryRaw(query,Integer.toString(guildId));
+            final String query = "SELECT name, galacticPower " +
+                    "FROM players " +
+                    "WHERE guild_id = ? " +
+                    "ORDER BY galacticPower DESC";
+            final GenericRawResults<String[]> results = this.queryRaw(query, Integer.toString(guildId));
             final Map<String, Integer> returnValue = new LinkedHashMap<>();
-            for (final String[] result : results){
+            for (final String[] result : results) {
                 returnValue.put(result[0], Integer.parseInt(result[1]));
             }
             return returnValue;
-        } catch (final SQLException exception){
-            throw new RetrieveError(className, "getGpForGuild", exception.getMessage());
+        } catch (final SQLException exception) {
+            throw new RetrieveError(CLASS_NAME, "getGpForGuild", exception.getMessage());
         }
     }
 
     @Override
     public Map<String, Integer> getRelicForGuild(final int guildId, final int relicLevel) throws RetrieveError {
         try {
-            String query = "SELECT t1.name, count(t2.relic) AS relics ";
-             query += "FROM players AS t1 ";
-             query += "INNER JOIN playerUnits AS t2 ";
-             query += "WHERE t1.guild_id = ? ";
-             query += "AND t2.player_id = t1.allycode ";
-             query += "AND t2.relic <= ? ";
-             query += "AND t2.relic > -1 ";
-             query += "GROUP BY t1.name ";
-             query += "ORDER BY relics DESC;";
-            final GenericRawResults<String[]> results = this.queryRaw(query,Integer.toString(guildId), Integer.toString(relicLevel));
+            final String query = "SELECT t1.name, count(t2.relic) AS relics " + "FROM players AS t1 " +
+                    "INNER JOIN playerUnits AS t2 " +
+                    "WHERE t1.guild_id = ? " +
+                    "AND t2.player_id = t1.allycode " +
+                    "AND t2.relic <= ? " +
+                    "AND t2.relic > -1 " +
+                    "GROUP BY t1.name " +
+                    "ORDER BY relics DESC;";
+            final GenericRawResults<String[]> results = this.queryRaw(query, Integer.toString(guildId), Integer.toString(relicLevel));
             final Map<String, Integer> returnValue = new LinkedHashMap<>();
-            for (final String[] result : results){
+            for (final String[] result : results) {
                 returnValue.put(result[0], Integer.parseInt(result[1]));
             }
             return returnValue;
         } catch (final SQLException exception) {
-            throw new RetrieveError(className, "getRelicForGuild", exception.getMessage());
+            throw new RetrieveError(CLASS_NAME, "getRelicForGuild", exception.getMessage());
         }
     }
 }

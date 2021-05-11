@@ -18,7 +18,6 @@ import nl.djj.swgoh_bot_v2.helpers.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -80,7 +79,6 @@ public class UpdateImpl {
             dao.glRequirementDao().clear();
             requirementData = httpHelper.getJsonObject(SwgohGgEndpoint.GL_CHECKLIST_ENDPOINT.getUrl());
             final JSONArray unitReqData = requirementData.getJSONArray("units");
-            final List<GLRequirement> requirements = new ArrayList<>();
             for (int i = 0; i < unitReqData.length(); i++) {
                 final JSONObject glData = unitReqData.getJSONObject(i);
                 final String glName = glData.getString("unitName");

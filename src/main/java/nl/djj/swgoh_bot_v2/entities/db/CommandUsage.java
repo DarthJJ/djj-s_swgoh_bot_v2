@@ -9,14 +9,14 @@ import nl.djj.swgoh_bot_v2.database.daos.CommandUsageDaoImpl;
  **/
 @DatabaseTable(tableName = "commandUsage", daoClass = CommandUsageDaoImpl.class)
 public class CommandUsage {
-    @DatabaseField(generatedId = true)
-    private int id;
+    @DatabaseField(columnName = "id", generatedId = true)
+    private transient int identifier;
     @DatabaseField(uniqueCombo = true)
-    private String commandName;
+    private transient String commandName;
     @DatabaseField(uniqueCombo = true)
-    private String flagName;
+    private transient String flagName;
     @DatabaseField
-    private int usage;
+    private transient int usage;
 
     /**
      * Constructor.
@@ -50,5 +50,9 @@ public class CommandUsage {
 
     public void setUsage(final int usage) {
         this.usage = usage;
+    }
+
+    public int getIdentifier() {
+        return identifier;
     }
 }

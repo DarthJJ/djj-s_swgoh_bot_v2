@@ -3,10 +3,8 @@ package nl.djj.swgoh_bot_v2.entities;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import nl.djj.swgoh_bot_v2.database.DAO;
 import nl.djj.swgoh_bot_v2.helpers.MessageHelper;
 
-import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;

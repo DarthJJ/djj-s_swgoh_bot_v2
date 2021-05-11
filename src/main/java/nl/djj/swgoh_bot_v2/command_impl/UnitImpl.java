@@ -30,7 +30,8 @@ public class UnitImpl {
     /**
      * Constructor.
      *
-     * @param dao the DB connection.
+     * @param dao    the DB connection.
+     * @param logger the logger.
      */
     public UnitImpl(final DAO dao, final Logger logger) {
         super();
@@ -106,7 +107,7 @@ public class UnitImpl {
      * @param profile the profile.
      */
     public void createUnitProfile(final Player player, final ProfileCompare profile) throws RetrieveError {
-        for (Map.Entry<String, String> entry : SwgohConstants.COMPARE_TOONS.entrySet()) {
+        for (final Map.Entry<String, String> entry : SwgohConstants.COMPARE_TOONS.entrySet()) {
             profile.addUnit(dao.playerUnitDao().getForPlayer(player, entry.getKey()), entry.getKey());
         }
         profile.setG13(dao.playerUnitDao().getGearCount(player, SwgohConstants.GEAR_LEVEL_13));
@@ -145,12 +146,12 @@ public class UnitImpl {
             final PlayerUnit playerUnit = new PlayerUnit(player, dao.unitDao().getById(baseId), rarity, galacticPower, gear, gearPieces, relic, speed);
             units.add(playerUnit);
             for (int j = 0; j < abilityData.length(); j++) {
-                String abilityId = abilityData.getJSONObject(j).getString("id");
-                if ("uniqueskill_GALACTICLEGEND01".equals(abilityId)) {
-                    abilityId += "_" + baseId;
+                final StringBuilder abilityId = new StringBuilder(abilityData.getJSONObject(j).getString("id"));
+                if ("uniqueskill_GALACTICLEGEND01".equals(abilityId.toString())) {
+                    abilityId.append('_').append(baseId);
                 }
                 final int level = abilityData.getJSONObject(j).getInt("ability_tier");
-                abilities.add(new UnitAbility(playerUnit, dao.abilityDao().getById(abilityId), level));
+                abilities.add(new UnitAbility(playerUnit, dao.abilityDao().getById(abilityId.toString()), level));
             }
         }
         logger.debug(className, "Inserting playerUnits in the DB");

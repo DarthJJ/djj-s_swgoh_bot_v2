@@ -13,8 +13,6 @@ import nl.djj.swgoh_bot_v2.helpers.Logger;
 import nl.djj.swgoh_bot_v2.helpers.MessageHelper;
 import nl.djj.swgoh_bot_v2.helpers.StringHelper;
 
-import java.sql.SQLException;
-
 /**
  * @author DJJ
  */
@@ -62,7 +60,7 @@ public class ConfigImpl {
             return;
         }
         try {
-            Config config = getConfig(message.getGuildId());
+            final Config config = getConfig(message.getGuildId());
             config.setPrefix(message.getArgs().get(0));
             dao.configDao().save(config);
             message.done("Prefix updated to: " + config.getPrefix());
@@ -73,7 +71,7 @@ public class ConfigImpl {
 
     private Config getConfig(final String discordId) throws RetrieveError, InsertionError {
         Config config = dao.configDao().getById(discordId);
-        if (config == null){
+        if (config == null) {
             config = new Config(discordId);
             dao.configDao().save(config);
         }
@@ -167,7 +165,7 @@ public class ConfigImpl {
             config.setNotifyChannel(StringHelper.stripMessageChannel(message.getAltArgs().get(0)));
             dao.configDao().save(config);
             message.done("Notification Channel updated");
-        } catch (final InsertionError | RetrieveError exception){
+        } catch (final InsertionError | RetrieveError exception) {
             logger.error(className, "setNotifyChannel", exception.getMessage());
             message.error(exception.getMessage());
         }

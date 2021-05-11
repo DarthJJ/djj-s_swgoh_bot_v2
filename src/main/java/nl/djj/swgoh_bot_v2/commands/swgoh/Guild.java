@@ -40,7 +40,7 @@ public class Guild extends BaseCommand {
         flags.put(FLAG_GP, new Flag(FLAG_GP, "Sorts al the members based on GP", true, name, FLAG_GP));
         flags.put(FLAG_RELIC, new Flag(FLAG_RELIC, "Shows all members with the amount of toons below or at the given relic level", true, name, FLAG_RELIC, " <relicLevel>"));
         flags.put(FLAG_COMPARE, new Flag(FLAG_COMPARE, "Compares 1 guild to another", true, name, FLAG_COMPARE, "<guildId/allycode>"));
-        flags.put(FLAG_GL, new Flag(FLAG_GL, "Get's the GL status of the guild", true, name, FLAG_GL, "<GL>"));
+        flags.put(FLAG_GL, new Flag(FLAG_GL, "Gets the GL status of the guild", true, name, FLAG_GL, "<GL>"));
 
     }
 

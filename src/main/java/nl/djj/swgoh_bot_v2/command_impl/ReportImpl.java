@@ -1,15 +1,11 @@
 package nl.djj.swgoh_bot_v2.command_impl;
 
 import nl.djj.swgoh_bot_v2.config.GithubConstants;
-import nl.djj.swgoh_bot_v2.config.Permission;
 import nl.djj.swgoh_bot_v2.database.DAO;
 import nl.djj.swgoh_bot_v2.entities.GithubIssueStatus;
 import nl.djj.swgoh_bot_v2.entities.Message;
-import nl.djj.swgoh_bot_v2.exceptions.InsertionError;
-import nl.djj.swgoh_bot_v2.exceptions.RetrieveError;
 import nl.djj.swgoh_bot_v2.helpers.Logger;
 import nl.djj.swgoh_bot_v2.helpers.MessageHelper;
-import nl.djj.swgoh_bot_v2.helpers.StringHelper;
 import org.kohsuke.github.*;
 
 import java.io.IOException;
@@ -91,6 +87,7 @@ public class ReportImpl {
      * @param message the message.
      */
     public void createIssue(final Message message) {
+        //TODO: impl
 //        try {
 //            if (!dbHandler.isUserAllowedToCreateTicket(message.getAuthorId())) {
 //                message.error("You are not allowed to create an ticket. Please contact the developer if you think this is wrong");

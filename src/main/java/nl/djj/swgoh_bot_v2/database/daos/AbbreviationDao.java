@@ -12,11 +12,29 @@ import java.util.List;
  * @author DJJ
  **/
 public interface AbbreviationDao extends Dao<Abbreviation, Integer> {
-    String className = AbbreviationDao.class.getName();
+    /**
+     * The name of the implementation.
+     */
+    String CLASS_NAME = AbbreviationDao.class.getName();
 
-    List<Abbreviation> getByPlayerUnitId(final int unitId) throws RetrieveError;
+    /**
+     * Gets the abbreviation for the given unit id.
+     * @param unitId the unit id to search for.
+     * @return a list with abbreviations.
+     * @throws RetrieveError when something goes wrong.
+     */
+    List<Abbreviation> getByUnitId(final int unitId) throws RetrieveError;
 
+    /**
+     * Saves the abbreviation in the DB.
+     * @param abbreviation the abbreviation.
+     * @throws InsertionError when something goes wrong.
+     */
     void save(final Abbreviation abbreviation) throws InsertionError;
 
+    /**
+     * Deletes the Table.
+     * @throws DeletionError when something goes wrong.
+     */
     void clear() throws DeletionError;
 }

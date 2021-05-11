@@ -26,7 +26,7 @@ public class PresenceDaoImpl extends BaseDaoImpl<Presence, Integer> implements P
         try {
             this.create(presence);
         } catch (final SQLException exception) {
-            throw new InsertionError(className, "add", exception.getMessage());
+            throw new InsertionError(CLASS_NAME, "add", exception.getMessage());
         }
     }
 }

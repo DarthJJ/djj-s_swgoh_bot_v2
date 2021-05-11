@@ -88,7 +88,7 @@ public final class CalculationHelper {
 
     private static double getGearValue(final double gearLevel) {
         double returnValue = 0.0;
-        for (Map.Entry<Integer, Double> entry : SwgohConstants.GEAR_SCALE.entrySet()) {
+        for (final Map.Entry<Integer, Double> entry : SwgohConstants.GEAR_SCALE.entrySet()) {
             if (entry.getKey() <= gearLevel) {
                 returnValue += entry.getValue();
             }
@@ -98,7 +98,7 @@ public final class CalculationHelper {
 
     private static double getRelicValue(final double relicLevel) {
         double returnValue = 0.0;
-        for (Map.Entry<Integer, Double> entry : SwgohConstants.RELIC_SCALE.entrySet()) {
+        for (final Map.Entry<Integer, Double> entry : SwgohConstants.RELIC_SCALE.entrySet()) {
             if (entry.getKey() <= relicLevel) {
                 returnValue += entry.getValue();
             }
@@ -108,7 +108,7 @@ public final class CalculationHelper {
 
     private static double getRarityValue(final double rarityLevel) {
         double returnValue = 0.0;
-        for (Map.Entry<Integer, Double> entry : SwgohConstants.RARITY_SCALE.entrySet()) {
+        for (final Map.Entry<Integer, Double> entry : SwgohConstants.RARITY_SCALE.entrySet()) {
             if (entry.getKey() <= rarityLevel) {
                 returnValue += entry.getValue();
             }

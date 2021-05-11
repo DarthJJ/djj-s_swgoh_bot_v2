@@ -1,13 +1,9 @@
 package nl.djj.swgoh_bot_v2.command_impl;
 
-import net.dv8tion.jda.api.entities.TextChannel;
 import nl.djj.swgoh_bot_v2.Main;
 import nl.djj.swgoh_bot_v2.database.DAO;
 import nl.djj.swgoh_bot_v2.entities.Message;
-import nl.djj.swgoh_bot_v2.exceptions.RetrieveError;
 import nl.djj.swgoh_bot_v2.helpers.Logger;
-
-import java.util.List;
 
 /**
  * @author DJJ
@@ -20,26 +16,14 @@ public abstract class ControlImpl {
     private static final transient String STOP_UPDATE = "Update done, please enjoy the bot.";
 
     /**
-     * @param logger    the logger.
-     * @param dao the DB handler.
+     * @param logger the logger.
+     * @param dao    the DB handler.
      */
     public ControlImpl(final Logger logger, final DAO dao) {
         super();
         this.dao = dao;
         this.logger = logger;
     }
-
-    /**
-     * Create / update the database.
-     *
-     * @param message the message.
-     */
-    public void createDatabase(final Message message) {
-//        dbHandler.createDatabase();
-//        logger.info(className, "Updating / Creating the DB");
-//        message.done("Database has been updated!");
-    }
-
     /**
      * Enables update mode.
      *
@@ -62,6 +46,7 @@ public abstract class ControlImpl {
 
 
     private void sendNotification(final Message message, final String string) {
+        //TODO:
 //        try {
 //            final List<String> channels = dbHandler.getAllGuildNotifyChannels();
 //
@@ -84,8 +69,9 @@ public abstract class ControlImpl {
 
     /**
      * Sends a notification to all guilds.
+     *
      * @param message the message to use.
-     * @param string the message.
+     * @param string  the message.
      */
     public void sendMessage(final Message message, final String string) {
         sendNotification(message, string);

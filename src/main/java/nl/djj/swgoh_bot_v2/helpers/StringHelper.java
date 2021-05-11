@@ -80,7 +80,12 @@ public final class StringHelper {
         return result.toLocalDate();
     }
 
-    public static LocalDateTime parseSwgohDate(final String dateString){
+    /**
+     * Parses the date from SWGOH to something the code understands.
+     * @param dateString the SWGOH date.
+     * @return a localDateTimet object.
+     */
+    public static LocalDateTime parseSwgohDate(final String dateString) {
         return LocalDateTime.parse(dateString, DateTimeFormatter.ISO_DATE_TIME);
     }
 

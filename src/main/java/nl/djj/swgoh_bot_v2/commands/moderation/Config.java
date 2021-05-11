@@ -38,7 +38,7 @@ public class Config extends BaseCommand {
 
     @Override
     public void createFlags() {
-        flags.put(FLAG_SET_GUILD, new Flag(FLAG_SET_GUILD, "Sets the SWGOH guild id for the discord Guild", true, name, FLAG_SET_GUILD, "<guildId>"));
+        flags.put(FLAG_SET_GUILD, new Flag(FLAG_SET_GUILD, "Sets the SWGOH guild id for this Discord server", true, name, FLAG_SET_GUILD, "<guildId>"));
         flags.put(FLAG_GET_CONFIG, new Flag(FLAG_GET_CONFIG, "Gets the config for the discord Guild", true, name, FLAG_GET_CONFIG));
         flags.put(FLAG_SET_PREFIX, new Flag(FLAG_SET_PREFIX, "Sets the prefix for the current guild", true, name, FLAG_SET_PREFIX, "<prefix>"));
         flags.put(FLAG_SET_IGNORE_ROLE, new Flag(FLAG_SET_IGNORE_ROLE, "Sets the ignore role for the bot presence functionality.", true, name, FLAG_SET_IGNORE_ROLE, "<@RoleTag>"));

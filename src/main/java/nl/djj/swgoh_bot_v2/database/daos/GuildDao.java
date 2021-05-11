@@ -9,10 +9,24 @@ import nl.djj.swgoh_bot_v2.exceptions.RetrieveError;
  * @author DJJ
  **/
 public interface GuildDao extends Dao<Guild, Integer> {
-    String className = GuildDao.class.getName();
+    /**
+     * The name of the implementation.
+     */
+    String CLASS_NAME = GuildDao.class.getName();
 
+    /**
+     * Gets an guild by the id.
+     * @param guildId the guild id.
+     * @return a guild object.
+     * @throws RetrieveError when something goes wrong.
+     */
     Guild getById(final int guildId) throws RetrieveError;
 
+    /**
+     * Saves the guild.
+     * @param guild the guild object.
+     * @throws InsertionError when something goes wrong.
+     */
     void save(final Guild guild) throws InsertionError;
 
 }

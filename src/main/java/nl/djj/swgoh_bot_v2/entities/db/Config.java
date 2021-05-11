@@ -32,11 +32,15 @@ public class Config {
 
     }
 
-    public Config(final String guildId){
+    /**
+     * Constructor.
+     * @param guildId the guildId.
+     */
+    public Config(final String guildId) {
         super();
         this.guildId = guildId;
-        this. swgohId = -1;
-        this. prefix = BotConstants.DEFAULT_PREFIX;
+        this.swgohId = -1;
+        this.prefix = BotConstants.DEFAULT_PREFIX;
         this.moderationRole = "";
         this.ignoreRole = "";
         this.notifyChannel = "";

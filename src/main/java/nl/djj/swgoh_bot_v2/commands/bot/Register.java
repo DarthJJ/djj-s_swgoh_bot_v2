@@ -36,7 +36,7 @@ public class Register extends BaseCommand {
     @Override
     public void createFlags() {
         flags.put(FLAG_ADD, new Flag(FLAG_ADD, "Register to the bot", false, name, FLAG_ADD, " <allycode: xxx-xxx-xxx / xxxxxxxxx>"));
-        flags.put(FLAG_REMOVE, new Flag(FLAG_REMOVE, "Unregister to the bot", true, name, FLAG_REMOVE));
+        flags.put(FLAG_REMOVE, new Flag(FLAG_REMOVE, "Unregister from the bot", true, name, FLAG_REMOVE));
     }
 
     @Override

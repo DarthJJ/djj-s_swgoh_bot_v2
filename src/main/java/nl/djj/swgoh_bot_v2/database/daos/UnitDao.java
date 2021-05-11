@@ -9,9 +9,23 @@ import nl.djj.swgoh_bot_v2.exceptions.RetrieveError;
  * @author DJJ
  **/
 public interface UnitDao extends Dao<Unit, String> {
-    String className = UnitDao.class.getName();
+    /**
+     * The name of the implementation.
+     */
+    String CLASS_NAME = UnitDao.class.getName();
 
-    Unit getById(final String id) throws RetrieveError;
+    /**
+     * Gets an unit by id.
+     * @param unitId the unit id.
+     * @return a Unit object.
+     * @throws RetrieveError when something goes wrong.
+     */
+    Unit getById(final String unitId) throws RetrieveError;
 
+    /**
+     * Saves a unit object to the DB.
+     * @param unit the unit object.
+     * @throws InsertionError when something goes wrong.
+     */
     void save(final Unit unit) throws InsertionError;
 }

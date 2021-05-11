@@ -28,7 +28,7 @@ public class FarmingLocationDaoImpl extends BaseDaoImpl<FarmingLocation, Integer
         try {
             return this.queryForEq("unitId", unitId);
         } catch (final SQLException exception) {
-            throw new RetrieveError(className, "getByUnitId", exception.getMessage());
+            throw new RetrieveError(CLASS_NAME, "getByUnitId", exception.getMessage());
         }
     }
 
@@ -36,8 +36,8 @@ public class FarmingLocationDaoImpl extends BaseDaoImpl<FarmingLocation, Integer
     public List<FarmingLocation> getByLocation(final String location) throws RetrieveError {
         try {
             return this.queryForEq("location", location);
-        } catch (final SQLException exception){
-            throw new RetrieveError(className, "getByLocation", exception.getMessage());
+        } catch (final SQLException exception) {
+            throw new RetrieveError(CLASS_NAME, "getByLocation", exception.getMessage());
         }
     }
 
@@ -45,8 +45,8 @@ public class FarmingLocationDaoImpl extends BaseDaoImpl<FarmingLocation, Integer
     public void save(final FarmingLocation farmingLocation) throws InsertionError {
         try {
             this.createOrUpdate(farmingLocation);
-        } catch (final SQLException exception){
-            throw new InsertionError(className,"save", exception.getMessage());
+        } catch (final SQLException exception) {
+            throw new InsertionError(CLASS_NAME, "save", exception.getMessage());
         }
     }
 }
