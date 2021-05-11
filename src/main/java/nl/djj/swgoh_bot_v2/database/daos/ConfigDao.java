@@ -5,6 +5,8 @@ import nl.djj.swgoh_bot_v2.entities.db.Config;
 import nl.djj.swgoh_bot_v2.exceptions.InsertionError;
 import nl.djj.swgoh_bot_v2.exceptions.RetrieveError;
 
+import java.util.List;
+
 /**
  * @author DJJ
  **/
@@ -28,4 +30,10 @@ public interface ConfigDao extends Dao<Config, String> {
      * @throws InsertionError when something goes wrong.
      */
     void save(final Config config) throws InsertionError;
+
+    /**
+     * @return a list of notification channels.
+     * @throws RetrieveError when something goes wrong.
+     */
+    List<String> getAllNotificationChannels() throws RetrieveError;
 }

@@ -83,8 +83,8 @@ public class PlayerUnitDaoImpl extends BaseDaoImpl<PlayerUnit, String> implement
     }
 
     @Override
-    public int getZetaCount(final Player player) throws RetrieveError {
-        final String query = "SELECT count() FROM unitAbilities as t1 " +
+    public int getZetaCount(final Player player, @Nullable final String unitId) throws RetrieveError {
+        String query = "SELECT count() FROM unitAbilities as t1 " +
                 "INNER JOIN playerUnits AS t2 " +
                 "INNER JOIN abilities AS t3 " +
                 "WHERE t2.player_id = ? " +
@@ -92,8 +92,16 @@ public class PlayerUnitDaoImpl extends BaseDaoImpl<PlayerUnit, String> implement
                 "AND t3.identifier = t1.baseAbility_id " +
                 "AND t3.zeta = 1 " +
                 "AND t1.level = t3.tierMax ";
+        if (unitId != null) {
+            query += "AND t2.unit_id = ?";
+        }
         try {
-            return (int) this.queryRawValue(query, Integer.toString(player.getAllycode()));
+            final List<String> args = new ArrayList<>();
+            args.add(Integer.toString(player.getAllycode()));
+            if (unitId != null){
+                args.add(unitId);
+            }
+            return (int) this.queryRawValue(query, args.toArray(new String[0]));
         } catch (final SQLException exception) {
             throw new RetrieveError(CLASS_NAME, "getZetaCount", exception.getMessage());
         }

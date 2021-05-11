@@ -1,14 +1,18 @@
 package nl.djj.swgoh_bot_v2.command_impl;
 
+import net.dv8tion.jda.api.entities.TextChannel;
 import nl.djj.swgoh_bot_v2.Main;
 import nl.djj.swgoh_bot_v2.database.DAO;
 import nl.djj.swgoh_bot_v2.entities.Message;
+import nl.djj.swgoh_bot_v2.exceptions.RetrieveError;
 import nl.djj.swgoh_bot_v2.helpers.Logger;
+
+import java.util.List;
 
 /**
  * @author DJJ
  */
-public abstract class ControlImpl {
+public class ControlImpl {
     private final transient String className = this.getClass().getSimpleName();
     private final transient Logger logger;
     private final transient DAO dao;
@@ -46,26 +50,24 @@ public abstract class ControlImpl {
 
 
     private void sendNotification(final Message message, final String string) {
-        //TODO:
-//        try {
-//            final List<String> channels = dbHandler.getAllGuildNotifyChannels();
-//
-//            for (final String channel : channels) {
-//                final TextChannel textChannel = message.getChannel().getJDA().getTextChannelById(channel);
-//                if (textChannel != null) {
-//                    textChannel.sendMessage(string).queue();
-//                }
-//            }
-//            message.done("Notification sent");
-//        } catch (final RetrieveError error) {
-//            message.error(error.getMessage());
-//        }
+        try {
+            final List<String> channels = dao.configDao().getAllNotificationChannels();
+            int counter = 0;
+            for (final String channel : channels) {
+                if (channel.isEmpty()){
+                    continue;
+                }
+                final TextChannel textChannel = message.getChannel().getJDA().getTextChannelById(channel);
+                if (textChannel != null) {
+                    textChannel.sendMessage(string).queue();
+                    counter++;
+                }
+            }
+            message.done("Notification sent to: " + counter + " guilds");
+        } catch (final RetrieveError error) {
+            message.error(error.getMessage());
+        }
     }
-
-    /**
-     * overridden for bot closure.
-     */
-    public abstract void closeBot();
 
     /**
      * Sends a notification to all guilds.

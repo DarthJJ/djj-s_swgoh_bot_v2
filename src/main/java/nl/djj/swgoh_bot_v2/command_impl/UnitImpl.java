@@ -108,11 +108,11 @@ public class UnitImpl {
      */
     public void createUnitProfile(final Player player, final ProfileCompare profile) throws RetrieveError {
         for (final Map.Entry<String, String> entry : SwgohConstants.COMPARE_TOONS.entrySet()) {
-            profile.addUnit(dao.playerUnitDao().getForPlayer(player, entry.getKey()), entry.getKey());
+            profile.addUnit(dao.playerUnitDao().getForPlayer(player, entry.getKey()), entry.getKey(), dao.playerUnitDao().getZetaCount(player, entry.getKey()));
         }
         profile.setG13(dao.playerUnitDao().getGearCount(player, SwgohConstants.GEAR_LEVEL_13));
         profile.setG12(dao.playerUnitDao().getGearCount(player, SwgohConstants.GEAR_LEVEL_12));
-        profile.setZetas(dao.playerUnitDao().getZetaCount(player));
+        profile.setZetas(dao.playerUnitDao().getZetaCount(player, null));
         profile.setRelics(dao.playerUnitDao().getRelics(player));
     }
 

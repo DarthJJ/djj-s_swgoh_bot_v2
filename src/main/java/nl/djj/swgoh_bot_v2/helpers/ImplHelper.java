@@ -11,7 +11,7 @@ public class ImplHelper {
     private final transient ProfileImpl profileImpl;
     private final transient CommandImpl commandImpl;
     private final transient UpdateImpl updateImpl;
-    //    private final transient ControlImpl controlImpl;
+    private final transient ControlImpl controlImpl;
     private final transient UnitImpl unitImpl;
     private final transient ConfigImpl configImpl;
     private final transient GuildImpl guildImpl;
@@ -26,7 +26,7 @@ public class ImplHelper {
         this.profileImpl = new ProfileImpl(logger, dao, this);
         this.commandImpl = new CommandImpl(logger, dao);
         this.updateImpl = new UpdateImpl(logger, dao);
-//        this.controlImpl = new ControlImpl(logger, dao);
+        this.controlImpl = new ControlImpl(logger, dao);
         this.unitImpl = new UnitImpl(dao, logger);
         this.configImpl = new ConfigImpl(dao, logger);
         this.guildImpl = new GuildImpl(logger, dao, this);
@@ -46,9 +46,9 @@ public class ImplHelper {
         return this.updateImpl;
     }
 
-//    public ControlImpl getControlImpl() {
-//        return this.controlImpl;
-//    }
+    public ControlImpl getControlImpl() {
+        return this.controlImpl;
+    }
 
     public UnitImpl getUnitImpl() {
         return this.unitImpl;

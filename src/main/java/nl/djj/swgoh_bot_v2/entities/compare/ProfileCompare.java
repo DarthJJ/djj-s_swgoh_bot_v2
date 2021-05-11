@@ -60,7 +60,7 @@ public class ProfileCompare {
      * @param unitData the data of the unit.
      * @param baseId   the unit baseId.
      */
-    public void addUnit(final PlayerUnit unitData, final String baseId) {
+    public void addUnit(final PlayerUnit unitData, final String baseId, final int zetas) {
         final UnitCompare compare;
         if (unitData == null) {
             compare = new UnitCompare("", baseId, -1, -1, -1, -1, -1, -1);
@@ -71,7 +71,7 @@ public class ProfileCompare {
                     unitData.getGalacticPower(),
                     unitData.getGear(),
                     unitData.getRelic(),
-                    0, //TODO: replace with actual value.
+                    zetas,
                     unitData.getSpeed());
         }
         units.put(baseId, compare);
