@@ -275,4 +275,40 @@ public class ProfileImpl {
         this.dao.playerDao().save(player);
         return dao.playerDao().getById(allycode);
     }
+
+    public void speedMods(final Message message) {
+        try {
+            final JSONObject modData = httpHelper.getJsonObject(String.format(SwgohGgEndpoint.MOD_ENDPOINT.getUrl(), message.getAllycode()));
+            final JSONArray mods = modData.getJSONArray("mods");
+            int garbage = 0;
+            int plus10 = 0;
+            int plus15 = 0;
+            int plus20 = 0;
+            int plus25 = 0;
+            for (int i = 0; i < mods.length(); i++) {
+                final JSONObject mod = mods.getJSONObject(i);
+                final JSONArray secondaryStats = mod.getJSONArray("secondary_stats");
+                for (int j = 0; j < secondaryStats.length(); j++) {
+                    final JSONObject secondaryStat = secondaryStats.getJSONObject(j);
+                    if (secondaryStat.getString("name").equals("Speed")) {
+                        final int speed = Integer.parseInt(secondaryStat.getString("display_value"));
+                        if (speed < 10) {
+                            garbage++;
+                        } else if (speed < 15) {
+                            plus10++;
+                        } else if (speed < 20) {
+                            plus15++;
+                        } else if (speed < 25) {
+                            plus20++;
+                        } else {
+                            plus25++;
+                        }
+                    }
+                }
+            }
+            message.done(MessageHelper.formatModMessage(garbage, plus10, plus15, plus20, plus25));
+        } catch (HttpRetrieveError error) {
+            message.error(error.getMessage());
+        }
+    }
 }

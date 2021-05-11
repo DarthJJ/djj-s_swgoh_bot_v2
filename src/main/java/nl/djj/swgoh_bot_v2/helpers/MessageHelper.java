@@ -10,8 +10,6 @@ import nl.djj.swgoh_bot_v2.entities.GithubIssueStatus;
 import nl.djj.swgoh_bot_v2.entities.Message;
 import nl.djj.swgoh_bot_v2.entities.compare.*;
 import nl.djj.swgoh_bot_v2.entities.db.Config;
-import nl.djj.swgoh_bot_v2.entities.db.Guild;
-import nl.djj.swgoh_bot_v2.entities.db.Player;
 import org.json.JSONArray;
 
 import java.awt.*;
@@ -107,26 +105,6 @@ public final class MessageHelper {
         }
         returnValue.add(builder.build());
         return returnValue;
-    }
-
-    /**
-     * Formats the info to an embed.
-     *
-     * @param player the player.
-     * @return a message embed.
-     */
-    public static MessageEmbed formatSwgohProfile(final Player player) {
-        final EmbedBuilder builder = new EmbedBuilder(baseEmbed());
-        builder.appendDescription("Generic Profile info for: " + player.getName());
-        final String generic = String.format(TABLE_FORMAT, "Level", "=", player.getPermission()) +
-                String.format(TABLE_FORMAT, "Guild", "=", player.getGuild());
-        builder.addField(new MessageEmbed.Field("Generic", "```" + generic + "```", false));
-        final String galacticPower = String.format(TABLE_FORMAT, "GP_total", "=", player.getGalacticPower());
-        builder.addField(new MessageEmbed.Field("GP", "```" + galacticPower + "```", false));
-        final String profileLink = String.format(TABLE_FORMAT, "SWGOH player", "", "[Link](" + player.getUrl() + ")");
-        builder.addField(new MessageEmbed.Field("SWGOH", profileLink, false));
-        builder.addField(new MessageEmbed.Field("Updated:", player.getLastUpdated().toString(), false));
-        return builder.build();
     }
 
     /**
@@ -418,6 +396,18 @@ public final class MessageHelper {
         embed.addField("Issue Labels", "```" + githubIssueStatus.getLabels() + "```", false);
         embed.addField("Last comment", "```" + githubIssueStatus.getLastComment() + "```", false);
         embed.addField("Issue URL", "[Link to Github](" + githubIssueStatus.getUrl() + ")", false);
+        return embed.build();
+    }
+
+    public static MessageEmbed formatModMessage(final int garbage, final int plus10, final int plus15, final int plus20, final int plus25) {
+        final EmbedBuilder embed = new EmbedBuilder(baseEmbed());
+        embed.setDescription("Speed mods");
+        final String mods = String.format(TABLE_FORMAT, "Garbage", ":", garbage) +
+                String.format(TABLE_FORMAT, "10+", ":", plus10) +
+                String.format(TABLE_FORMAT, "15+", ":", plus15) +
+                String.format(TABLE_FORMAT, "20+", ":", plus20) +
+                String.format(TABLE_FORMAT, "25+", ":", plus25);
+        embed.addField("Mods", "```" + mods + "```", false);
         return embed.build();
     }
 
