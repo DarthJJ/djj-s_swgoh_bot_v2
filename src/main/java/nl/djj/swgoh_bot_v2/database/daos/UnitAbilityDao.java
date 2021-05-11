@@ -16,4 +16,6 @@ public interface UnitAbilityDao extends Dao<UnitAbility, Integer> {
     List<UnitAbility> getForUnit(final String unitId) throws RetrieveError;
 
     void save(final UnitAbility ability) throws InsertionError;
+
+    void saveAll(final List<UnitAbility> abilities) throws InsertionError;
 }

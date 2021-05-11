@@ -19,6 +19,8 @@ public interface PlayerUnitDao extends Dao<PlayerUnit, String> {
 
     void save(final PlayerUnit playerUnit) throws InsertionError;
 
+    void saveAll(final List<PlayerUnit> playerUnits) throws InsertionError;
+
     List<PlayerUnit> getAllForPlayer(final Player player) throws RetrieveError;
 
     PlayerUnit getForPlayer(final Player player, final String baseId) throws RetrieveError;

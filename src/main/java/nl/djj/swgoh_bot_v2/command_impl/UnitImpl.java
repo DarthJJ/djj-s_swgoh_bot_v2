@@ -12,7 +12,9 @@ import nl.djj.swgoh_bot_v2.helpers.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -122,7 +124,8 @@ public class UnitImpl {
      * @throws InsertionError When storing in the DB goes wrong.
      */
     public void insertUnits(final JSONArray playerUnits, final Player player) throws RetrieveError, InsertionError {
-        logger.debug(className, "Inserting playerUnits in the DB");
+        final List<UnitAbility> abilities = new ArrayList<>();
+        final List<PlayerUnit> units = new ArrayList<>();
         for (int i = 0; i < playerUnits.length(); i++) {
             final JSONObject unitData = playerUnits.optJSONObject(i).getJSONObject("data");
             final String baseId = unitData.getString("base_id");
@@ -140,16 +143,19 @@ public class UnitImpl {
                 }
             }
             final PlayerUnit playerUnit = new PlayerUnit(player, dao.unitDao().getById(baseId), rarity, galacticPower, gear, gearPieces, relic, speed);
-            dao.playerUnitDao().save(playerUnit);
-            logger.debug(className, "Inserting unit ability in the DB");
+            units.add(playerUnit);
             for (int j = 0; j < abilityData.length(); j++) {
                 String abilityId = abilityData.getJSONObject(j).getString("id");
                 if ("uniqueskill_GALACTICLEGEND01".equals(abilityId)) {
                     abilityId += "_" + baseId;
                 }
                 final int level = abilityData.getJSONObject(j).getInt("ability_tier");
-                dao.unitAbilityDao().save(new UnitAbility(playerUnit, dao.abilityDao().getById(abilityId), level));
+                abilities.add(new UnitAbility(playerUnit, dao.abilityDao().getById(abilityId), level));
             }
         }
+        logger.debug(className, "Inserting playerUnits in the DB");
+        dao.playerUnitDao().saveAll(units);
+        logger.debug(className, "Inserting unit abilities in the DB");
+        dao.unitAbilityDao().saveAll(abilities);
     }
 }

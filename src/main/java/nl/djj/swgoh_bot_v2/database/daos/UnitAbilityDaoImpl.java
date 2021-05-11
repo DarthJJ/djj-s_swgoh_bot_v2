@@ -1,6 +1,7 @@
 package nl.djj.swgoh_bot_v2.database.daos;
 
 import com.j256.ormlite.dao.BaseDaoImpl;
+import com.j256.ormlite.misc.TransactionManager;
 import com.j256.ormlite.support.ConnectionSource;
 import nl.djj.swgoh_bot_v2.entities.db.UnitAbility;
 import nl.djj.swgoh_bot_v2.exceptions.InsertionError;
@@ -9,17 +10,20 @@ import nl.djj.swgoh_bot_v2.exceptions.RetrieveError;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 /**
  * @author DJJ
  **/
 public class UnitAbilityDaoImpl extends BaseDaoImpl<UnitAbility, Integer> implements UnitAbilityDao {
+    final transient ConnectionSource connection;
 
     /**
      * Constructor.
      **/
     public UnitAbilityDaoImpl(final ConnectionSource connection) throws SQLException {
         super(connection, UnitAbility.class);
+        this.connection = connection;
     }
 
     @Override
@@ -38,12 +42,26 @@ public class UnitAbilityDaoImpl extends BaseDaoImpl<UnitAbility, Integer> implem
                     "playerUnit_id", ability.getPlayerUnit().getIdentifier(),
                     "baseAbility_id", ability.getBaseAbility().getIdentifier()
             ));
-            if (found.size() > 0){
+            if (found.size() > 0) {
                 ability.setIdentifier(found.get(0).getIdentifier());
             }
             this.createOrUpdate(ability);
         } catch (final SQLException exception) {
             throw new InsertionError(className, "save", exception.getMessage());
+        }
+    }
+
+    @Override
+    public void saveAll(final List<UnitAbility> abilities) throws InsertionError {
+        try {
+            this.callBatchTasks((Callable<Void>) () -> {
+                for (final UnitAbility ability : abilities) {
+                    UnitAbilityDaoImpl.this.save(ability);
+                }
+                return null;
+            });
+        } catch (final SQLException exception) {
+            throw new InsertionError(className, "saveAll", exception.getMessage());
         }
     }
 }

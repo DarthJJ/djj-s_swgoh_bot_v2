@@ -8,12 +8,14 @@ import nl.djj.swgoh_bot_v2.config.SwgohConstants;
 import nl.djj.swgoh_bot_v2.entities.db.Guild;
 import nl.djj.swgoh_bot_v2.entities.db.Player;
 import nl.djj.swgoh_bot_v2.entities.db.PlayerUnit;
+import nl.djj.swgoh_bot_v2.entities.db.UnitAbility;
 import nl.djj.swgoh_bot_v2.exceptions.InsertionError;
 import nl.djj.swgoh_bot_v2.exceptions.RetrieveError;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.Callable;
 
 /**
  * @author DJJ
@@ -35,6 +37,20 @@ public class PlayerUnitDaoImpl extends BaseDaoImpl<PlayerUnit, String> implement
             this.createOrUpdate(playerUnit);
         } catch (final SQLException exception) {
             throw new InsertionError(className, "save", exception.getMessage());
+        }
+    }
+
+    @Override
+    public void saveAll(final List<PlayerUnit> playerUnits) throws InsertionError {
+        try {
+            this.callBatchTasks((Callable<Void>) () -> {
+                for (final PlayerUnit playerUnit : playerUnits) {
+                    PlayerUnitDaoImpl.this.save(playerUnit);
+                }
+                return null;
+            });
+        } catch (final SQLException exception) {
+            throw new InsertionError(className, "saveAll", exception.getMessage());
         }
     }
 
