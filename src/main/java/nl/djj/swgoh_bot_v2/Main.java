@@ -52,7 +52,7 @@ public final class Main {
             if (debug) {
                 initializeDiscord(dotenv.get("BETA_DISCORD_TOKEN"));
             } else {
-                initializeDiscord(dotenv.get("PUBLIC_DISCORD_TOKEN"));
+                initializeDiscord(dotenv.get("PUBLIC_DISCORD_TOKEN_V2"));
             }
             logger.info(className, "Bot Ready!");
         } catch (final InitializationError exception) {
