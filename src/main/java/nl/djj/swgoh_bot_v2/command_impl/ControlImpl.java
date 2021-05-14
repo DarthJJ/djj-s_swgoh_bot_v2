@@ -28,6 +28,7 @@ public class ControlImpl {
         this.dao = dao;
         this.logger = logger;
     }
+
     /**
      * Enables update mode.
      *
@@ -54,7 +55,7 @@ public class ControlImpl {
             final List<String> channels = dao.configDao().getAllNotificationChannels();
             int counter = 0;
             for (final String channel : channels) {
-                if (channel.isEmpty()){
+                if (channel.isEmpty()) {
                     continue;
                 }
                 final TextChannel textChannel = message.getChannel().getJDA().getTextChannelById(channel);
@@ -65,6 +66,7 @@ public class ControlImpl {
             }
             message.done("Notification sent to: " + counter + " guilds");
         } catch (final RetrieveError error) {
+            logger.error(className, "sendNotification", error.getMessage());
             message.error(error.getMessage());
         }
     }

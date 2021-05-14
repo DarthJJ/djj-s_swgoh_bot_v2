@@ -1,11 +1,16 @@
 package nl.djj.swgoh_bot_v2.command_impl;
 
 import nl.djj.swgoh_bot_v2.config.GithubConstants;
+import nl.djj.swgoh_bot_v2.config.Permission;
 import nl.djj.swgoh_bot_v2.database.DAO;
 import nl.djj.swgoh_bot_v2.entities.GithubIssueStatus;
 import nl.djj.swgoh_bot_v2.entities.Message;
+import nl.djj.swgoh_bot_v2.entities.db.Player;
+import nl.djj.swgoh_bot_v2.exceptions.InsertionError;
+import nl.djj.swgoh_bot_v2.exceptions.RetrieveError;
 import nl.djj.swgoh_bot_v2.helpers.Logger;
 import nl.djj.swgoh_bot_v2.helpers.MessageHelper;
+import nl.djj.swgoh_bot_v2.helpers.StringHelper;
 import org.kohsuke.github.*;
 
 import java.io.IOException;
@@ -87,23 +92,22 @@ public class ReportImpl {
      * @param message the message.
      */
     public void createIssue(final Message message) {
-        //TODO: impl
-//        try {
-//            if (!dbHandler.isUserAllowedToCreateTicket(message.getAuthorId())) {
-//                message.error("You are not allowed to create an ticket. Please contact the developer if you think this is wrong");
-//                return;
-//            }
-//            if (message.getArgs().isEmpty()) {
-//                message.error("Please provide a description of the issue");
-//                return;
-//            }
-//            final long issueId = github.getRepository(GithubConstants.getOWNER() + "/" + GithubConstants.getREPO()).createIssue("Bot created issue by: " + message.getAuthor())
-//                    .body(message.getArgs().stream().map(String::toString).collect(Collectors.joining(" ")))
-//                    .label("BotInbox").create().getNumber();
-//            message.done("Issue is created, for future reference about this issue, use ID: **" + issueId + "**\nThanks for your support and contribution");
-//        } catch (final IOException | RetrieveError exception) {
-//            message.error("Something went wrong creating the issue, try again later");
-//        }
+        try {
+            if (!dao.playerDao().isPlayerAllowedToCreateTickets(message.getAllycode())) {
+                message.error("You are not allowed to create an ticket. Please contact the developer if you think this is wrong");
+                return;
+            }
+            if (message.getArgs().isEmpty()) {
+                message.error("Please provide a description of the issue");
+                return;
+            }
+            final long issueId = github.getRepository(GithubConstants.getOWNER() + "/" + GithubConstants.getREPO()).createIssue("Bot created issue by: " + message.getAuthor())
+                    .body(message.getArgs().stream().map(String::toString).collect(Collectors.joining(" ")))
+                    .label("BotInbox").create().getNumber();
+            message.done("Issue is created, for future reference about this issue, use ID: **" + issueId + "**\nThanks for your support and contribution");
+        } catch (final IOException exception) {
+            message.error("Something went wrong creating the issue, try again later");
+        }
     }
 
     /**
@@ -111,20 +115,21 @@ public class ReportImpl {
      * @param message the message.
      */
     public void disallowUser(final Message message) {
-//        try {
-//            if (dbHandler.getPermissionForUser(message.getAuthorId()) == Permission.USER) {
-//                message.error("You are not allowed to run this command");
-//                return;
-//            }
-//            if (message.getArgs().isEmpty()) {
-//                message.error("Please tag a user to disallow");
-//                return;
-//            }
-//            final String discordId = StringHelper.getDiscordIdFromTag(message.getAltArgs().get(0));
-//            dbHandler.setIsAllowedTicketDisabled(discordId);
-//            message.done(String.format("User: **%s** disallowed from creating tickets", String.join(" ", message.getArgs()).replace("@", "")));
-//        } catch (final RetrieveError | InsertionError error) {
-//            message.error(error.getMessage());
-//        }
+        try {
+            final Player player = dao.playerDao().getById(message.getAllycode());
+            if (player.getPermission() == Permission.USER) {
+                message.error("You are not allowed to run this command");
+                return;
+            }
+            if (message.getArgs().isEmpty()) {
+                message.error("Please tag a user to disallow");
+                return;
+            }
+            final String discordId = StringHelper.getDiscordIdFromTag(message.getAltArgs().get(0));
+            dao.playerDao().disallowTicketCreation(discordId);
+            message.done(String.format("User: **%s** disallowed from creating tickets", String.join(" ", message.getArgs()).replace("@", "")));
+        } catch (final RetrieveError | InsertionError error) {
+            message.error(error.getMessage());
+        }
     }
 }

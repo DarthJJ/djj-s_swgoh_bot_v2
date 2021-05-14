@@ -71,4 +71,17 @@ public interface PlayerDao extends Dao<Player, Integer> {
      * @throws RetrieveError when something goes wrong.
      */
     Map<String, Integer> getRelicForGuild(int guildId, int relicLevel) throws RetrieveError;
+
+    /**
+     * Checks whether the user can create a ticket.
+     * @param allycode the allycode to search for.
+     * @return a boolean.
+     */
+    boolean isPlayerAllowedToCreateTickets(final int allycode);
+
+    /**
+     * Disallows the given userId to create tickets.
+     * @param discordId the user to disallow.
+     */
+    void disallowTicketCreation(String discordId) throws InsertionError;
 }

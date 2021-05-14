@@ -15,7 +15,7 @@ public class ImplHelper {
     private final transient UnitImpl unitImpl;
     private final transient ConfigImpl configImpl;
     private final transient GuildImpl guildImpl;
-//    private final transient ReportImpl reportImpl;
+    private final transient ReportImpl reportImpl;
 
     /**
      * @param logger the logger.
@@ -30,7 +30,7 @@ public class ImplHelper {
         this.unitImpl = new UnitImpl(dao, logger);
         this.configImpl = new ConfigImpl(dao, logger);
         this.guildImpl = new GuildImpl(logger, dao, this);
-//        this.reportImpl = new ReportImpl(logger, dao);
+        this.reportImpl = new ReportImpl(logger, dao);
     }
 
 
@@ -62,7 +62,7 @@ public class ImplHelper {
         return this.guildImpl;
     }
 
-//    public ReportImpl getReportImpl() {
-//        return reportImpl;
-//    }
+    public ReportImpl getReportImpl() {
+        return reportImpl;
+    }
 }

@@ -43,11 +43,11 @@ public class Report extends BaseCommand {
 
     @Override
     public void handleMessage(final Message message) {
-//        switch (message.getFlag()) {
-//            case FLAG_CREATE -> this.implHelper.getReportImpl().createIssue(message);
-//            case FLAG_STATUS -> this.implHelper.getReportImpl().issueStatus(message);
-//            case FLAG_DISALLOW -> this.implHelper.getReportImpl().disallowUser(message);
-//            default -> unknownFlag(message);
-//        }
+        switch (message.getFlag()) {
+            case FLAG_CREATE -> this.implHelper.getReportImpl().createIssue(message);
+            case FLAG_STATUS -> this.implHelper.getReportImpl().issueStatus(message);
+            case FLAG_DISALLOW -> this.implHelper.getReportImpl().disallowUser(message);
+            default -> unknownFlag(message);
+        }
     }
 }

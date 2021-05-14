@@ -66,6 +66,7 @@ public class ConfigImpl {
             message.done("Prefix updated to: " + config.getPrefix());
         } catch (final InsertionError | RetrieveError exception) {
             logger.error(className, "setPrefix", exception.getMessage());
+            message.error(exception.getMessage());
         }
     }
 

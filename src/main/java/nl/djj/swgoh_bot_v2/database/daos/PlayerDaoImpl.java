@@ -110,4 +110,29 @@ public class PlayerDaoImpl extends BaseDaoImpl<Player, Integer> implements Playe
             throw new RetrieveError(CLASS_NAME, "getRelicForGuild", exception.getMessage());
         }
     }
+
+    @Override
+    public boolean isPlayerAllowedToCreateTickets(final int allycode) {
+        try {
+            final Player player = this.getById(allycode);
+            if (player != null) {
+                return player.isAllowedToCreateTickets();
+            }
+            return false;
+        } catch (final RetrieveError error) {
+            return false;
+        }
+    }
+
+    @Override
+    public void disallowTicketCreation(final String discordId) throws InsertionError {
+        try {
+            final Player player = this.getByDiscordId(discordId);
+            player.setAllowedToCreateTickets(false);
+            this.save(player);
+
+        } catch (final RetrieveError error) {
+            throw new InsertionError(CLASS_NAME, "disallowTicketCreation", error.getMessage());
+        }
+    }
 }

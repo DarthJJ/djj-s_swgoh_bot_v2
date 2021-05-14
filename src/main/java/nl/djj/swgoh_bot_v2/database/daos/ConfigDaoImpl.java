@@ -53,7 +53,7 @@ public class ConfigDaoImpl extends BaseDaoImpl<Config, String> implements Config
                 returnValue.add(result[0]);
             }
             return returnValue;
-        } catch (final SQLException exception){
+        } catch (final SQLException exception) {
             throw new RetrieveError(CLASS_NAME, "getAllNotificationChannels", exception.getMessage());
         }
     }

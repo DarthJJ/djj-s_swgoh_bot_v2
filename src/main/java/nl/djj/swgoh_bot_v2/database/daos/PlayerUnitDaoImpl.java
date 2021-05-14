@@ -98,7 +98,7 @@ public class PlayerUnitDaoImpl extends BaseDaoImpl<PlayerUnit, String> implement
         try {
             final List<String> args = new ArrayList<>();
             args.add(Integer.toString(player.getAllycode()));
-            if (unitId != null){
+            if (unitId != null) {
                 args.add(unitId);
             }
             return (int) this.queryRawValue(query, args.toArray(new String[0]));

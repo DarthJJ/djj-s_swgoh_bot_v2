@@ -63,7 +63,7 @@ public interface PlayerUnitDao extends Dao<PlayerUnit, String> {
     /**
      * Gets the amount of zetas a player has.
      * @param player the player to search for.
-     * @param baseId, unitId tp filter on (can be nulled)
+     * @param baseId the unit to filter on (can be nulled).
      * @return the amount of zetas.
      * @throws RetrieveError when something goes wrong.
      */
@@ -73,7 +73,7 @@ public interface PlayerUnitDao extends Dao<PlayerUnit, String> {
      * Gets tge amount of playerUnits at or above the gearLevel for the given guild.
      * @param guild the guild.
      * @param gearLevel the gearLevel.
-     * @param unitId the unitId (can be nulled to get for all units)
+     * @param unitId the unitId (can be nulled to get for all units).
      * @return a value.
      * @throws RetrieveError when something goes wrong.
      */
