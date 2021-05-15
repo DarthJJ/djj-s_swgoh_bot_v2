@@ -3,7 +3,7 @@ package nl.djj.swgoh_bot_v2.database.custom_persistors;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.field.types.EnumToStringType;
-import nl.djj.swgoh_bot_v2.config.Permission;
+import nl.djj.swgoh_bot_v2.config.enums.Permission;
 
 /**
  * @author DJJ
