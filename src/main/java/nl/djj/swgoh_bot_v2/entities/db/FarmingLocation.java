@@ -1,37 +1,54 @@
 package nl.djj.swgoh_bot_v2.entities.db;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+import nl.djj.swgoh_bot_v2.database.daos.FarmingLocationDaoImpl;
+
 /**
  * @author DJJ
  **/
+@DatabaseTable(tableName = "farmingLocations", daoClass = FarmingLocationDaoImpl.class)
 public class FarmingLocation {
-    private final transient String unitId;
-    private final transient String type;
-    private final transient String location;
-    private final transient String node;
-    private final transient boolean preferred;
+    @DatabaseField(generatedId = true)
+    private transient int identifier;
+    @DatabaseField(foreign = true)
+    private transient Unit unit;
+    @DatabaseField
+    private transient String location;
+    @DatabaseField
+    private transient String node;
+    @DatabaseField
+    private transient boolean preferred;
 
     /**
-     * The Constructor.
-     * @param unitId the unitId.
-     * @param type the type of location.
+     * Constructor.
+     **/
+    public FarmingLocation() {
+
+    }
+
+    /**
+     * Constructor.
+     * @param identifier the identifier.
+     * @param unit the unit.
      * @param location the location.
      * @param node the node (if applicable).
-     * @param preferred if this is the preferred location.
+     * @param preferred if it's preferred.
      */
-    public FarmingLocation(final String unitId, final String type, final String location, final String node, final boolean preferred) {
-        this.unitId = unitId;
-        this.type = type;
+    public FarmingLocation(final int identifier, final Unit unit, final String location, final String node, final boolean preferred) {
+        this.identifier = identifier;
+        this.unit = unit;
         this.location = location;
         this.node = node;
         this.preferred = preferred;
     }
 
-    public String getUnitId() {
-        return unitId;
+    public int getIdentifier() {
+        return identifier;
     }
 
-    public String getType() {
-        return type;
+    public Unit getUnit() {
+        return unit;
     }
 
     public String getLocation() {

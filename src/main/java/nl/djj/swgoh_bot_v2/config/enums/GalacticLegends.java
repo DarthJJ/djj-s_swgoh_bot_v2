@@ -11,7 +11,8 @@ public enum GalacticLegends {
     KYLO("Kylo", "kylo"),
     JML("Jedi Master Luke Skywalker", "jml"),
     JKL("Jedi Knight Luke", "jkl"),
-    SEE("Sith Eternal Emperor", "see");
+    SEE("Sith Eternal Emperor", "see"),
+    JMK("Jedi Master Kenobi", "jmk");
 
     private final String name;
     private final String key;
@@ -71,7 +72,7 @@ public enum GalacticLegends {
     public static String getKeys() {
         final StringBuilder keyString = new StringBuilder();
         for (final GalacticLegends gl : values()) {
-            keyString.append(gl.getKey()).append('|');
+            keyString.append(gl.getKey()).append(" for: ").append(gl.getName()).append('\n');
         }
         return keyString.toString();
     }

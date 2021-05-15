@@ -1,6 +1,6 @@
 package nl.djj.swgoh_bot_v2.commands.bot;
 
-import nl.djj.swgoh_bot_v2.command_impl.ImplHelper;
+import nl.djj.swgoh_bot_v2.helpers.ImplHelper;
 import nl.djj.swgoh_bot_v2.commands.BaseCommand;
 import nl.djj.swgoh_bot_v2.config.enums.CommandCategory;
 import nl.djj.swgoh_bot_v2.config.enums.Permission;
@@ -35,8 +35,8 @@ public class Register extends BaseCommand {
 
     @Override
     public void createFlags() {
-        flags.put(FLAG_ADD, new Flag(FLAG_ADD, "Register to the bot", name, FLAG_ADD, " <allycode: xxx-xxx-xxx / xxxxxxxxx>"));
-        flags.put(FLAG_REMOVE, new Flag(FLAG_REMOVE, "Unregister to the bot", name, FLAG_REMOVE));
+        flags.put(FLAG_ADD, new Flag(FLAG_ADD, "Register to the bot", false, name, FLAG_ADD, " <allycode: xxx-xxx-xxx / xxxxxxxxx>"));
+        flags.put(FLAG_REMOVE, new Flag(FLAG_REMOVE, "Unregister from the bot", true, name, FLAG_REMOVE));
     }
 
     @Override

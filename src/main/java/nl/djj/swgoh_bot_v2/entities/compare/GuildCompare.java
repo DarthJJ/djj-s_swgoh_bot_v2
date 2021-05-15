@@ -13,7 +13,7 @@ public class GuildCompare {
     private final transient int g13;
     private final transient int g12;
     private final transient int zetas;
-    private final transient Map<Integer, Integer> relics;
+    private transient Map<Integer, Integer> relics;
     private final transient Map<String, UnitProfile> units;
 
     /**
@@ -56,13 +56,8 @@ public class GuildCompare {
         return units;
     }
 
-    /**
-     * Add a relic count.
-     * @param level the relic level.
-     * @param amount the amount of relics.
-     */
-    public void addRelic(final int level, final int amount) {
-        relics.put(level, amount);
+    public void setRelics(final Map<Integer, Integer> relics) {
+        this.relics = relics;
     }
 
     /**

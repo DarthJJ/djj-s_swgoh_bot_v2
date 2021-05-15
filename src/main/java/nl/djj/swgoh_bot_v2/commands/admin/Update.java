@@ -1,6 +1,6 @@
 package nl.djj.swgoh_bot_v2.commands.admin;
 
-import nl.djj.swgoh_bot_v2.command_impl.ImplHelper;
+import nl.djj.swgoh_bot_v2.helpers.ImplHelper;
 import nl.djj.swgoh_bot_v2.commands.BaseCommand;
 import nl.djj.swgoh_bot_v2.config.enums.CommandCategory;
 import nl.djj.swgoh_bot_v2.config.enums.Permission;
@@ -39,11 +39,11 @@ public class Update extends BaseCommand {
 
     @Override
     public void createFlags() {
-        flags.put(FLAG_UNITS, new Flag(FLAG_UNITS, "Updates the units", name, FLAG_UNITS));
-        flags.put(FLAG_ABBREVIATIONS, new Flag(FLAG_ABBREVIATIONS, "Updates the unit abbreviations", name, FLAG_ABBREVIATIONS));
-        flags.put(FLAG_GL_REQUIREMENTS, new Flag(FLAG_GL_REQUIREMENTS, "Updates the GL Requirements", name, FLAG_GL_REQUIREMENTS));
-        flags.put(FLAG_ABILITIES, new Flag(FLAG_ABILITIES, "Updates the unit abilities", name, FLAG_ABILITIES));
-        flags.put(FLAG_LOCATIONS, new Flag(FLAG_LOCATIONS, "Updates the farming and shop locations of units", name, FLAG_LOCATIONS, "<location>"));
+        flags.put(FLAG_UNITS, new Flag(FLAG_UNITS, "Updates the units", true, name, FLAG_UNITS));
+        flags.put(FLAG_ABBREVIATIONS, new Flag(FLAG_ABBREVIATIONS, "Updates the unit abbreviations", true, name, FLAG_ABBREVIATIONS));
+        flags.put(FLAG_GL_REQUIREMENTS, new Flag(FLAG_GL_REQUIREMENTS, "Updates the GL Requirements", true, name, FLAG_GL_REQUIREMENTS));
+        flags.put(FLAG_ABILITIES, new Flag(FLAG_ABILITIES, "Updates the unit abilities", true, name, FLAG_ABILITIES));
+        flags.put(FLAG_LOCATIONS, new Flag(FLAG_LOCATIONS, "Updates the farming and shop locations of units", true, name, FLAG_LOCATIONS, "<location>"));
     }
 
     @Override

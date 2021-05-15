@@ -1,8 +1,8 @@
 package nl.djj.swgoh_bot_v2.command_impl;
 
-import nl.djj.swgoh_bot_v2.database.DatabaseHandler;
+import nl.djj.swgoh_bot_v2.database.DAO;
 import nl.djj.swgoh_bot_v2.entities.Message;
-import nl.djj.swgoh_bot_v2.exceptions.SQLInsertionError;
+import nl.djj.swgoh_bot_v2.exceptions.InsertionError;
 import nl.djj.swgoh_bot_v2.helpers.Logger;
 
 /**
@@ -11,16 +11,16 @@ import nl.djj.swgoh_bot_v2.helpers.Logger;
 public class CommandImpl {
     private final transient String className = this.getClass().getSimpleName();
     private final transient Logger logger;
-    private final transient DatabaseHandler dbHandler;
+    private final transient DAO dao;
 
     /**
-     * @param logger    the logger.
-     * @param dbHandler DB handler.
+     * @param logger the logger.
+     * @param dao    DB handler.
      */
-    public CommandImpl(final Logger logger, final DatabaseHandler dbHandler) {
+    public CommandImpl(final Logger logger, final DAO dao) {
         super();
         this.logger = logger;
-        this.dbHandler = dbHandler;
+        this.dao = dao;
     }
 
     /**
@@ -30,7 +30,7 @@ public class CommandImpl {
      * @return boolean value.
      */
     public boolean getCommandEnabledStatus(final String commandName) {
-        return dbHandler.getCommandEnabledStatus(commandName);
+        return dao.commandDao().isEnabled(commandName);
     }
 
     /**
@@ -39,14 +39,14 @@ public class CommandImpl {
      * @param message the message.
      */
     public void enableCommand(final Message message) {
-        final String enableCommand = String.join(", ", message.getArgs());
-        try {
-            dbHandler.enableCommand(enableCommand);
-            message.done("Command: " + enableCommand + " enabled!");
-        } catch (final SQLInsertionError error) {
-            logger.error(className, "enableCommand", error.getMessage());
-            message.error(error.getMessage());
-        }
+//        final String enableCommand = String.join(", ", message.getArgs());
+//        try {
+//            dbHandler.enableCommand(enableCommand);
+//            message.done("Command: " + enableCommand + " enabled!");
+//        } catch (final InsertionError error) {
+//            logger.error(className, "enableCommand", error.getMessage());
+//            message.error(error.getMessage());
+//        }
     }
 
     /**
@@ -55,14 +55,14 @@ public class CommandImpl {
      * @param message the message.
      */
     public void disableCommand(final Message message) {
-        final String enableCommand = String.join(", ", message.getArgs());
-        try {
-            dbHandler.disableCommand(enableCommand);
-            message.done("Command: " + enableCommand + " disabled!");
-        } catch (final SQLInsertionError error) {
-            logger.error(className, "disableCommand", error.getMessage());
-            message.error(error.getMessage());
-        }
+//        final String enableCommand = String.join(", ", message.getArgs());
+//        try {
+//            dbHandler.disableCommand(enableCommand);
+//            message.done("Command: " + enableCommand + " disabled!");
+//        } catch (final InsertionError error) {
+//            logger.error(className, "disableCommand", error.getMessage());
+//            message.error(error.getMessage());
+//        }
     }
 
     /**
@@ -72,6 +72,10 @@ public class CommandImpl {
      * @param flag    the flag.
      */
     public void updateCommandUsage(final String command, final String flag) {
-        dbHandler.updateCommandUsage(command, flag);
+        try {
+            dao.commandUsageDao().updateUsage(command, flag);
+        } catch (final InsertionError error) {
+            logger.error(className, "updateCommandUsage", error.getMessage());
+        }
     }
 }
