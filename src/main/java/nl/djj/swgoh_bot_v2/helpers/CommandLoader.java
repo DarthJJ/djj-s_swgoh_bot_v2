@@ -1,6 +1,5 @@
 package nl.djj.swgoh_bot_v2.helpers;
 
-import nl.djj.swgoh_bot_v2.command_impl.ImplHelper;
 import nl.djj.swgoh_bot_v2.commands.BaseCommand;
 import nl.djj.swgoh_bot_v2.commands.admin.Control;
 import nl.djj.swgoh_bot_v2.commands.admin.Notify;
@@ -12,7 +11,11 @@ import nl.djj.swgoh_bot_v2.commands.bot.Report;
 import nl.djj.swgoh_bot_v2.commands.moderation.Config;
 import nl.djj.swgoh_bot_v2.commands.swgoh.Guild;
 import nl.djj.swgoh_bot_v2.commands.swgoh.Profile;
+import nl.djj.swgoh_bot_v2.database.DAO;
 import nl.djj.swgoh_bot_v2.entities.Message;
+import nl.djj.swgoh_bot_v2.entities.db.Command;
+import nl.djj.swgoh_bot_v2.exceptions.InitializationError;
+import nl.djj.swgoh_bot_v2.exceptions.InsertionError;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,6 +28,7 @@ public class CommandLoader {
     private final transient Map<String, BaseCommand> commands;
     private final transient Map<String, String> aliases;
     private final transient ImplHelper implHelper;
+    private final transient DAO dao;
     private final transient String className = this.getClass().getSimpleName();
     private final transient Logger logger;
 
@@ -33,35 +37,44 @@ public class CommandLoader {
      *
      * @param implHelper the command handler to use.
      * @param logger     the logger to use.
+     * @param dao        the DB connection.
      */
-    public CommandLoader(final ImplHelper implHelper, final Logger logger) {
+    public CommandLoader(final ImplHelper implHelper, final Logger logger, final DAO dao) throws InitializationError {
         super();
-        this.commands = new TreeMap<>();
-        this.aliases = new TreeMap<>();
-        this.implHelper = implHelper;
-        this.logger = logger;
-        initializeCommands(new ArrayList<>(Arrays.asList(
-                new Update(logger, implHelper),
-                new Control(logger, implHelper),
-                new Register(logger, implHelper),
-                new Profile(logger, implHelper),
-                new Guild(logger, implHelper),
-                new Config(logger, implHelper),
-                new Changelog(logger, implHelper),
-                new Notify(logger, implHelper),
-                new Report(logger, implHelper),
-                new Help(logger, implHelper) {
-                    @Override
-                    public void handleRequest(final Message message) {
-                        handleHelpRequest(message);
+        try {
+            this.commands = new TreeMap<>();
+            this.aliases = new TreeMap<>();
+            this.implHelper = implHelper;
+            this.dao = dao;
+            this.logger = logger;
+            initializeCommands(new ArrayList<>(Arrays.asList(
+                    new Update(logger, implHelper),
+                    new Control(logger, implHelper),
+                    new Register(logger, implHelper),
+                    new Profile(logger, implHelper),
+                    new Guild(logger, implHelper),
+                    new Config(logger, implHelper),
+                    new Changelog(logger, implHelper),
+                    new Notify(logger, implHelper),
+                    new Report(logger, implHelper),
+                    new Help(logger, implHelper) {
+                        @Override
+                        public void handleRequest(final Message message) {
+                            handleHelpRequest(message);
+                        }
                     }
-                }
-        )));
+            )));
+        } catch (final InsertionError exception) {
+            throw new InitializationError(className, "Constructor", exception.getMessage());
+        }
     }
 
-    private void initializeCommands(final List<BaseCommand> toLoad) {
+    private void initializeCommands(final List<BaseCommand> toLoad) throws InsertionError {
         for (final BaseCommand command : toLoad) {
             command.createFlags();
+            if (!dao.commandDao().exist(command.getName())) {
+                dao.commandDao().save(new Command(command.getName(), false));
+            }
             commands.put(command.getName().toLowerCase(Locale.ENGLISH), command);
             logger.info(className, "Loaded command: " + command.getName());
             aliases.put(command.getName().toLowerCase(Locale.ENGLISH), command.getName().toLowerCase(Locale.ENGLISH));

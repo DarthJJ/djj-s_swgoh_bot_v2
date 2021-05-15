@@ -1,90 +1,93 @@
 package nl.djj.swgoh_bot_v2.entities.db;
 
-import java.util.Objects;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+import nl.djj.swgoh_bot_v2.config.BotConstants;
+import nl.djj.swgoh_bot_v2.database.daos.ConfigDaoImpl;
 
 /**
  * @author DJJ
- */
+ **/
+@DatabaseTable(tableName = "config", daoClass = ConfigDaoImpl.class)
 public class Config {
-    private transient String swgohId;
-    private final transient String discordId;
+    @DatabaseField(id = true)
+    private transient String guildId;
+    @DatabaseField
+    private transient int swgohId;
+    @DatabaseField
     private transient String prefix;
+    @DatabaseField
     private transient String moderationRole;
+    @DatabaseField
     private transient String ignoreRole;
+    @DatabaseField
     private transient String notifyChannel;
+    @DatabaseField
     private transient String botLoggingChannel;
 
     /**
      * Constructor.
-     *
-     * @param swgohId   the SWGOH ID.
-     * @param discordId the Discord ID.
-     */
-    public Config(final String swgohId, final String discordId) {
-        super();
-        this.swgohId = swgohId;
-        this.discordId = discordId;
+     **/
+    public Config() {
+
     }
 
     /**
      * Constructor.
-     *
-     * @param discordId the Discord ID.
+     * @param guildId the guildId.
      */
-    public Config(final String discordId) {
+    public Config(final String guildId) {
         super();
-        this.discordId = discordId;
+        this.guildId = guildId;
+        this.swgohId = -1;
+        this.prefix = BotConstants.DEFAULT_PREFIX;
+        this.moderationRole = "";
+        this.ignoreRole = "";
+        this.notifyChannel = "";
+        this.botLoggingChannel = "";
     }
 
-    public void setSwgohId(final String swgohId) {
-        this.swgohId = Objects.requireNonNullElse(swgohId, "");
+    public String getGuildId() {
+        return guildId;
     }
 
-    public String getSwgohId() {
-        return this.swgohId;
-    }
-
-    public String getDiscordId() {
-        return this.discordId;
+    public int getSwgohId() {
+        return swgohId;
     }
 
     public String getPrefix() {
         return prefix;
     }
 
-    public void setPrefix(final String prefix) {
-        this.prefix = Objects.requireNonNullElse(prefix, "");
-    }
-
     public String getModerationRole() {
         return moderationRole;
-    }
-
-    public void setModerationRole(final String moderationRole) {
-        this.moderationRole = Objects.requireNonNullElse(moderationRole, "");
     }
 
     public String getIgnoreRole() {
         return ignoreRole;
     }
 
-    public void setIgnoreRole(final String ignoreRole) {
-        this.ignoreRole = Objects.requireNonNullElse(ignoreRole, "");
-    }
-
     public String getNotifyChannel() {
         return notifyChannel;
-    }
-
-    public void setNotifyChannel(final String notifyChannel) {
-        this.notifyChannel = Objects.requireNonNullElse(notifyChannel, "");
     }
 
     public String getBotLoggingChannel() {
         return botLoggingChannel;
     }
 
-    public void setBotLoggingChannel(final String botLoggingChannel) {
-        this.botLoggingChannel = Objects.requireNonNullElse(botLoggingChannel, "");
+    public void setPrefix(final String prefix) {
+        this.prefix = prefix;
+    }
+
+    public void setSwgohId(final int swgohId) {
+        this.swgohId = swgohId;
+    }
+
+    public void setIgnoreRole(final String ignoreRole) {
+        this.ignoreRole = ignoreRole;
+    }
+
+    public void setNotifyChannel(final String notifyChannel) {
+        this.notifyChannel = notifyChannel;
     }
 }

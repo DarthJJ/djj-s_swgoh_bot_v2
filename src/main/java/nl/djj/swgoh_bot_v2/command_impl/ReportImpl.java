@@ -2,11 +2,12 @@ package nl.djj.swgoh_bot_v2.command_impl;
 
 import nl.djj.swgoh_bot_v2.config.GithubConstants;
 import nl.djj.swgoh_bot_v2.config.Permission;
-import nl.djj.swgoh_bot_v2.database.DatabaseHandler;
+import nl.djj.swgoh_bot_v2.database.DAO;
 import nl.djj.swgoh_bot_v2.entities.GithubIssueStatus;
 import nl.djj.swgoh_bot_v2.entities.Message;
-import nl.djj.swgoh_bot_v2.exceptions.SQLInsertionError;
-import nl.djj.swgoh_bot_v2.exceptions.SQLRetrieveError;
+import nl.djj.swgoh_bot_v2.entities.db.Player;
+import nl.djj.swgoh_bot_v2.exceptions.InsertionError;
+import nl.djj.swgoh_bot_v2.exceptions.RetrieveError;
 import nl.djj.swgoh_bot_v2.helpers.Logger;
 import nl.djj.swgoh_bot_v2.helpers.MessageHelper;
 import nl.djj.swgoh_bot_v2.helpers.StringHelper;
@@ -21,19 +22,19 @@ import java.util.stream.Collectors;
 public class ReportImpl {
     private final transient String className = this.getClass().getName();
     private final transient Logger logger;
-    private final transient DatabaseHandler dbHandler;
+    private final transient DAO dao;
     private transient GitHub github;
 
     /**
      * Constructor.
      *
      * @param logger the logger.
-     * @param dbHandler  the DB Handler.
+     * @param dao  the DB Handler.
      **/
-    public ReportImpl(final Logger logger, final DatabaseHandler dbHandler) {
+    public ReportImpl(final Logger logger, final DAO dao) {
         super();
         this.logger = logger;
-        this.dbHandler = dbHandler;
+        this.dao = dao;
         init();
     }
 
@@ -92,7 +93,7 @@ public class ReportImpl {
      */
     public void createIssue(final Message message) {
         try {
-            if (!dbHandler.isUserAllowedToCreateTicket(message.getAuthorId())) {
+            if (!dao.playerDao().isPlayerAllowedToCreateTickets(message.getAllycode())) {
                 message.error("You are not allowed to create an ticket. Please contact the developer if you think this is wrong");
                 return;
             }
@@ -104,7 +105,7 @@ public class ReportImpl {
                     .body(message.getArgs().stream().map(String::toString).collect(Collectors.joining(" ")))
                     .label("BotInbox").create().getNumber();
             message.done("Issue is created, for future reference about this issue, use ID: **" + issueId + "**\nThanks for your support and contribution");
-        } catch (final IOException | SQLRetrieveError exception) {
+        } catch (final IOException exception) {
             message.error("Something went wrong creating the issue, try again later");
         }
     }
@@ -115,7 +116,8 @@ public class ReportImpl {
      */
     public void disallowUser(final Message message) {
         try {
-            if (dbHandler.getPermissionForUser(message.getAuthorId()) == Permission.USER) {
+            final Player player = dao.playerDao().getById(message.getAllycode());
+            if (player.getPermission() == Permission.USER) {
                 message.error("You are not allowed to run this command");
                 return;
             }
@@ -124,9 +126,9 @@ public class ReportImpl {
                 return;
             }
             final String discordId = StringHelper.getDiscordIdFromTag(message.getAltArgs().get(0));
-            dbHandler.setIsAllowedTicketDisabled(discordId);
+            dao.playerDao().disallowTicketCreation(discordId);
             message.done(String.format("User: **%s** disallowed from creating tickets", String.join(" ", message.getArgs()).replace("@", "")));
-        } catch (final SQLRetrieveError | SQLInsertionError error) {
+        } catch (final RetrieveError | InsertionError error) {
             message.error(error.getMessage());
         }
     }

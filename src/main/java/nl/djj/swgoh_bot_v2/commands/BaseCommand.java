@@ -1,6 +1,6 @@
 package nl.djj.swgoh_bot_v2.commands;
 
-import nl.djj.swgoh_bot_v2.command_impl.ImplHelper;
+import nl.djj.swgoh_bot_v2.helpers.ImplHelper;
 import nl.djj.swgoh_bot_v2.config.CommandCategory;
 import nl.djj.swgoh_bot_v2.config.Permission;
 import nl.djj.swgoh_bot_v2.entities.Flag;
@@ -43,10 +43,19 @@ public abstract class BaseCommand {
 
     /**
      * Called when an unknown flag is passed to the command.
+     *
      * @param message the message.
      */
     public void unknownFlag(final Message message) {
-        message.error("This is not a valid flag, please use '" + message.getGuildPrefix() + "help " + name + "'");
+        message.error("This is not a valid flag, please use '**" + message.getGuildPrefix() + "help " + name + "**'");
+    }
+
+    /**
+     * Called when an user isn't registered and the command requires it.
+     * @param message the message.
+     */
+    public void missingRegistration(final Message message) {
+        message.error("You need to be registered with the bot to use this command. please use: '**" + message.getGuildPrefix() + "help register**'");
     }
 
     /**

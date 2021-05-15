@@ -1,6 +1,6 @@
 package nl.djj.swgoh_bot_v2.commands.admin;
 
-import nl.djj.swgoh_bot_v2.command_impl.ImplHelper;
+import nl.djj.swgoh_bot_v2.helpers.ImplHelper;
 import nl.djj.swgoh_bot_v2.commands.BaseCommand;
 import nl.djj.swgoh_bot_v2.config.CommandCategory;
 import nl.djj.swgoh_bot_v2.config.Permission;
@@ -34,7 +34,7 @@ public class Notify extends BaseCommand {
 
     @Override
     public void createFlags() {
-        flags.put(FLAG_MESSAGE, new Flag(FLAG_MESSAGE, "Sends a message to the guilds in the notify channel", name, FLAG_MESSAGE, "<message>"));
+        flags.put(FLAG_MESSAGE, new Flag(FLAG_MESSAGE, "Sends a message to the guilds in the notify channel", true, name, FLAG_MESSAGE, "<message>"));
     }
 
     @Override
