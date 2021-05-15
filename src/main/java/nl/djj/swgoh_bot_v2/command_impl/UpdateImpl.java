@@ -15,9 +15,7 @@ import nl.djj.swgoh_bot_v2.helpers.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * @author DJJ
@@ -87,7 +85,7 @@ public class UpdateImpl {
                     final String unitId = unitData.getString("baseId");
                     final int gearLevel = unitData.getInt("gearLevel");
                     final int relicLevel = unitData.getInt("relicTier");
-                    dao.glRequirementDao().save(new GLRequirement(GalacticLegends.getByName(glName), unitId, gearLevel, relicLevel));
+                    dao.glRequirementDao().save(new GlRequirement(GalacticLegends.getByName(glName), unitId, gearLevel, relicLevel));
                 }
             }
             logger.info(className, "Done updating the GL Requirements");

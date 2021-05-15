@@ -198,7 +198,7 @@ public class ProfileImpl {
         try {
             final int allycode = getAndUpdateProfileData(message, -1);
             final GalacticLegends glEvent = GalacticLegends.getByKey(message.getArgs().get(0));
-            final List<GLRequirement> requirements = dao.glRequirementDao().getForEvent(glEvent.getKey());
+            final List<GlRequirement> requirements = dao.glRequirementDao().getForEvent(glEvent.getKey());
             message.done(MessageHelper.formatPlayerGLStatus(getGlStatus(glEvent.getName(), dao.playerDao().getById(allycode), requirements)));
         } catch (final RetrieveError | InsertionError | HttpRetrieveError error) {
             message.error(error.getMessage());
@@ -214,10 +214,10 @@ public class ProfileImpl {
      * @return a PlayerGLStatus object.
      * @throws RetrieveError when something goes wrong .
      */
-    public PlayerGLStatus getGlStatus(final String eventName, final Player player, final List<GLRequirement> requirements) throws RetrieveError {
+    public PlayerGLStatus getGlStatus(final String eventName, final Player player, final List<GlRequirement> requirements) throws RetrieveError {
         final List<GLUnit> compares = new ArrayList<>();
         double totalCompletion = 0.0;
-        for (final GLRequirement requirement : requirements) {
+        for (final GlRequirement requirement : requirements) {
             final PlayerUnit unit = dao.playerUnitDao().getForPlayer(player, requirement.getBaseId());
             final long zetas = unit.getAbilities().stream().filter(unitAbility -> unitAbility.getBaseAbility().isZeta() && unitAbility.getBaseAbility().getTierMax() == unitAbility.getLevel()).count();
             final GLUnit compare = new GLUnit(unit.getUnit().getName(), unit.getGear(), unit.getGearPieces(), unit.getRelic(), unit.getRarity(), (int) zetas);

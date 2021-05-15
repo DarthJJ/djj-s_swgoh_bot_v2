@@ -9,7 +9,7 @@ import nl.djj.swgoh_bot_v2.database.DAO;
 import nl.djj.swgoh_bot_v2.entities.Message;
 import nl.djj.swgoh_bot_v2.entities.compare.GuildCompare;
 import nl.djj.swgoh_bot_v2.entities.compare.PlayerGLStatus;
-import nl.djj.swgoh_bot_v2.entities.db.GLRequirement;
+import nl.djj.swgoh_bot_v2.entities.db.GlRequirement;
 import nl.djj.swgoh_bot_v2.entities.db.Guild;
 import nl.djj.swgoh_bot_v2.entities.db.Player;
 import nl.djj.swgoh_bot_v2.exceptions.HttpRetrieveError;
@@ -134,7 +134,7 @@ public class GuildImpl {
             final int guildId = getAndUpdateGuildData(message.getGuildId(), -1, message.getChannel());
             final GalacticLegends glEvent = GalacticLegends.getByKey(message.getArgs().get(0));
 
-            final List<GLRequirement> requirements = dao.glRequirementDao().getForEvent(glEvent.getKey());
+            final List<GlRequirement> requirements = dao.glRequirementDao().getForEvent(glEvent.getKey());
             Map<String, PlayerGLStatus> playerStatus = new TreeMap<>();
             for (final Player player : dao.guildDao().getById(guildId).getPlayers()) {
                 playerStatus.put(player.getName(), this.implHelper.getProfileImpl().getGlStatus(glEvent.getName(), player, requirements));

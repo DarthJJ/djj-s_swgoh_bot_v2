@@ -47,7 +47,7 @@ public class Database {
             TableUtils.createTableIfNotExists(connection, CommandUsage.class);
             TableUtils.createTableIfNotExists(connection, Config.class);
             TableUtils.createTableIfNotExists(connection, FarmingLocation.class);
-            TableUtils.createTableIfNotExists(connection, GLRequirement.class);
+            TableUtils.createTableIfNotExists(connection, GlRequirement.class);
             TableUtils.createTableIfNotExists(connection, Guild.class);
             TableUtils.createTableIfNotExists(connection, Player.class);
             TableUtils.createTableIfNotExists(connection, PlayerUnit.class);

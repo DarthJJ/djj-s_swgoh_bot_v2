@@ -2,7 +2,7 @@ package nl.djj.swgoh_bot_v2.database.daos;
 
 import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.support.ConnectionSource;
-import nl.djj.swgoh_bot_v2.entities.db.GLRequirement;
+import nl.djj.swgoh_bot_v2.entities.db.GlRequirement;
 import nl.djj.swgoh_bot_v2.exceptions.DeletionError;
 import nl.djj.swgoh_bot_v2.exceptions.InsertionError;
 import nl.djj.swgoh_bot_v2.exceptions.RetrieveError;
@@ -14,7 +14,7 @@ import java.util.Locale;
 /**
  * @author DJJ
  **/
-public class GLRequirementDaoImpl extends BaseDaoImpl<GLRequirement, Integer> implements GLRequirementDao {
+public class GLRequirementDaoImpl extends BaseDaoImpl<GlRequirement, Integer> implements GLRequirementDao {
 
     /**
      * Constructor.
@@ -22,11 +22,11 @@ public class GLRequirementDaoImpl extends BaseDaoImpl<GLRequirement, Integer> im
      * @param connection the DB Connection.
      **/
     public GLRequirementDaoImpl(final ConnectionSource connection) throws SQLException {
-        super(connection, GLRequirement.class);
+        super(connection, GlRequirement.class);
     }
 
     @Override
-    public List<GLRequirement> getForEvent(final String eventId) throws RetrieveError {
+    public List<GlRequirement> getForEvent(final String eventId) throws RetrieveError {
         try {
             return this.queryForEq("glEvent", eventId.toUpperCase(Locale.ROOT));
         } catch (final SQLException exception) {
@@ -35,7 +35,7 @@ public class GLRequirementDaoImpl extends BaseDaoImpl<GLRequirement, Integer> im
     }
 
     @Override
-    public void save(final GLRequirement requirement) throws InsertionError {
+    public void save(final GlRequirement requirement) throws InsertionError {
         try {
             this.createOrUpdate(requirement);
         } catch (final SQLException exception) {
