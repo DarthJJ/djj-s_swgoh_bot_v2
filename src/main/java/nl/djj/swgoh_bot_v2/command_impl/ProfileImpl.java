@@ -1,7 +1,9 @@
 package nl.djj.swgoh_bot_v2.command_impl;
 
 import net.dv8tion.jda.api.entities.Role;
-import nl.djj.swgoh_bot_v2.config.*;
+import nl.djj.swgoh_bot_v2.config.BotConstants;
+import nl.djj.swgoh_bot_v2.config.SwgohConstants;
+import nl.djj.swgoh_bot_v2.config.SwgohGgEndpoint;
 import nl.djj.swgoh_bot_v2.config.enums.GalacticLegends;
 import nl.djj.swgoh_bot_v2.config.enums.Permission;
 import nl.djj.swgoh_bot_v2.database.DAO;
@@ -25,12 +27,9 @@ import java.util.Locale;
 /**
  * @author DJJ
  */
-public class ProfileImpl {
+public class ProfileImpl extends BaseImpl {
     private final transient HttpHelper httpHelper;
-    private final transient DAO dao;
     private final transient ImplHelper implHelper;
-    private final transient Logger logger;
-    private final transient String className = this.getClass().getName();
 
     /**
      * @param logger     the logger.
@@ -38,9 +37,7 @@ public class ProfileImpl {
      * @param implHelper the ImplHelper.
      */
     public ProfileImpl(final Logger logger, final DAO dao, final ImplHelper implHelper) {
-        super();
-        this.dao = dao;
-        this.logger = logger;
+        super(logger, dao, ProfileImpl.class.getName());
         this.httpHelper = new HttpHelper(logger);
         this.implHelper = implHelper;
     }

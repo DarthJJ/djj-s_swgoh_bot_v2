@@ -16,14 +16,12 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.List;
+import java.util.Locale;
 
 /**
  * @author DJJ
  */
-public class UpdateImpl {
-    private final transient String className = this.getClass().getSimpleName();
-    private final transient Logger logger;
-    private final transient DAO dao;
+public class UpdateImpl extends BaseImpl {
     private final transient HttpHelper httpHelper;
 
     /**
@@ -31,9 +29,7 @@ public class UpdateImpl {
      * @param dao    the DB handler.
      */
     public UpdateImpl(final Logger logger, final DAO dao) {
-        super();
-        this.dao = dao;
-        this.logger = logger;
+        super(logger, dao, UpdateImpl.class.getName());
         this.httpHelper = new HttpHelper(logger);
     }
 
@@ -102,35 +98,34 @@ public class UpdateImpl {
      * @param message message.
      */
     public void updateLocations(final Message message) {
-//        logger.info(className, "Updating the locations");
-//        final List<String> locationData;
-//        try {
-//            locationData = httpHelper.getCsv(BotConstants.FARMING_LOCATIONS_LINK);
-//        } catch (final HttpRetrieveError error) {
-//            message.error(error.getMessage());
-//            return;
-//        }
-//        final List<FarmingLocation> locations = new ArrayList<>();
-//        for (final String locDataString : locationData) {
-//            if (locDataString.contains("Unit")) {
-//                continue;
-//            }
-//            final String[] splitted = locDataString.split(";");
-//            //CHECKSTYLE.OFF: MagicNumber
-//            final boolean isPreferred = "yes".equals(splitted[3].toLowerCase(Locale.ROOT));
-//            locations.add(new FarmingLocation(splitted[0].replace("'", "''"),
-//                    splitted[1].replace("'", "''"),
-//                    splitted[2].replace("'", "''"),
-//                    splitted[3].replace("'", "''"),
-//                    isPreferred));
-//            //CHECKSTYLE.ON: MagicNumber
-//        }
-//        try {
-//            dbHandler.updateFarmingLocations(locations);
-//            message.done("Farming locations updated");
-//        } catch (final InsertionError error) {
-//            message.error(error.getMessage());
-//        }
+        logger.info(className, "Updating the locations");
+        final List<String> locationData;
+        try {
+            locationData = httpHelper.getCsv(BotConstants.FARMING_LOCATIONS_LINK);
+        } catch (final HttpRetrieveError error) {
+            message.error(error.getMessage());
+            return;
+        }
+        try {
+            for (final String locDataString : locationData) {
+                if (locDataString.contains("Unit")) {
+                    continue;
+                }
+                final String[] splitted = locDataString.split(";");
+                //CHECKSTYLE.OFF: MagicNumber
+                final boolean isPreferred = "yes".equals(splitted[4].toLowerCase(Locale.ROOT));
+                dao.farmingLocationDao().save(new FarmingLocation(
+                        dao.unitDao().getById(splitted[0].replace("'", "''")),
+                        splitted[1].replace("'", "''"),
+                        splitted[2].replace("'", "''"),
+                        splitted[3].replace("'", "''"),
+                        isPreferred));
+                //CHECKSTYLE.ON: MagicNumber
+            }
+            message.done("Farming locations updated");
+        } catch (final InsertionError | RetrieveError error) {
+            message.error(error.getMessage());
+        }
     }
 
     /**

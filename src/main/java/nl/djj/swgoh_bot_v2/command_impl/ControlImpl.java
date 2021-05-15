@@ -12,10 +12,7 @@ import java.util.List;
 /**
  * @author DJJ
  */
-public class ControlImpl {
-    private final transient String className = this.getClass().getSimpleName();
-    private final transient Logger logger;
-    private final transient DAO dao;
+public class ControlImpl extends BaseImpl {
     private static final transient String START_UPDATE = "Update starting, please refrain from bot usage.";
     private static final transient String STOP_UPDATE = "Update done, please enjoy the bot.";
 
@@ -24,9 +21,7 @@ public class ControlImpl {
      * @param dao    the DB handler.
      */
     public ControlImpl(final Logger logger, final DAO dao) {
-        super();
-        this.dao = dao;
-        this.logger = logger;
+        super(logger, dao, ControlImpl.class.getName());
     }
 
     /**

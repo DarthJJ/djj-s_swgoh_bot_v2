@@ -29,9 +29,8 @@ import static java.util.stream.Collectors.toMap;
 /**
  * @author DJJ
  */
-public class GuildImpl {
+public class GuildImpl extends BaseImpl {
     private final transient HttpHelper httpHelper;
-    private final transient DAO dao;
     private final transient ImplHelper implHelper;
 
     /**
@@ -42,8 +41,7 @@ public class GuildImpl {
      * @param implHelper the implHelper.
      */
     public GuildImpl(final Logger logger, final DAO dao, final ImplHelper implHelper) {
-        super();
-        this.dao = dao;
+        super(logger, dao, GuildImpl.class.getName());
         this.httpHelper = new HttpHelper(logger);
         this.implHelper = implHelper;
     }

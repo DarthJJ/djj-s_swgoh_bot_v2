@@ -22,10 +22,7 @@ import java.util.stream.Collectors;
 /**
  * @author DJJ
  */
-public class UnitImpl {
-    private final transient String className = this.getClass().getName();
-    private final transient DAO dao;
-    private final transient Logger logger;
+public class UnitImpl extends BaseImpl {
 
     /**
      * Constructor.
@@ -33,10 +30,8 @@ public class UnitImpl {
      * @param dao    the DB connection.
      * @param logger the logger.
      */
-    public UnitImpl(final DAO dao, final Logger logger) {
-        super();
-        this.dao = dao;
-        this.logger = logger;
+    public UnitImpl(final Logger logger, final DAO dao) {
+        super(logger, dao, UnitImpl.class.getName());
     }
 
     /**

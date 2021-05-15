@@ -19,10 +19,7 @@ import java.util.stream.Collectors;
 /**
  * @author DJJ
  **/
-public class ReportImpl {
-    private final transient String className = this.getClass().getName();
-    private final transient Logger logger;
-    private final transient DAO dao;
+public class ReportImpl extends BaseImpl {
     private transient GitHub github;
 
     /**
@@ -32,13 +29,7 @@ public class ReportImpl {
      * @param dao  the DB Handler.
      **/
     public ReportImpl(final Logger logger, final DAO dao) {
-        super();
-        this.logger = logger;
-        this.dao = dao;
-        init();
-    }
-
-    private void init() {
+        super(logger, dao, ReportImpl.class.getName());
         try {
             github = new GitHubBuilder().withOAuthToken(GithubConstants.getOauthToken()).build();
         } catch (final IOException exception) {
