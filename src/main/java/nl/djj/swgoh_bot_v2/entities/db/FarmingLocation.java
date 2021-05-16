@@ -11,8 +11,10 @@ import nl.djj.swgoh_bot_v2.database.daos.FarmingLocationDaoImpl;
 public class FarmingLocation {
     @DatabaseField(generatedId = true)
     private transient int identifier;
-    @DatabaseField(foreign = true)
+    @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private transient Unit unit;
+    @DatabaseField
+    private transient String type;
     @DatabaseField
     private transient String location;
     @DatabaseField
@@ -29,15 +31,16 @@ public class FarmingLocation {
 
     /**
      * Constructor.
-     * @param identifier the identifier.
-     * @param unit the unit.
-     * @param location the location.
-     * @param node the node (if applicable).
+     *
+     * @param unit      the unit.
+     * @param type      the farming type.
+     * @param location  the location.
+     * @param node      the node (if applicable).
      * @param preferred if it's preferred.
      */
-    public FarmingLocation(final int identifier, final Unit unit, final String location, final String node, final boolean preferred) {
-        this.identifier = identifier;
+    public FarmingLocation(final Unit unit, final String type, final String location, final String node, final boolean preferred) {
         this.unit = unit;
+        this.type = type;
         this.location = location;
         this.node = node;
         this.preferred = preferred;
@@ -49,6 +52,10 @@ public class FarmingLocation {
 
     public Unit getUnit() {
         return unit;
+    }
+
+    public String getType() {
+        return type;
     }
 
     public String getLocation() {

@@ -16,10 +16,7 @@ import nl.djj.swgoh_bot_v2.helpers.StringHelper;
 /**
  * @author DJJ
  */
-public class ConfigImpl {
-    private final transient String className = this.getClass().getName();
-    private final transient DAO dao;
-    private final transient Logger logger;
+public class ConfigImpl extends BaseImpl {
     private final transient HttpHelper httpHelper;
 
     /**
@@ -28,10 +25,8 @@ public class ConfigImpl {
      * @param dao    the DB Connection
      * @param logger the logger.
      */
-    public ConfigImpl(final DAO dao, final Logger logger) {
-        super();
-        this.dao = dao;
-        this.logger = logger;
+    public ConfigImpl(final Logger logger, final DAO dao) {
+        super(logger, dao, CommandImpl.class.getName());
         this.httpHelper = new HttpHelper(logger);
     }
 

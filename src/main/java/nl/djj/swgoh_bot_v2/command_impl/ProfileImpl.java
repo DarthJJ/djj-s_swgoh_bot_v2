@@ -1,7 +1,11 @@
 package nl.djj.swgoh_bot_v2.command_impl;
 
 import net.dv8tion.jda.api.entities.Role;
-import nl.djj.swgoh_bot_v2.config.*;
+import nl.djj.swgoh_bot_v2.config.BotConstants;
+import nl.djj.swgoh_bot_v2.config.SwgohConstants;
+import nl.djj.swgoh_bot_v2.config.SwgohGgEndpoint;
+import nl.djj.swgoh_bot_v2.config.enums.GalacticLegends;
+import nl.djj.swgoh_bot_v2.config.enums.Permission;
 import nl.djj.swgoh_bot_v2.database.DAO;
 import nl.djj.swgoh_bot_v2.entities.Message;
 import nl.djj.swgoh_bot_v2.entities.compare.GLUnit;
@@ -23,12 +27,9 @@ import java.util.Locale;
 /**
  * @author DJJ
  */
-public class ProfileImpl {
+public class ProfileImpl extends BaseImpl {
     private final transient HttpHelper httpHelper;
-    private final transient DAO dao;
     private final transient ImplHelper implHelper;
-    private final transient Logger logger;
-    private final transient String className = this.getClass().getName();
 
     /**
      * @param logger     the logger.
@@ -36,9 +37,7 @@ public class ProfileImpl {
      * @param implHelper the ImplHelper.
      */
     public ProfileImpl(final Logger logger, final DAO dao, final ImplHelper implHelper) {
-        super();
-        this.dao = dao;
-        this.logger = logger;
+        super(logger, dao, ProfileImpl.class.getName());
         this.httpHelper = new HttpHelper(logger);
         this.implHelper = implHelper;
     }
@@ -55,7 +54,7 @@ public class ProfileImpl {
         }
     }
 
-    private int getAndUpdateProfileData(final Message message, final int swgohIdentifier) throws InsertionError, RetrieveError, HttpRetrieveError {
+    private Player getAndUpdateProfileData(final Message message, final int swgohIdentifier) throws InsertionError, RetrieveError, HttpRetrieveError {
         final Player user;
         final int swgohId;
         if (swgohIdentifier == -1) {
@@ -64,12 +63,24 @@ public class ProfileImpl {
         } else {
             swgohId = swgohIdentifier;
         }
-        final JSONObject playerData = httpHelper.getJsonObject(SwgohGgEndpoint.PLAYER_ENDPOINT.getUrl() + swgohId);
+        return getAndUpdatePlayer(swgohId);
+    }
+
+    /**
+     * Gets the player and inserts it in the DB.
+     * @param allycode the allycode.
+     * @return a player object.
+     * @throws InsertionError when something goes wrong inserting.
+     * @throws RetrieveError when something goes wrong retrieving.
+     * @throws HttpRetrieveError the something goes wrong retrieving.
+     */
+    public Player getAndUpdatePlayer(final int allycode) throws InsertionError, RetrieveError, HttpRetrieveError {
+        final JSONObject playerData = httpHelper.getJsonObject(SwgohGgEndpoint.PLAYER_ENDPOINT.getUrl() + allycode);
         final JSONObject playerInfo = playerData.getJSONObject("data");
         final JSONArray playerUnits = playerData.getJSONArray("units");
         final Player player = insertProfile(playerInfo, null);
         this.implHelper.getUnitImpl().insertUnits(playerUnits, player);
-        return swgohId;
+        return player;
     }
 
     /**
@@ -153,9 +164,9 @@ public class ProfileImpl {
                 message.getChannel().sendMessage("Allycode validation error, syntax: <xxx-xxx-xxx>").queue();
                 return;
             }
-            final int swgohId = getAndUpdateProfileData(message, -1);
-            final int rivalId = getAndUpdateProfileData(null, Integer.parseInt(message.getArgs().get(0)));
-            message.done(MessageHelper.formatProfileCompare(implHelper.getUnitImpl().compareProfiles(swgohId, rivalId)));
+            final Player player = getAndUpdateProfileData(message, -1);
+            final Player rival = getAndUpdateProfileData(null, Integer.parseInt(message.getArgs().get(0)));
+            message.done(MessageHelper.formatProfileCompare(implHelper.getUnitImpl().compareProfiles(player.getAllycode(), rival.getAllycode())));
         } catch (final InsertionError | RetrieveError | HttpRetrieveError exception) {
             message.error(exception.getMessage());
         }
@@ -194,10 +205,10 @@ public class ProfileImpl {
             return;
         }
         try {
-            final int allycode = getAndUpdateProfileData(message, -1);
+            final Player player = getAndUpdateProfileData(message, -1);
             final GalacticLegends glEvent = GalacticLegends.getByKey(message.getArgs().get(0));
-            final List<GLRequirement> requirements = dao.glRequirementDao().getForEvent(glEvent.getKey());
-            message.done(MessageHelper.formatPlayerGLStatus(getGlStatus(glEvent.getName(), dao.playerDao().getById(allycode), requirements)));
+            final List<GlRequirement> requirements = dao.glRequirementDao().getForEvent(glEvent.getKey());
+            message.done(MessageHelper.formatPlayerGLStatus(getGlStatus(glEvent.getName(), dao.playerDao().getById(player.getAllycode()), requirements)));
         } catch (final RetrieveError | InsertionError | HttpRetrieveError error) {
             message.error(error.getMessage());
         }
@@ -212,10 +223,10 @@ public class ProfileImpl {
      * @return a PlayerGLStatus object.
      * @throws RetrieveError when something goes wrong .
      */
-    public PlayerGLStatus getGlStatus(final String eventName, final Player player, final List<GLRequirement> requirements) throws RetrieveError {
+    public PlayerGLStatus getGlStatus(final String eventName, final Player player, final List<GlRequirement> requirements) throws RetrieveError {
         final List<GLUnit> compares = new ArrayList<>();
         double totalCompletion = 0.0;
-        for (final GLRequirement requirement : requirements) {
+        for (final GlRequirement requirement : requirements) {
             final PlayerUnit unit = dao.playerUnitDao().getForPlayer(player, requirement.getBaseId());
             final long zetas = unit.getAbilities().stream().filter(unitAbility -> unitAbility.getBaseAbility().isZeta() && unitAbility.getBaseAbility().getTierMax() == unitAbility.getLevel()).count();
             final GLUnit compare = new GLUnit(unit.getUnit().getName(), unit.getGear(), unit.getGearPieces(), unit.getRelic(), unit.getRarity(), (int) zetas);
@@ -285,6 +296,7 @@ public class ProfileImpl {
 
     /**
      * Get's the speedmods for an user.
+     *
      * @param message the message.
      */
     public void speedMods(final Message message) {

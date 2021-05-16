@@ -2,14 +2,14 @@ package nl.djj.swgoh_bot_v2.command_impl;
 
 import net.dv8tion.jda.api.entities.MessageChannel;
 import nl.djj.swgoh_bot_v2.config.BotConstants;
-import nl.djj.swgoh_bot_v2.config.GalacticLegends;
+import nl.djj.swgoh_bot_v2.config.enums.GalacticLegends;
 import nl.djj.swgoh_bot_v2.config.SwgohConstants;
 import nl.djj.swgoh_bot_v2.config.SwgohGgEndpoint;
 import nl.djj.swgoh_bot_v2.database.DAO;
 import nl.djj.swgoh_bot_v2.entities.Message;
 import nl.djj.swgoh_bot_v2.entities.compare.GuildCompare;
 import nl.djj.swgoh_bot_v2.entities.compare.PlayerGLStatus;
-import nl.djj.swgoh_bot_v2.entities.db.GLRequirement;
+import nl.djj.swgoh_bot_v2.entities.db.GlRequirement;
 import nl.djj.swgoh_bot_v2.entities.db.Guild;
 import nl.djj.swgoh_bot_v2.entities.db.Player;
 import nl.djj.swgoh_bot_v2.exceptions.HttpRetrieveError;
@@ -29,9 +29,8 @@ import static java.util.stream.Collectors.toMap;
 /**
  * @author DJJ
  */
-public class GuildImpl {
+public class GuildImpl extends BaseImpl {
     private final transient HttpHelper httpHelper;
-    private final transient DAO dao;
     private final transient ImplHelper implHelper;
 
     /**
@@ -42,8 +41,7 @@ public class GuildImpl {
      * @param implHelper the implHelper.
      */
     public GuildImpl(final Logger logger, final DAO dao, final ImplHelper implHelper) {
-        super();
-        this.dao = dao;
+        super(logger, dao, GuildImpl.class.getName());
         this.httpHelper = new HttpHelper(logger);
         this.implHelper = implHelper;
     }
@@ -134,7 +132,7 @@ public class GuildImpl {
             final int guildId = getAndUpdateGuildData(message.getGuildId(), -1, message.getChannel());
             final GalacticLegends glEvent = GalacticLegends.getByKey(message.getArgs().get(0));
 
-            final List<GLRequirement> requirements = dao.glRequirementDao().getForEvent(glEvent.getKey());
+            final List<GlRequirement> requirements = dao.glRequirementDao().getForEvent(glEvent.getKey());
             Map<String, PlayerGLStatus> playerStatus = new TreeMap<>();
             for (final Player player : dao.guildDao().getById(guildId).getPlayers()) {
                 playerStatus.put(player.getName(), this.implHelper.getProfileImpl().getGlStatus(glEvent.getName(), player, requirements));

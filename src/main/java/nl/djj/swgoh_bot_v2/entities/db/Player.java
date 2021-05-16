@@ -4,7 +4,8 @@ import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
-import nl.djj.swgoh_bot_v2.config.Permission;
+
+import nl.djj.swgoh_bot_v2.config.enums.Permission;
 import nl.djj.swgoh_bot_v2.database.custom_persistors.LocalDateTimePersister;
 import nl.djj.swgoh_bot_v2.database.custom_persistors.PermissionPersister;
 import nl.djj.swgoh_bot_v2.database.daos.PlayerDaoImpl;

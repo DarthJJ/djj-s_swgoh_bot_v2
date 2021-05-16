@@ -8,19 +8,14 @@ import nl.djj.swgoh_bot_v2.helpers.Logger;
 /**
  * @author DJJ
  */
-public class CommandImpl {
-    private final transient String className = this.getClass().getSimpleName();
-    private final transient Logger logger;
-    private final transient DAO dao;
+public class CommandImpl extends BaseImpl {
 
     /**
      * @param logger the logger.
      * @param dao    DB handler.
      */
     public CommandImpl(final Logger logger, final DAO dao) {
-        super();
-        this.logger = logger;
-        this.dao = dao;
+        super(logger, dao, CommandImpl.class.getName());
     }
 
     /**

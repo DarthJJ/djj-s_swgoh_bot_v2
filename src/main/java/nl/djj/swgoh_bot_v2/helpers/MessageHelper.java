@@ -420,5 +420,24 @@ public final class MessageHelper {
         return embed.build();
     }
 
+    /**
+     * Creates an embed for the need overview.
+     * @param result the list with units and rarities.
+     * @param type the type of farming requested.
+     * @param percentage the completion percentage.
+     * @return a messageEmbed.
+     */
+    public static MessageEmbed formatNeedMessage(final Map<String, Integer> result, final String type, final double percentage) {
+        final EmbedBuilder embed = new EmbedBuilder(baseEmbed());
+        embed.setDescription("Need status for: " + type + "\nCompletion: " + new DecimalFormat("##.##%").format(percentage));
+        final StringBuilder fieldValue = new StringBuilder();
+        fieldValue.append(String.format(UNIT_TABLE_FORMAT, "Unit:", ":", "Rarity:"));
+        for (final Map.Entry<String, Integer> entry : result.entrySet()){
+            fieldValue.append(String.format(UNIT_TABLE_FORMAT, entry.getKey(), ":", entry.getValue()));
+        }
+        embed.addField("status", "```" + fieldValue + "```", false);
+        return embed.build();
+    }
+
 //CHECKSTYLE.ON: MultipleStringLiteralsCheck
 }

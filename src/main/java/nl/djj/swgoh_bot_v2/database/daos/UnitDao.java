@@ -5,6 +5,8 @@ import nl.djj.swgoh_bot_v2.entities.db.Unit;
 import nl.djj.swgoh_bot_v2.exceptions.InsertionError;
 import nl.djj.swgoh_bot_v2.exceptions.RetrieveError;
 
+import java.util.List;
+
 /**
  * @author DJJ
  **/
@@ -28,4 +30,11 @@ public interface UnitDao extends Dao<Unit, String> {
      * @throws InsertionError when something goes wrong.
      */
     void save(final Unit unit) throws InsertionError;
+
+    /**
+     * Gets all the units in the DB.
+     * @return a list with all the units.
+     * @throws RetrieveError when something goes wrong.
+     */
+    List<Unit> getAll() throws RetrieveError;
 }
