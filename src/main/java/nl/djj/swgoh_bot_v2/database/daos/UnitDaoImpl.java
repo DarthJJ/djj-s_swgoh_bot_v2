@@ -7,6 +7,7 @@ import nl.djj.swgoh_bot_v2.exceptions.InsertionError;
 import nl.djj.swgoh_bot_v2.exceptions.RetrieveError;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -38,6 +39,15 @@ public class UnitDaoImpl extends BaseDaoImpl<Unit, String> implements UnitDao {
             this.createOrUpdate(unit);
         } catch (final SQLException exception) {
             throw new InsertionError(CLASS_NAME, "save", exception.getMessage());
+        }
+    }
+
+    @Override
+    public List<Unit> getAll() throws RetrieveError {
+        try {
+            return this.queryForAll();
+        } catch (final SQLException exception) {
+            throw new RetrieveError(CLASS_NAME, "getAll", exception.getMessage());
         }
     }
 }

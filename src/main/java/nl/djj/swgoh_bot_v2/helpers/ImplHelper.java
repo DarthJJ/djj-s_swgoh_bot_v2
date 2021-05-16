@@ -16,7 +16,7 @@ public class ImplHelper {
     private final transient ConfigImpl configImpl;
     private final transient GuildImpl guildImpl;
     private final transient ReportImpl reportImpl;
-    private final transient NeedImpl needImpl
+    private final transient NeedImpl needImpl;
 
     /**
      * @param logger the logger.
@@ -32,7 +32,7 @@ public class ImplHelper {
         this.configImpl = new ConfigImpl(logger, dao);
         this.guildImpl = new GuildImpl(logger, dao, this);
         this.reportImpl = new ReportImpl(logger, dao);
-        this.needImpl = new NeedImpl(logger, dao);
+        this.needImpl = new NeedImpl(logger, dao, this);
     }
 
 
