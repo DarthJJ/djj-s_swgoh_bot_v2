@@ -1,41 +1,59 @@
 package nl.djj.swgoh_bot_v2.entities.db;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+import nl.djj.swgoh_bot_v2.database.daos.UnitAbilityDaoImpl;
+
 /**
  * @author DJJ
- */
+ **/
+@DatabaseTable(tableName = "unitAbilities", daoClass = UnitAbilityDaoImpl.class)
 public class UnitAbility {
-    private final transient String abilityId;
-    private final transient int allycode;
-    private final transient int guildId;
-    private final transient int level;
+    @DatabaseField(generatedId = true)
+    private transient int identifier;
+    @DatabaseField(foreign = true, uniqueCombo = true, foreignAutoRefresh = true)
+    private transient PlayerUnit playerUnit;
+    @DatabaseField(foreign = true, uniqueCombo = true, foreignAutoRefresh = true)
+    private transient Ability baseAbility;
+    @DatabaseField
+    private transient int level;
 
     /**
      * Constructor.
-     * @param abilityId ID of the ability.
-     * @param allycode the allycode of the owner of the unit.
-     * @param guildId the guild of the owner of the unit.
-     * @param level the level of the ability.
+     **/
+    public UnitAbility() {
+
+    }
+
+    /**
+     * Constructor.
+     * @param playerUnit the PlayerUnit which has this ability.
+     * @param baseAbility the base ability.
+     * @param level the current level.
      */
-    public UnitAbility(final String abilityId, final int allycode, final int guildId, final int level) {
-        this.abilityId = abilityId;
-        this.allycode = allycode;
-        this.guildId = guildId;
+    public UnitAbility(final PlayerUnit playerUnit, final Ability baseAbility, final int level) {
+        this.playerUnit = playerUnit;
+        this.baseAbility = baseAbility;
         this.level = level;
     }
 
-    public String getAbilityId() {
-        return abilityId;
+    public PlayerUnit getPlayerUnit() {
+        return playerUnit;
     }
 
-    public int getAllycode() {
-        return allycode;
-    }
-
-    public int getGuildId() {
-        return guildId;
+    public Ability getBaseAbility() {
+        return baseAbility;
     }
 
     public int getLevel() {
         return level;
+    }
+
+    public int getIdentifier() {
+        return identifier;
+    }
+
+    public void setIdentifier(final int identifier) {
+        this.identifier = identifier;
     }
 }

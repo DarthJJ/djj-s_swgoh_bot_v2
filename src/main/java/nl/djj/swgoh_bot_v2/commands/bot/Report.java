@@ -1,9 +1,9 @@
 package nl.djj.swgoh_bot_v2.commands.bot;
 
-import nl.djj.swgoh_bot_v2.command_impl.ImplHelper;
+import nl.djj.swgoh_bot_v2.helpers.ImplHelper;
 import nl.djj.swgoh_bot_v2.commands.BaseCommand;
-import nl.djj.swgoh_bot_v2.config.CommandCategory;
-import nl.djj.swgoh_bot_v2.config.Permission;
+import nl.djj.swgoh_bot_v2.config.enums.CommandCategory;
+import nl.djj.swgoh_bot_v2.config.enums.Permission;
 import nl.djj.swgoh_bot_v2.entities.Flag;
 import nl.djj.swgoh_bot_v2.entities.Message;
 import nl.djj.swgoh_bot_v2.helpers.Logger;
@@ -36,9 +36,9 @@ public class Report extends BaseCommand {
 
     @Override
     public void createFlags() {
-        flags.put(FLAG_CREATE, new Flag(FLAG_CREATE, "Creates an issue on github", name, FLAG_CREATE, "<ticket description>"));
-        flags.put(FLAG_STATUS, new Flag(FLAG_STATUS, "Gets the status of an earlier created issue", name, FLAG_STATUS, "<ticketNumber>"));
-        flags.put(FLAG_DISALLOW, new Flag(FLAG_DISALLOW, "**MODERATOR ONLY** Disallows the tagged user of creating tickets", name, FLAG_DISALLOW, "<userTag>"));
+        flags.put(FLAG_CREATE, new Flag(FLAG_CREATE, "Creates an issue on github", true, name, FLAG_CREATE, "<ticket description>"));
+        flags.put(FLAG_STATUS, new Flag(FLAG_STATUS, "Gets the status of an earlier created issue", true, name, FLAG_STATUS, "<ticketNumber>"));
+        flags.put(FLAG_DISALLOW, new Flag(FLAG_DISALLOW, "**MODERATOR ONLY** Disallows the tagged user of creating tickets", true, name, FLAG_DISALLOW, "<userTag>"));
     }
 
     @Override

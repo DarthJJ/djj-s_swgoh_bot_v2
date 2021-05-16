@@ -1,12 +1,12 @@
-package nl.djj.swgoh_bot_v2.command_impl;
+package nl.djj.swgoh_bot_v2.helpers;
 
-import nl.djj.swgoh_bot_v2.database.DatabaseHandler;
-import nl.djj.swgoh_bot_v2.helpers.Logger;
+import nl.djj.swgoh_bot_v2.command_impl.*;
+import nl.djj.swgoh_bot_v2.database.DAO;
 
 /**
  * @author DJJ
  */
-public abstract class ImplHelper {
+public class ImplHelper {
 
     private final transient ProfileImpl profileImpl;
     private final transient CommandImpl commandImpl;
@@ -16,32 +16,25 @@ public abstract class ImplHelper {
     private final transient ConfigImpl configImpl;
     private final transient GuildImpl guildImpl;
     private final transient ReportImpl reportImpl;
+    private final transient NeedImpl needImpl;
 
     /**
-     * @param logger    the logger.
-     * @param dbHandler the DB handler.
+     * @param logger the logger.
+     * @param dao    the DB connection.
      */
-    public ImplHelper(final Logger logger, final DatabaseHandler dbHandler) {
+    public ImplHelper(final Logger logger, final DAO dao) {
         super();
-        this.profileImpl = new ProfileImpl(logger, dbHandler, this);
-        this.commandImpl = new CommandImpl(logger, dbHandler);
-        this.updateImpl = new UpdateImpl(logger, dbHandler);
-        this.controlImpl = new ControlImpl(logger, dbHandler) {
-            @Override
-            public void closeBot() {
-                ImplHelper.this.closeBot();
-            }
-        };
-        this.unitImpl = new UnitImpl(dbHandler);
-        this.configImpl = new ConfigImpl(dbHandler, logger);
-        this.guildImpl = new GuildImpl(logger, dbHandler, this);
-        this.reportImpl = new ReportImpl(logger, dbHandler);
+        this.profileImpl = new ProfileImpl(logger, dao, this);
+        this.commandImpl = new CommandImpl(logger, dao);
+        this.updateImpl = new UpdateImpl(logger, dao);
+        this.controlImpl = new ControlImpl(logger, dao);
+        this.unitImpl = new UnitImpl(logger, dao);
+        this.configImpl = new ConfigImpl(logger, dao);
+        this.guildImpl = new GuildImpl(logger, dao, this);
+        this.reportImpl = new ReportImpl(logger, dao);
+        this.needImpl = new NeedImpl(logger, dao, this);
     }
 
-    /**
-     * Overridden to close the bot.
-     */
-    public abstract void closeBot();
 
     public ProfileImpl getProfileImpl() {
         return this.profileImpl;
@@ -73,5 +66,9 @@ public abstract class ImplHelper {
 
     public ReportImpl getReportImpl() {
         return reportImpl;
+    }
+
+    public NeedImpl getNeedImpl() {
+        return needImpl;
     }
 }

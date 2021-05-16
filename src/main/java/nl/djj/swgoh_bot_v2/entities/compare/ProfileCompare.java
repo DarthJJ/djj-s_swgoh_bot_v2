@@ -1,6 +1,6 @@
 package nl.djj.swgoh_bot_v2.entities.compare;
 
-import org.json.JSONObject;
+import nl.djj.swgoh_bot_v2.entities.db.PlayerUnit;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -12,12 +12,10 @@ public class ProfileCompare {
     private transient String name = "";
     private transient String guild = "";
     private transient int galacticPower;
-    private transient int toonGp;
-    private transient int shipGp;
     private transient int zetas;
     private transient int g13;
     private transient int g12;
-    private final transient Map<Integer, Integer> relics;
+    private transient Map<Integer, Integer> relics;
     private final transient Map<String, UnitCompare> units;
 
     /**
@@ -25,7 +23,6 @@ public class ProfileCompare {
      */
     public ProfileCompare() {
         super();
-        relics = new ConcurrentHashMap<>();
         units = new ConcurrentHashMap<>();
     }
 
@@ -41,59 +38,44 @@ public class ProfileCompare {
         this.galacticPower = galacticPower;
     }
 
-    public void setToonGp(final int toonGp) {
-        this.toonGp = toonGp;
+    public void setZetas(final int zetas) {
+        this.zetas = zetas;
     }
 
-    public void setShipGp(final int shipGp) {
-        this.shipGp = shipGp;
+    public void setG13(final int g13) {
+        this.g13 = g13;
     }
 
-    /**
-     * Updates the zeta count.
-     * @param amount the amount to add.
-     */
-    public void addZeta(final int amount) {
-        this.zetas = this.zetas + amount;
+    public void setG12(final int g12) {
+        this.g12 = g12;
     }
 
-    /**
-     * Adds 1 to the G13 counter.
-     */
-    public void addG13() {
-        this.g13++;
-    }
-
-    /**
-     * Updates the relic count.
-     * @param relicLevel the relic level to add.
-     */
-    public void addRelic(final int relicLevel) {
-        final int realRelicLevel = Math.max(-1, relicLevel - 2);
-        relics.merge(realRelicLevel, 1, Integer::sum);
+    public void setRelics(final Map<Integer, Integer> relics) {
+        this.relics = relics;
     }
 
     /**
      * Adds a unit to the compare list.
+     *
      * @param unitData the data of the unit.
+     * @param baseId   the unit baseId.
+     * @param zetas the amount of zetas.
      */
-    public void addUnit(final JSONObject unitData) {
-        final UnitCompare compare = new UnitCompare(unitData.getString("name"),
-                unitData.getString("base_id"),
-                unitData.getInt("rarity"),
-                unitData.getInt("power"),
-                unitData.getInt("gear_level"),
-                unitData.getInt("relic_tier"),
-                unitData.getJSONArray("zeta_abilities").length(),
-                unitData.getJSONObject("stats").getInt("5"));
-        units.put(compare.getBaseId(), compare);
-    }
-
-    /**
-     * Adds 1 to the G12 counter.
-     */
-    public void addG12() {
-        this.g12++;
+    public void addUnit(final PlayerUnit unitData, final String baseId, final int zetas) {
+        final UnitCompare compare;
+        if (unitData == null) {
+            compare = new UnitCompare("", baseId, -1, -1, -1, -1, -1, -1);
+        } else {
+            compare = new UnitCompare(unitData.getUnit().getName(),
+                    unitData.getUnit().getBaseId(),
+                    unitData.getRarity(),
+                    unitData.getGalacticPower(),
+                    unitData.getGear(),
+                    unitData.getRelic(),
+                    zetas,
+                    unitData.getSpeed());
+        }
+        units.put(baseId, compare);
     }
 
     public String getName() {
@@ -106,14 +88,6 @@ public class ProfileCompare {
 
     public int getGalacticPower() {
         return galacticPower;
-    }
-
-    public int getToonGp() {
-        return toonGp;
-    }
-
-    public int getShipGp() {
-        return shipGp;
     }
 
     public int getZetas() {

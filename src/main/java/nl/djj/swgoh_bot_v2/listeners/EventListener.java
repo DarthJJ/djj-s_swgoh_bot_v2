@@ -5,7 +5,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.user.update.UserUpdateOnlineStatusEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import nl.djj.swgoh_bot_v2.Main;
-import nl.djj.swgoh_bot_v2.command_impl.ImplHelper;
+import nl.djj.swgoh_bot_v2.helpers.ImplHelper;
 import nl.djj.swgoh_bot_v2.commands.BaseCommand;
 import nl.djj.swgoh_bot_v2.config.BotConstants;
 import nl.djj.swgoh_bot_v2.entities.Message;
@@ -24,13 +24,12 @@ public class EventListener extends ListenerAdapter {
     /**
      * Constructor.
      *
-     * @param logger     the logger to use.
      * @param commands   the helper for the commands.
      * @param implHelper the helper for command impl.
      */
-    public EventListener(final Logger logger, final CommandLoader commands, final ImplHelper implHelper) {
+    public EventListener(final CommandLoader commands, final ImplHelper implHelper) {
         super();
-        this.logger = logger;
+        this.logger = Main.getLogger();
         this.commands = commands;
         this.implHelper = implHelper;
     }
@@ -55,20 +54,24 @@ public class EventListener extends ListenerAdapter {
             return;
         }
         final Message message = Message.initFromEvent(event, guildPrefix);
+        message.setAllycode(implHelper.getProfileImpl().getAllycodeByDiscord(message.getAuthorId()));
         message.working();
         final BaseCommand command = commands.getCommand(message.getCommand(), event.getAuthor().getId().equals(BotConstants.OWNER_ID));
         if (command == null) {
-            message.error("This command doesn't exist, please use: '" + guildPrefix + "help");
+            message.error("This command doesn't exist or isn't enabled, please use: '" + guildPrefix + "help");
             return;
         }
-        if (command.isFlagRequired() && message.getFlag().isEmpty()) {
-            message.error("Missing flags for this command, use the help function: " + guildPrefix + "help " + command.getName());
+        if (command.isFlagRequired() && (message.getFlag().isEmpty() || !command.getFlags().containsKey(message.getFlag()))) {
+            command.unknownFlag(message);
             return;
         }
-
+        if (command.getFlags().containsKey(message.getFlag()) && command.getFlags().get(message.getFlag()).isRegistrationNeeded() && message.getAllycode() == -1) {
+            command.missingRegistration(message);
+            return;
+        }
         if (implHelper.getProfileImpl().isAllowed(message.getAuthorId(), command.getRequiredLevel())) {
             logger.command(message);
-            implHelper.getCommandImpl().updateCommandUsage(message.getCommand(), message.getFlag());
+            implHelper.getCommandImpl().updateCommandUsage(command.getName(), message.getFlag());
             command.handleMessage(message);
         } else {
             logger.permission(message);

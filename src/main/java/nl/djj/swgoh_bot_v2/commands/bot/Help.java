@@ -1,9 +1,9 @@
 package nl.djj.swgoh_bot_v2.commands.bot;
 
-import nl.djj.swgoh_bot_v2.command_impl.ImplHelper;
+import nl.djj.swgoh_bot_v2.helpers.ImplHelper;
 import nl.djj.swgoh_bot_v2.commands.BaseCommand;
-import nl.djj.swgoh_bot_v2.config.CommandCategory;
-import nl.djj.swgoh_bot_v2.config.Permission;
+import nl.djj.swgoh_bot_v2.config.enums.CommandCategory;
+import nl.djj.swgoh_bot_v2.config.enums.Permission;
 import nl.djj.swgoh_bot_v2.entities.Message;
 import nl.djj.swgoh_bot_v2.helpers.Logger;
 

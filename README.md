@@ -1,0 +1,1 @@
+[![Java CI with Gradle](https://github.com/DarthJJ/djj-s_swgoh_bot_v2/actions/workflows/gradle.yml/badge.svg?branch=master)](https://github.com/DarthJJ/djj-s_swgoh_bot_v2/actions/workflows/gradle.yml)

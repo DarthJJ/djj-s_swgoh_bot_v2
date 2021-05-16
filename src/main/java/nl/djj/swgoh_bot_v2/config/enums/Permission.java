@@ -1,4 +1,4 @@
-package nl.djj.swgoh_bot_v2.config;
+package nl.djj.swgoh_bot_v2.config.enums;
 
 
 import java.util.Arrays;

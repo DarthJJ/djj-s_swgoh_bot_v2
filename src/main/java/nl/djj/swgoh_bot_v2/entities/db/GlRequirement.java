@@ -1,30 +1,40 @@
 package nl.djj.swgoh_bot_v2.entities.db;
 
-import nl.djj.swgoh_bot_v2.config.GalacticLegends;
-import org.json.JSONObject;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+import nl.djj.swgoh_bot_v2.config.enums.GalacticLegends;
+import nl.djj.swgoh_bot_v2.database.custom_persistors.GalacticLegendsPersister;
+import nl.djj.swgoh_bot_v2.database.daos.GLRequirementDaoImpl;
 
 /**
  * @author DJJ
- */
+ **/
+@DatabaseTable(tableName = "glRequirements", daoClass = GLRequirementDaoImpl.class)
 public class GlRequirement {
+    @DatabaseField(columnName = "id", generatedId = true)
+    private transient int identifier;
+    @DatabaseField(uniqueCombo = true, persisterClass = GalacticLegendsPersister.class)
     private transient GalacticLegends glEvent;
+    @DatabaseField(uniqueCombo = true)
     private transient String baseId;
+    @DatabaseField
     private transient int gearLevel;
+    @DatabaseField
     private transient int relicLevel;
 
     /**
-     * The constructor.
-     */
+     * Constructor.
+     **/
     public GlRequirement() {
-        super();
+
     }
 
     /**
-     * The Constructor.
-     * @param glEvent the event.
-     * @param baseId the unit baseID.
-     * @param gearLevel the gear level.
-     * @param relicLevel the relic level.
+     * Constructor.
+     * @param glEvent the GL Event.
+     * @param baseId the unit baseId.
+     * @param gearLevel the required gearLevel.
+     * @param relicLevel the required relicLevel.
      */
     public GlRequirement(final GalacticLegends glEvent, final String baseId, final int gearLevel, final int relicLevel) {
         this.glEvent = glEvent;
@@ -37,46 +47,19 @@ public class GlRequirement {
         return glEvent;
     }
 
-    public void setGlEvent(final GalacticLegends glEvent) {
-        this.glEvent = glEvent;
-    }
-
     public String getBaseId() {
         return baseId;
-    }
-
-    public void setBaseId(final String baseId) {
-        this.baseId = baseId;
     }
 
     public int getGearLevel() {
         return gearLevel;
     }
 
-    public void setGearLevel(final int gearLevel) {
-        this.gearLevel = gearLevel;
-    }
-
     public int getRelicLevel() {
         return relicLevel;
     }
 
-    public void setRelicLevel(final int relicLevel) {
-        this.relicLevel = relicLevel;
-    }
-
-    /**
-     * Inits an GL Requirement object from json data.
-     * @param data the json data.
-     * @param glEvent the name of the GL.
-     * @return a GL Requirement object.
-     */
-    public static GlRequirement initFromJson(final JSONObject data, final String glEvent) {
-        final GlRequirement requirement = new GlRequirement();
-        requirement.setBaseId(data.getString("baseId"));
-        requirement.setGlEvent(GalacticLegends.getByName(glEvent));
-        requirement.setGearLevel(data.getInt("gearLevel"));
-        requirement.setRelicLevel(data.getInt("relicTier"));
-        return requirement;
+    public int getIdentifier() {
+        return identifier;
     }
 }

@@ -23,6 +23,8 @@
         <exclude name="NonStaticInitializer"/>
         <exclude name="AssignmentInOperand"/>
         <exclude name="DataflowAnomalyAnalysis"/>
+        <exclude name="AssignmentToNonFinalStatic"/>
+        <exclude name="AvoidFieldNameMatchingMethodName"/>
     </rule>
     <rule ref="category/java/design.xml">
         <exclude name="LawOfDemeter"/>
@@ -47,6 +49,7 @@
     <rule ref="category/java/codestyle.xml/ShortClassName">
         <properties>
             <property name="minimum" value="4" />
+            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['.DAO']"/>
         </properties>
     </rule>
     <rule ref="category/java/codestyle.xml/CommentDefaultAccessModifier" >
