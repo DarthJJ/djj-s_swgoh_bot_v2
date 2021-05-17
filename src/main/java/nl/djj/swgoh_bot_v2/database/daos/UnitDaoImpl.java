@@ -9,6 +9,7 @@ import nl.djj.swgoh_bot_v2.exceptions.RetrieveError;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.Callable;
 
 /**
  * @author DJJ
@@ -29,7 +30,7 @@ public class UnitDaoImpl extends BaseDaoImpl<Unit, String> implements UnitDao {
         try {
             return this.queryForId(unitId.toUpperCase(Locale.ROOT));
         } catch (final SQLException exception) {
-            throw new RetrieveError(CLASS_NAME, "getById", exception.getMessage());
+            throw new RetrieveError(CLASS_NAME, "getById", exception);
         }
     }
 
@@ -38,8 +39,22 @@ public class UnitDaoImpl extends BaseDaoImpl<Unit, String> implements UnitDao {
         try {
             this.createOrUpdate(unit);
         } catch (final SQLException exception) {
-            throw new InsertionError(CLASS_NAME, "save", exception.getMessage());
+            throw new InsertionError(CLASS_NAME, "save", exception);
         }
+    }
+
+    @Override
+    public void saveAll(final List<Unit> units) throws InsertionError {
+            try {
+                this.callBatchTasks((Callable<Void>) () -> {
+                    for (final Unit unit : units) {
+                        this.save(unit);
+                    }
+                    return null;
+                });
+            } catch (final SQLException exception) {
+                throw new InsertionError(CLASS_NAME, "saveAll", exception);
+            }
     }
 
     @Override
@@ -47,7 +62,7 @@ public class UnitDaoImpl extends BaseDaoImpl<Unit, String> implements UnitDao {
         try {
             return this.queryForAll();
         } catch (final SQLException exception) {
-            throw new RetrieveError(CLASS_NAME, "getAll", exception.getMessage());
+            throw new RetrieveError(CLASS_NAME, "getAll", exception);
         }
     }
 }

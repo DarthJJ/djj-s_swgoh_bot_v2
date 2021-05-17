@@ -31,7 +31,7 @@ public class CommandUsageDaoImpl extends BaseDaoImpl<CommandUsage, Integer> impl
                     "flagName", flagName
             )).get(0);
         } catch (final SQLException | IndexOutOfBoundsException exception) {
-            throw new RetrieveError(CLASS_NAME, "getByName", exception.getMessage());
+            throw new RetrieveError(CLASS_NAME, "getByName", exception);
         }
     }
 
@@ -53,7 +53,7 @@ public class CommandUsageDaoImpl extends BaseDaoImpl<CommandUsage, Integer> impl
         try {
             this.createOrUpdate(commandUsage);
         } catch (final SQLException exception) {
-            throw new InsertionError(CLASS_NAME, "save", exception.getMessage());
+            throw new InsertionError(CLASS_NAME, "save", exception);
         }
     }
 }

@@ -27,7 +27,7 @@ public class GuildDaoImpl extends BaseDaoImpl<Guild, Integer> implements GuildDa
         try {
             return this.queryForId(guildId);
         } catch (final SQLException exception) {
-            throw new RetrieveError(CLASS_NAME, "getById", exception.getMessage());
+            throw new RetrieveError(CLASS_NAME, "getById", exception);
         }
     }
 
@@ -36,7 +36,7 @@ public class GuildDaoImpl extends BaseDaoImpl<Guild, Integer> implements GuildDa
         try {
             this.createOrUpdate(guild);
         } catch (final SQLException exception) {
-            throw new InsertionError(CLASS_NAME, "save", exception.getMessage());
+            throw new InsertionError(CLASS_NAME, "save", exception);
         }
     }
 }

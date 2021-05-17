@@ -30,7 +30,7 @@ public class GLRequirementDaoImpl extends BaseDaoImpl<GlRequirement, Integer> im
         try {
             return this.queryForEq("glEvent", eventId.toUpperCase(Locale.ROOT));
         } catch (final SQLException exception) {
-            throw new RetrieveError(CLASS_NAME, "getForEvent", exception.getMessage());
+            throw new RetrieveError(CLASS_NAME, "getForEvent", exception);
         }
     }
 
@@ -39,7 +39,7 @@ public class GLRequirementDaoImpl extends BaseDaoImpl<GlRequirement, Integer> im
         try {
             this.createOrUpdate(requirement);
         } catch (final SQLException exception) {
-            throw new InsertionError(CLASS_NAME, "save", exception.getMessage());
+            throw new InsertionError(CLASS_NAME, "save", exception);
         }
     }
 
@@ -48,7 +48,7 @@ public class GLRequirementDaoImpl extends BaseDaoImpl<GlRequirement, Integer> im
         try {
             this.updateRaw("DELETE FROM glRequirements WHERE 1 = 1;");
         } catch (final SQLException exception) {
-            throw new DeletionError(CLASS_NAME, "clear", exception.getMessage());
+            throw new DeletionError(CLASS_NAME, "clear", exception);
         }
     }
 }

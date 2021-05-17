@@ -15,6 +15,7 @@ import nl.djj.swgoh_bot_v2.helpers.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -42,17 +43,19 @@ public class UpdateImpl extends BaseImpl {
         logger.info(className, "Updating the units.");
         final JSONArray characterData;
         final JSONArray shipData;
+        final List<Unit> units = new ArrayList<>();
         try {
             characterData = httpHelper.getJsonArray(SwgohGgEndpoint.CHARACTER_ENDPOINT.getUrl());
             shipData = httpHelper.getJsonArray(SwgohGgEndpoint.SHIP_ENDPOINT.getUrl());
             for (int i = 0; i < characterData.length(); i++) {
                 final JSONObject charJson = characterData.getJSONObject(i);
-                dao.unitDao().save(new Unit(charJson.getString("base_id"), charJson.getString("name").replace("'", "`"), charJson.getString("alignment"), true));
+                units.add(new Unit(charJson.getString("base_id"), charJson.getString("name").replace("'", "`"), charJson.getString("alignment"), true));
             }
             for (int i = 0; i < shipData.length(); i++) {
                 final JSONObject shipJson = shipData.getJSONObject(i);
-                dao.unitDao().save(new Unit(shipJson.getString("base_id"), shipJson.getString("name").replace("'", "`"), shipJson.getString("alignment"), false));
+                units.add(new Unit(shipJson.getString("base_id"), shipJson.getString("name").replace("'", "`"), shipJson.getString("alignment"), false));
             }
+            dao.unitDao().saveAll(units);
             logger.info(className, "Done updating the units");
             message.done("Units updated!");
         } catch (final HttpRetrieveError | InsertionError error) {
@@ -164,6 +167,7 @@ public class UpdateImpl extends BaseImpl {
     public void updateAbilities(final Message message) {
         logger.info(className, "Updating the abilities");
         final JSONArray abilityData;
+        final List<Ability> abilities = new ArrayList<>();
         try {
             abilityData = httpHelper.getJsonArray(SwgohGgEndpoint.ABILITY_ENDPOINT.getUrl());
             for (int i = 0; i < abilityData.length(); i++) {
@@ -184,13 +188,12 @@ public class UpdateImpl extends BaseImpl {
                 } else {
                     baseId = ability.getString("base_id");
                 }
-                dao.abilityDao().save(new Ability(baseId, name, tierMax, isZeta, isOmega, dao.unitDao().getById(unitBaseId)));
+                abilities.add(new Ability(baseId, name, tierMax, isZeta, isOmega, dao.unitDao().getById(unitBaseId)));
             }
+            dao.abilityDao().saveAll(abilities);
             message.done("Abilities updated");
         } catch (final RetrieveError | InsertionError | HttpRetrieveError error) {
             message.error(error.getMessage());
         }
     }
-
-    //TODO: save farming locations
 }

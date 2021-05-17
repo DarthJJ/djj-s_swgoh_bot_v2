@@ -45,15 +45,24 @@ public final class Main {
         debug = Boolean.parseBoolean(dotenv.get("DEBUG_MODE"));
         logger = new Logger(debug);
         try {
-            final Database database = new Database(logger);
+            final String username = dotenv.get("DB_USER");
+            final String password = dotenv.get("DB_PASS");
+            final String discordToken;
+            final String dbName;
+            final String address = dotenv.get("DB_ADDRESS");
+            final String port = dotenv.get("DB_PORT");
+            if (debug) {
+                discordToken = dotenv.get("BETA_DISCORD_TOKEN");
+                dbName = dotenv.get("DB_NAME_BETA");
+            } else {
+                discordToken = dotenv.get("PUBLIC_DISCORD_TOKEN_V2");
+                dbName = dotenv.get("DB_NAME");
+            }
+            final Database database = new Database(logger, username, address, port, password, dbName);
             database.createDatabase();
             implHelper = new ImplHelper(logger, database.dao());
             commandLoader = new CommandLoader(implHelper, logger, database.dao());
-            if (debug) {
-                initializeDiscord(dotenv.get("BETA_DISCORD_TOKEN"));
-            } else {
-                initializeDiscord(dotenv.get("PUBLIC_DISCORD_TOKEN_V2"));
-            }
+            initializeDiscord(discordToken);
             logger.info(className, "Bot Ready!");
         } catch (final InitializationError exception) {
             logger.error(className, "Main", exception.getMessage());
@@ -74,7 +83,7 @@ public final class Main {
             builder.build();
             ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME)).setLevel(Level.ERROR);
         } catch (final LoginException exception) {
-            throw new InitializationError(className, "InitializeDiscord", exception.getMessage());
+            throw new InitializationError(className, "InitializeDiscord", exception);
         }
     }
 

@@ -1,21 +1,20 @@
 package nl.djj.swgoh_bot_v2.exceptions;
 
-import nl.djj.swgoh_bot_v2.helpers.Logger;
+import nl.djj.swgoh_bot_v2.Main;
 
 /**
  * @author DJJ
  */
-public class HttpRetrieveError extends Exception {
+public class HttpRetrieveError extends BaseError {
     /**
      * Constructor.
      *
      * @param className  className.
-     * @param message    the error.
+     * @param exception    the error.
      * @param methodName the methodName.
-     * @param logger     the logger.
      */
-    public HttpRetrieveError(final String className, final String methodName, final String message, final Logger logger) {
-        super(message);
-        logger.error(className, methodName, message);
+    public HttpRetrieveError(final String className, final String methodName, final Exception exception) {
+        super();
+        Main.getLogger().error(className, methodName, exceptionToString(exception));
     }
 }

@@ -22,7 +22,7 @@ public abstract class Help extends BaseCommand {
         super(logger, implHelper);
         name = "help";
         requiredLevel = Permission.USER;
-        description = "Register or unregister with the bot.";
+        description = "Gives help in using the bot";
         aliases = new String[]{
                 "reg"
         };

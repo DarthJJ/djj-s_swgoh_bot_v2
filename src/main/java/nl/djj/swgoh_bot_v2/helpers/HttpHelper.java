@@ -51,7 +51,7 @@ public class HttpHelper {
             final BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
             return stringToJSonArray(reader);
         } catch (final IOException exception) {
-            throw new HttpRetrieveError(className, "getJsonArray", exception.getMessage(), logger);
+            throw new HttpRetrieveError(className, "getJsonArray", exception);
         }
     }
 
@@ -67,7 +67,7 @@ public class HttpHelper {
             final BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
             return stringToJsonObject(reader);
         } catch (final IOException exception) {
-            throw new HttpRetrieveError(className, "getJsonObject", exception.getMessage(), logger);
+            throw new HttpRetrieveError(className, "getJsonObject", exception);
         }
     }
 
@@ -93,7 +93,7 @@ public class HttpHelper {
             }
             return returnValue;
         } catch (final IOException exception) {
-            throw new HttpRetrieveError(className, "getCsv", exception.getMessage(), logger);
+            throw new HttpRetrieveError(className, "getCsv", exception);
         }
     }
 }
