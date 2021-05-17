@@ -90,20 +90,14 @@ public final class MessageHelper {
     public static List<MessageEmbed> formatGenericHelpText(final Map<String, List<BaseCommand>> helpText) {
         final List<MessageEmbed> returnValue = new ArrayList<>();
         EmbedBuilder builder = new EmbedBuilder(baseEmbed());
-        builder.appendDescription("Commands available for you");
         for (final Map.Entry<String, List<BaseCommand>> entry : helpText.entrySet()) {
-            final StringBuilder helpString = new StringBuilder();
+            builder.appendDescription("Commands available for you: \nCategory: " + entry.getKey());
             for (final BaseCommand command : entry.getValue()) {
-                helpString.append(String.format(HELP_TABLE_FORMAT, command.getName(), " = ", command.getDescription()));
+                builder.addField(new MessageEmbed.Field(command.getName(), "```" + command.getDescription() + "```", false));
             }
-            helpString.append('\n');
-            builder.addField(new MessageEmbed.Field(entry.getKey(), "```" + helpString + "```", false));
-            if (builder.length() >= MessageEmbed.EMBED_MAX_LENGTH_BOT - 500) {
-                returnValue.add(builder.build());
-                builder = new EmbedBuilder(baseEmbed());
-            }
+            returnValue.add(builder.build());
+            builder = new EmbedBuilder(baseEmbed());
         }
-        returnValue.add(builder.build());
         return returnValue;
     }
 
