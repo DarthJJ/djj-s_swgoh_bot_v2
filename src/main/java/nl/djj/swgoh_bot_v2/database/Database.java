@@ -21,14 +21,15 @@ public class Database {
 
     /**
      * Constructor.
+     *
      * @param logger the logger.
      **/
-    public Database(final Logger logger) throws InitializationError {
+    public Database(final Logger logger, final String username, final String password, final String dbName) throws InitializationError {
         try {
             this.logger = logger;
             com.j256.ormlite.logger.Logger.setGlobalLogLevel(Log.Level.ERROR);
-            final String databaseUrl = "jdbc:sqlite:database/data.sqlite";
-            connection = new JdbcConnectionSource(databaseUrl);
+            final String databaseUrl = "jdbc:mysql://192.168.2.198:3306/" + dbName;
+            connection = new JdbcConnectionSource(databaseUrl, username, password);
             dao = new DAO(connection);
         } catch (final SQLException exception) {
             throw new InitializationError(className, "Constructor", exception.getMessage());

@@ -3,11 +3,13 @@ package nl.djj.swgoh_bot_v2.database.daos;
 import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.support.ConnectionSource;
 import nl.djj.swgoh_bot_v2.entities.db.Ability;
+import nl.djj.swgoh_bot_v2.entities.db.PlayerUnit;
 import nl.djj.swgoh_bot_v2.exceptions.InsertionError;
 import nl.djj.swgoh_bot_v2.exceptions.RetrieveError;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 /**
  * @author DJJ
@@ -47,6 +49,20 @@ public class AbilityDaoImpl extends BaseDaoImpl<Ability, String> implements Abil
             this.createOrUpdate(ability);
         } catch (final SQLException exception) {
             throw new InsertionError(CLASS_NAME, "save", exception);
+        }
+    }
+
+    @Override
+    public void saveAll(final List<Ability> abilities) throws InsertionError {
+        try {
+            this.callBatchTasks((Callable<Void>) () -> {
+                for (final Ability ability : abilities) {
+                    this.save(ability);
+                }
+                return null;
+            });
+        } catch (final SQLException exception) {
+            throw new InsertionError(CLASS_NAME, "saveAll", exception);
         }
     }
 }

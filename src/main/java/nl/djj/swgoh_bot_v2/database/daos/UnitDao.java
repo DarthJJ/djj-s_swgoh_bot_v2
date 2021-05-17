@@ -32,6 +32,13 @@ public interface UnitDao extends Dao<Unit, String> {
     void save(final Unit unit) throws InsertionError;
 
     /**
+     * Saves a list of unit objets to the DB.
+     * @param units the list of units.
+     * @throws InsertionError when something goes wrong.
+     */
+    void saveAll(final List<Unit> units) throws InsertionError;
+
+    /**
      * Gets all the units in the DB.
      * @return a list with all the units.
      * @throws RetrieveError when something goes wrong.
