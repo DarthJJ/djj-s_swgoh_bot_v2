@@ -29,7 +29,7 @@ public class AbbreviationDaoImpl extends BaseDaoImpl<Abbreviation, Integer> impl
         try {
             return this.queryForEq("unitId", unitId);
         } catch (final SQLException exception) {
-            throw new RetrieveError(CLASS_NAME, "getByUnitId", exception.getMessage());
+            throw new RetrieveError(CLASS_NAME, "getByUnitId", exception);
         }
     }
 
@@ -38,7 +38,7 @@ public class AbbreviationDaoImpl extends BaseDaoImpl<Abbreviation, Integer> impl
         try {
             this.createOrUpdate(abbreviation);
         } catch (final SQLException exception) {
-            throw new InsertionError(CLASS_NAME, "saveAbbreviation", exception.getMessage());
+            throw new InsertionError(CLASS_NAME, "saveAbbreviation", exception);
         }
     }
 
@@ -47,7 +47,7 @@ public class AbbreviationDaoImpl extends BaseDaoImpl<Abbreviation, Integer> impl
         try {
             this.updateRaw("DELETE FROM abbreviations WHERE 1 = 1;");
         } catch (final SQLException exception) {
-            throw new DeletionError(CLASS_NAME, "clear", exception.getMessage());
+            throw new DeletionError(CLASS_NAME, "clear", exception);
         }
     }
 }

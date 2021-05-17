@@ -38,4 +38,11 @@ public interface AbilityDao extends Dao<Ability, String> {
      * @throws InsertionError when something goes wrong.
      */
     void save(final Ability ability) throws InsertionError;
+
+    /**
+     * Saves a list of unit abilities to the DB.
+     * @param abilities the list of abilities.
+     * @throws InsertionError when something goes wrong.
+     */
+    void saveAll(final List<Ability> abilities) throws InsertionError;
 }

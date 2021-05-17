@@ -30,7 +30,7 @@ public class UnitAbilityDaoImpl extends BaseDaoImpl<UnitAbility, Integer> implem
         try {
             return this.queryForEq("playerUnit_id", unitId);
         } catch (final SQLException exception) {
-            throw new RetrieveError(CLASS_NAME, "getForUnit", exception.getMessage());
+            throw new RetrieveError(CLASS_NAME, "getForUnit", exception);
         }
     }
 
@@ -46,7 +46,7 @@ public class UnitAbilityDaoImpl extends BaseDaoImpl<UnitAbility, Integer> implem
             }
             this.createOrUpdate(ability);
         } catch (final SQLException exception) {
-            throw new InsertionError(CLASS_NAME, "save", exception.getMessage());
+            throw new InsertionError(CLASS_NAME, "save", exception);
         }
     }
 
@@ -60,7 +60,7 @@ public class UnitAbilityDaoImpl extends BaseDaoImpl<UnitAbility, Integer> implem
                 return null;
             });
         } catch (final SQLException exception) {
-            throw new InsertionError(CLASS_NAME, "saveAll", exception.getMessage());
+            throw new InsertionError(CLASS_NAME, "saveAll", exception);
         }
     }
 }

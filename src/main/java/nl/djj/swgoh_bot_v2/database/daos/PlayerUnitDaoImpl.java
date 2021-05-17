@@ -35,7 +35,7 @@ public class PlayerUnitDaoImpl extends BaseDaoImpl<PlayerUnit, String> implement
         try {
             this.createOrUpdate(playerUnit);
         } catch (final SQLException exception) {
-            throw new InsertionError(CLASS_NAME, "save", exception.getMessage());
+            throw new InsertionError(CLASS_NAME, "save", exception);
         }
     }
 
@@ -49,7 +49,7 @@ public class PlayerUnitDaoImpl extends BaseDaoImpl<PlayerUnit, String> implement
                 return null;
             });
         } catch (final SQLException exception) {
-            throw new InsertionError(CLASS_NAME, "saveAll", exception.getMessage());
+            throw new InsertionError(CLASS_NAME, "saveAll", exception);
         }
     }
 
@@ -58,7 +58,7 @@ public class PlayerUnitDaoImpl extends BaseDaoImpl<PlayerUnit, String> implement
         try {
             return this.queryForEq("player_id", player.getAllycode());
         } catch (final SQLException exception) {
-            throw new RetrieveError(CLASS_NAME, "getForPlayer", exception.getMessage());
+            throw new RetrieveError(CLASS_NAME, "getForPlayer", exception);
         }
     }
 
@@ -67,7 +67,7 @@ public class PlayerUnitDaoImpl extends BaseDaoImpl<PlayerUnit, String> implement
         try {
             return this.queryForId(baseId + "_" + player.getAllycode());
         } catch (final SQLException | ArrayIndexOutOfBoundsException exception) {
-            throw new RetrieveError(CLASS_NAME, "getForPlayer", exception.getMessage());
+            throw new RetrieveError(CLASS_NAME, "getForPlayer", exception);
         }
     }
 
@@ -78,7 +78,7 @@ public class PlayerUnitDaoImpl extends BaseDaoImpl<PlayerUnit, String> implement
             final PreparedQuery<PlayerUnit> query = queryBuilder.where().eq("gear", gearLevel).and().eq("player_id", player.getAllycode()).prepare();
             return this.query(query).size();
         } catch (final SQLException exception) {
-            throw new RetrieveError(CLASS_NAME, "getGearCount", exception.getMessage());
+            throw new RetrieveError(CLASS_NAME, "getGearCount", exception);
         }
     }
 
@@ -103,7 +103,7 @@ public class PlayerUnitDaoImpl extends BaseDaoImpl<PlayerUnit, String> implement
             }
             return (int) this.queryRawValue(query, args.toArray(new String[0]));
         } catch (final SQLException exception) {
-            throw new RetrieveError(CLASS_NAME, "getZetaCount", exception.getMessage());
+            throw new RetrieveError(CLASS_NAME, "getZetaCount", exception);
         }
     }
 
@@ -128,7 +128,7 @@ public class PlayerUnitDaoImpl extends BaseDaoImpl<PlayerUnit, String> implement
 
             return (int) this.queryRawValue(query, args.toArray(new String[0]));
         } catch (final SQLException exception) {
-            throw new RetrieveError(CLASS_NAME, "getGearCount", exception.getMessage());
+            throw new RetrieveError(CLASS_NAME, "getGearCount", exception);
         }
     }
 
@@ -155,7 +155,7 @@ public class PlayerUnitDaoImpl extends BaseDaoImpl<PlayerUnit, String> implement
             }
             return (int) this.queryRawValue(query, args.toArray(new String[0]));
         } catch (final SQLException exception) {
-            throw new RetrieveError(CLASS_NAME, "getZetaCount", exception.getMessage());
+            throw new RetrieveError(CLASS_NAME, "getZetaCount", exception);
         }
 
     }
@@ -175,7 +175,7 @@ public class PlayerUnitDaoImpl extends BaseDaoImpl<PlayerUnit, String> implement
             }
             return returnValue;
         } catch (final SQLException exception) {
-            throw new RetrieveError(CLASS_NAME, "getRelics", exception.getMessage());
+            throw new RetrieveError(CLASS_NAME, "getRelics", exception);
         }
     }
 
@@ -199,7 +199,7 @@ public class PlayerUnitDaoImpl extends BaseDaoImpl<PlayerUnit, String> implement
             }
             return (int) this.queryRawValue(query, args.toArray(new String[0]));
         } catch (final SQLException exception) {
-            throw new RetrieveError(CLASS_NAME, "getRelicCountForUnit", exception.getMessage());
+            throw new RetrieveError(CLASS_NAME, "getRelicCountForUnit", exception);
         }
     }
 
@@ -223,7 +223,7 @@ public class PlayerUnitDaoImpl extends BaseDaoImpl<PlayerUnit, String> implement
             }
             return (int) this.queryRawValue(query, args.toArray(new String[0]));
         } catch (final SQLException exception) {
-            throw new RetrieveError(CLASS_NAME, "getRarityCountForUnit", exception.getMessage());
+            throw new RetrieveError(CLASS_NAME, "getRarityCountForUnit", exception);
         }
     }
 
@@ -240,7 +240,7 @@ public class PlayerUnitDaoImpl extends BaseDaoImpl<PlayerUnit, String> implement
             }
             return returnValue;
         } catch (final SQLException exception) {
-            throw new RetrieveError(CLASS_NAME, "getRelics", exception.getMessage());
+            throw new RetrieveError(CLASS_NAME, "getRelics", exception);
         }
     }
 }

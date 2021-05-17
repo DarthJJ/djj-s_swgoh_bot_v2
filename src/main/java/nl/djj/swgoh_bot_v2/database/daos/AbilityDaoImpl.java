@@ -8,6 +8,7 @@ import nl.djj.swgoh_bot_v2.exceptions.RetrieveError;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 /**
  * @author DJJ
@@ -28,7 +29,7 @@ public class AbilityDaoImpl extends BaseDaoImpl<Ability, String> implements Abil
         try {
             return this.queryForId(identifier);
         } catch (final SQLException exception) {
-            throw new RetrieveError(CLASS_NAME, "getById", exception.getMessage());
+            throw new RetrieveError(CLASS_NAME, "getById", exception);
         }
     }
 
@@ -37,7 +38,7 @@ public class AbilityDaoImpl extends BaseDaoImpl<Ability, String> implements Abil
         try {
             return this.queryForEq("unitId", unitId);
         } catch (final SQLException exception) {
-            throw new RetrieveError(CLASS_NAME, "getByUnitId", exception.getMessage());
+            throw new RetrieveError(CLASS_NAME, "getByUnitId", exception);
         }
     }
 
@@ -46,7 +47,21 @@ public class AbilityDaoImpl extends BaseDaoImpl<Ability, String> implements Abil
         try {
             this.createOrUpdate(ability);
         } catch (final SQLException exception) {
-            throw new InsertionError(CLASS_NAME, "save", exception.getMessage());
+            throw new InsertionError(CLASS_NAME, "save", exception);
+        }
+    }
+
+    @Override
+    public void saveAll(final List<Ability> abilities) throws InsertionError {
+        try {
+            this.callBatchTasks((Callable<Void>) () -> {
+                for (final Ability ability : abilities) {
+                    this.save(ability);
+                }
+                return null;
+            });
+        } catch (final SQLException exception) {
+            throw new InsertionError(CLASS_NAME, "saveAll", exception);
         }
     }
 }
