@@ -96,7 +96,11 @@ public class CommandLoader {
             return;
         }
         if (command != null) {
-            message.done(MessageHelper.formatSpecificHelpText(command.getName(), command.getDescription(), command.getFlags(), message.getGuildPrefix()));
+            if (this.implHelper.getProfileImpl().isAllowed(message.getAuthorId(), command.getRequiredLevel())) {
+                message.done(MessageHelper.formatSpecificHelpText(command.getName(), command.getDescription(), command.getFlags(), message.getGuildPrefix()));
+                return;
+            }
+            message.error("You are not authorized for this command.\nNaughty boy / girl / Black Hawk");
             return;
         }
         final Map<String, List<BaseCommand>> helpText = new ConcurrentHashMap<>();
