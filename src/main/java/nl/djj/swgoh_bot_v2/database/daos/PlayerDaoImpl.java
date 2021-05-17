@@ -67,7 +67,7 @@ public class PlayerDaoImpl extends BaseDaoImpl<Player, Integer> implements Playe
         try {
             this.deleteById(allycode);
         } catch (final SQLException exception) {
-            throw new DeletionError(CLASS_NAME, "delete", exception.getMessage());
+            throw new DeletionError(CLASS_NAME, "delete", exception);
         }
     }
 

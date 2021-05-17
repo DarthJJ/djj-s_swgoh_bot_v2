@@ -81,7 +81,7 @@ public final class Main {
             builder.build();
             ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME)).setLevel(Level.ERROR);
         } catch (final LoginException exception) {
-            throw new InitializationError(className, "InitializeDiscord", exception.getMessage());
+            throw new InitializationError(className, "InitializeDiscord", exception);
         }
     }
 

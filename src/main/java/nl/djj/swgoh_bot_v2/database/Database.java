@@ -22,7 +22,10 @@ public class Database {
     /**
      * Constructor.
      *
-     * @param logger the logger.
+     * @param logger   the logger.
+     * @param username the username for DB access.
+     * @param password the password for DB access.
+     * @param dbName   the DB to connect to.
      **/
     public Database(final Logger logger, final String username, final String password, final String dbName) throws InitializationError {
         try {
@@ -32,7 +35,7 @@ public class Database {
             connection = new JdbcConnectionSource(databaseUrl, username, password);
             dao = new DAO(connection);
         } catch (final SQLException exception) {
-            throw new InitializationError(className, "Constructor", exception.getMessage());
+            throw new InitializationError(className, "Constructor", exception);
         }
     }
 

@@ -2,9 +2,6 @@ package nl.djj.swgoh_bot_v2.exceptions;
 
 import nl.djj.swgoh_bot_v2.Main;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
 /**
  * @author DJJ
  */

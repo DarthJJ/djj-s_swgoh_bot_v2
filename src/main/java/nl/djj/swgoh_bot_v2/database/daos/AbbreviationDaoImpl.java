@@ -47,7 +47,7 @@ public class AbbreviationDaoImpl extends BaseDaoImpl<Abbreviation, Integer> impl
         try {
             this.updateRaw("DELETE FROM abbreviations WHERE 1 = 1;");
         } catch (final SQLException exception) {
-            throw new DeletionError(CLASS_NAME, "clear", exception.getMessage());
+            throw new DeletionError(CLASS_NAME, "clear", exception);
         }
     }
 }

@@ -67,7 +67,7 @@ public class CommandLoader {
                     }
             )));
         } catch (final InsertionError exception) {
-            throw new InitializationError(className, "Constructor", exception.getMessage());
+            throw new InitializationError(className, "Constructor", exception);
         }
     }
 

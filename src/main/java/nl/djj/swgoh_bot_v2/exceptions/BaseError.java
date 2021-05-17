@@ -6,7 +6,7 @@ import java.io.StringWriter;
 /**
  * @author DJJ
  **/
-public class BaseError extends Exception{
+public class BaseError extends Exception {
 
     /**
      * Constructor.
@@ -15,9 +15,14 @@ public class BaseError extends Exception{
         super();
     }
 
-    public String exceptionToString(final Exception exception){
-        StringWriter stringWriter = new StringWriter();
-        PrintWriter printWriter = new PrintWriter(stringWriter);
+    /**
+     * Formats the given exception stacktrace to a string for printing purposes.
+     * @param exception the exception containing the stacktrace.
+     * @return a string representation.
+     */
+    public String exceptionToString(final Exception exception) {
+        final StringWriter stringWriter = new StringWriter();
+        final PrintWriter printWriter = new PrintWriter(stringWriter);
         exception.printStackTrace(printWriter);
         return stringWriter.toString();
     }
