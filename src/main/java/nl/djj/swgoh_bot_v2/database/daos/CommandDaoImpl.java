@@ -36,7 +36,7 @@ public class CommandDaoImpl extends BaseDaoImpl<Command, String> implements Comm
         try {
             this.createOrUpdate(command);
         } catch (final SQLException exception) {
-            throw new InsertionError(CLASS_NAME, "save", exception.getMessage());
+            throw new InsertionError(CLASS_NAME, "save", exception);
         }
     }
 
@@ -45,7 +45,7 @@ public class CommandDaoImpl extends BaseDaoImpl<Command, String> implements Comm
         try {
             return this.queryForId(name);
         } catch (final SQLException exception) {
-            throw new RetrieveError(CLASS_NAME, "getByName", exception.getMessage());
+            throw new RetrieveError(CLASS_NAME, "getByName", exception);
         }
     }
 

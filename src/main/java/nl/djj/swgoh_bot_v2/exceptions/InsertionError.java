@@ -5,17 +5,17 @@ import nl.djj.swgoh_bot_v2.Main;
 /**
  * @author DJJ
  */
-public class InsertionError extends Exception {
+public class InsertionError extends BaseError {
 
     /**
      * Constructor.
      *
      * @param className the className.
      * @param methodName the method name.
-     * @param message   the error.
+     * @param exception   the error.
      */
-    public InsertionError(final String className, final String methodName, final String message) {
-        super(message);
-        Main.getLogger().error(className, methodName, message);
+    public InsertionError(final String className, final String methodName, final Exception exception) {
+        super();
+        Main.getLogger().error(className, methodName, exceptionToString(exception));
     }
 }

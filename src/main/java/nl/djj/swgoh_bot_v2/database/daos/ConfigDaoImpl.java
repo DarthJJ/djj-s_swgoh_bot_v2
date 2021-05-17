@@ -30,7 +30,7 @@ public class ConfigDaoImpl extends BaseDaoImpl<Config, String> implements Config
         try {
             return this.queryForId(discordId);
         } catch (final SQLException exception) {
-            throw new RetrieveError(CLASS_NAME, "getById", exception.getMessage());
+            throw new RetrieveError(CLASS_NAME, "getById", exception);
         }
     }
 
@@ -39,7 +39,7 @@ public class ConfigDaoImpl extends BaseDaoImpl<Config, String> implements Config
         try {
             this.createOrUpdate(config);
         } catch (final SQLException exception) {
-            throw new InsertionError(CLASS_NAME, "save", exception.getMessage());
+            throw new InsertionError(CLASS_NAME, "save", exception);
         }
     }
 
@@ -54,7 +54,7 @@ public class ConfigDaoImpl extends BaseDaoImpl<Config, String> implements Config
             }
             return returnValue;
         } catch (final SQLException exception) {
-            throw new RetrieveError(CLASS_NAME, "getAllNotificationChannels", exception.getMessage());
+            throw new RetrieveError(CLASS_NAME, "getAllNotificationChannels", exception);
         }
     }
 

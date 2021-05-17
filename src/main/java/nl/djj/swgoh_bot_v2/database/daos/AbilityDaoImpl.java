@@ -28,7 +28,7 @@ public class AbilityDaoImpl extends BaseDaoImpl<Ability, String> implements Abil
         try {
             return this.queryForId(identifier);
         } catch (final SQLException exception) {
-            throw new RetrieveError(CLASS_NAME, "getById", exception.getMessage());
+            throw new RetrieveError(CLASS_NAME, "getById", exception);
         }
     }
 
@@ -37,7 +37,7 @@ public class AbilityDaoImpl extends BaseDaoImpl<Ability, String> implements Abil
         try {
             return this.queryForEq("unitId", unitId);
         } catch (final SQLException exception) {
-            throw new RetrieveError(CLASS_NAME, "getByUnitId", exception.getMessage());
+            throw new RetrieveError(CLASS_NAME, "getByUnitId", exception);
         }
     }
 
@@ -46,7 +46,7 @@ public class AbilityDaoImpl extends BaseDaoImpl<Ability, String> implements Abil
         try {
             this.createOrUpdate(ability);
         } catch (final SQLException exception) {
-            throw new InsertionError(CLASS_NAME, "save", exception.getMessage());
+            throw new InsertionError(CLASS_NAME, "save", exception);
         }
     }
 }

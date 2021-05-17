@@ -31,7 +31,7 @@ public class PlayerDaoImpl extends BaseDaoImpl<Player, Integer> implements Playe
         try {
             return this.queryForId(allycode);
         } catch (final SQLException exception) {
-            throw new RetrieveError(CLASS_NAME, "getById", exception.getMessage());
+            throw new RetrieveError(CLASS_NAME, "getById", exception);
         }
     }
 
@@ -40,7 +40,7 @@ public class PlayerDaoImpl extends BaseDaoImpl<Player, Integer> implements Playe
         try {
             this.createOrUpdate(player);
         } catch (final SQLException exception) {
-            throw new InsertionError(CLASS_NAME, "save", exception.getMessage());
+            throw new InsertionError(CLASS_NAME, "save", exception);
         }
     }
 
@@ -49,7 +49,7 @@ public class PlayerDaoImpl extends BaseDaoImpl<Player, Integer> implements Playe
         try {
             return this.queryForEq("discordId", discordId).get(0);
         } catch (final SQLException | IndexOutOfBoundsException exception) {
-            throw new RetrieveError(CLASS_NAME, "getByDiscordId", exception.getMessage());
+            throw new RetrieveError(CLASS_NAME, "getByDiscordId", exception);
         }
     }
 
@@ -58,7 +58,7 @@ public class PlayerDaoImpl extends BaseDaoImpl<Player, Integer> implements Playe
         try {
             return this.idExists(allycode);
         } catch (final SQLException exception) {
-            throw new RetrieveError(CLASS_NAME, "userExists", exception.getMessage());
+            throw new RetrieveError(CLASS_NAME, "userExists", exception);
         }
     }
 
@@ -85,7 +85,7 @@ public class PlayerDaoImpl extends BaseDaoImpl<Player, Integer> implements Playe
             }
             return returnValue;
         } catch (final SQLException exception) {
-            throw new RetrieveError(CLASS_NAME, "getGpForGuild", exception.getMessage());
+            throw new RetrieveError(CLASS_NAME, "getGpForGuild", exception);
         }
     }
 
@@ -107,7 +107,7 @@ public class PlayerDaoImpl extends BaseDaoImpl<Player, Integer> implements Playe
             }
             return returnValue;
         } catch (final SQLException exception) {
-            throw new RetrieveError(CLASS_NAME, "getRelicForGuild", exception.getMessage());
+            throw new RetrieveError(CLASS_NAME, "getRelicForGuild", exception);
         }
     }
 
@@ -132,7 +132,7 @@ public class PlayerDaoImpl extends BaseDaoImpl<Player, Integer> implements Playe
             this.save(player);
 
         } catch (final RetrieveError error) {
-            throw new InsertionError(CLASS_NAME, "disallowTicketCreation", error.getMessage());
+            throw new InsertionError(CLASS_NAME, "disallowTicketCreation", error);
         }
     }
 }

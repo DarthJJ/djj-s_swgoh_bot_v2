@@ -29,7 +29,7 @@ public class UnitDaoImpl extends BaseDaoImpl<Unit, String> implements UnitDao {
         try {
             return this.queryForId(unitId.toUpperCase(Locale.ROOT));
         } catch (final SQLException exception) {
-            throw new RetrieveError(CLASS_NAME, "getById", exception.getMessage());
+            throw new RetrieveError(CLASS_NAME, "getById", exception);
         }
     }
 
@@ -38,7 +38,7 @@ public class UnitDaoImpl extends BaseDaoImpl<Unit, String> implements UnitDao {
         try {
             this.createOrUpdate(unit);
         } catch (final SQLException exception) {
-            throw new InsertionError(CLASS_NAME, "save", exception.getMessage());
+            throw new InsertionError(CLASS_NAME, "save", exception);
         }
     }
 
@@ -47,7 +47,7 @@ public class UnitDaoImpl extends BaseDaoImpl<Unit, String> implements UnitDao {
         try {
             return this.queryForAll();
         } catch (final SQLException exception) {
-            throw new RetrieveError(CLASS_NAME, "getAll", exception.getMessage());
+            throw new RetrieveError(CLASS_NAME, "getAll", exception);
         }
     }
 }
