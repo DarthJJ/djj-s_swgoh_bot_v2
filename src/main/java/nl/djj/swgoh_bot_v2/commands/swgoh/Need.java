@@ -38,10 +38,10 @@ public class Need extends BaseCommand {
     @Override
     public void createFlags() {
         this.flags.put(FLAG_LS, new Flag(FLAG_LS, "Check which units on the LS battle nodes aren't yet 7*", true, name, FLAG_LS));
-        this.flags.put(FLAG_DS, new Flag(FLAG_DS, "Check which units on the DS battle nodes aren't yet 7*", true, name, FLAG_LS));
-        this.flags.put(FLAG_CANTINA, new Flag(FLAG_CANTINA, "Check which units on the Cantina battle nodes aren't yet 7*", true, name, FLAG_LS));
+        this.flags.put(FLAG_DS, new Flag(FLAG_DS, "Check which units on the DS battle nodes aren't yet 7*", true, name, FLAG_DS));
+        this.flags.put(FLAG_CANTINA, new Flag(FLAG_CANTINA, "Check which units on the Cantina battle nodes aren't yet 7*", true, name, FLAG_CANTINA));
         this.flags.put(FLAG_FLEET, new Flag(FLAG_FLEET, "Checks which units on the Fleet battles aren't yet 7*", true, name, FLAG_FLEET));
-        this.flags.put(FLAG_ALL, new Flag(FLAG_ALL, "Check which units aren't yet 7*", true, name, FLAG_LS));
+        this.flags.put(FLAG_ALL, new Flag(FLAG_ALL, "Check which units aren't yet 7*", true, name, FLAG_ALL));
     }
 
     @Override
