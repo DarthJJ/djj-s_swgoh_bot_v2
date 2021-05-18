@@ -33,8 +33,8 @@ public class Database {
         try {
             this.logger = logger;
             com.j256.ormlite.logger.Logger.setGlobalLogLevel(Log.Level.ERROR);
-            final String databaseUrl = String.format("jdbc:mysql://%s:%s/%s", address, port, dbName);
-            connection = new JdbcConnectionSource(databaseUrl, username, password);
+            final String databaseUrl = String.format("jdbc:postgresql://%s/%s?user=%s&password=%s&ssl=false", address, dbName, username, password);
+            connection = new JdbcConnectionSource(databaseUrl);
             dao = new DAO(connection);
         } catch (final SQLException exception) {
             throw new InitializationError(className, "Constructor", exception);

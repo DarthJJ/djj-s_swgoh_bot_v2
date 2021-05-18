@@ -9,17 +9,17 @@ import nl.djj.swgoh_bot_v2.database.daos.GLRequirementDaoImpl;
 /**
  * @author DJJ
  **/
-@DatabaseTable(tableName = "glRequirements", daoClass = GLRequirementDaoImpl.class)
+@DatabaseTable(tableName = "gl_requirements", daoClass = GLRequirementDaoImpl.class)
 public class GlRequirement {
-    @DatabaseField(columnName = "id", generatedId = true)
+    @DatabaseField(columnName = "id", generatedIdSequence = "gl_requirements_id_seq")
     private transient int identifier;
-    @DatabaseField(uniqueCombo = true, persisterClass = GalacticLegendsPersister.class)
+    @DatabaseField(uniqueCombo = true, columnName = "gl_event", persisterClass = GalacticLegendsPersister.class)
     private transient GalacticLegends glEvent;
-    @DatabaseField(uniqueCombo = true)
+    @DatabaseField(uniqueCombo = true, columnName = "base_id")
     private transient String baseId;
-    @DatabaseField
+    @DatabaseField(columnName = "gear_level")
     private transient int gearLevel;
-    @DatabaseField
+    @DatabaseField(columnName = "relic_level")
     private transient int relicLevel;
 
     /**

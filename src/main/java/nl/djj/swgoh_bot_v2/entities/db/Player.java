@@ -19,29 +19,29 @@ import java.time.LocalDateTime;
 public class Player {
     @DatabaseField(id = true)
     private transient int allycode;
-    @DatabaseField(unique = true)
+    @DatabaseField(unique = true, columnName = "discord_id")
     private transient String discordId;
     @DatabaseField
     private transient String name;
-    @DatabaseField
+    @DatabaseField(columnName = "galactic_power")
     private transient int galacticPower;
     @DatabaseField
     private transient String url;
-    @DatabaseField(persisterClass = LocalDateTimePersister.class)
+    @DatabaseField(persisterClass = LocalDateTimePersister.class, columnName = "last_updated")
     private transient LocalDateTime lastUpdated;
-    @DatabaseField(persisterClass = LocalDateTimePersister.class)
+    @DatabaseField(persisterClass = LocalDateTimePersister.class, columnName = "last_updated_swgoh")
     private transient LocalDateTime lastUpdatedSwgoh;
-    @ForeignCollectionField()
+    @ForeignCollectionField(columnName = "player_units")
     private transient ForeignCollection<PlayerUnit> playerUnits;
     @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private transient Guild guild;
-    @DatabaseField
+    @DatabaseField(columnName = "guild_name")
     private transient String guildName;
     @DatabaseField(persisterClass = PermissionPersister.class)
     private transient Permission permission;
     @DatabaseField
     private transient String username;
-    @DatabaseField
+    @DatabaseField(columnName = "allowed_to_create_tickets")
     private transient boolean allowedToCreateTickets;
 
     /**

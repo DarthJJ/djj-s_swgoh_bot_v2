@@ -2,16 +2,14 @@ package nl.djj.swgoh_bot_v2.command_impl;
 
 import net.dv8tion.jda.api.entities.MessageChannel;
 import nl.djj.swgoh_bot_v2.config.BotConstants;
-import nl.djj.swgoh_bot_v2.config.enums.GalacticLegends;
 import nl.djj.swgoh_bot_v2.config.SwgohConstants;
 import nl.djj.swgoh_bot_v2.config.SwgohGgEndpoint;
+import nl.djj.swgoh_bot_v2.config.enums.GalacticLegends;
 import nl.djj.swgoh_bot_v2.database.DAO;
 import nl.djj.swgoh_bot_v2.entities.Message;
 import nl.djj.swgoh_bot_v2.entities.compare.GuildCompare;
 import nl.djj.swgoh_bot_v2.entities.compare.PlayerGLStatus;
-import nl.djj.swgoh_bot_v2.entities.db.GlRequirement;
-import nl.djj.swgoh_bot_v2.entities.db.Guild;
-import nl.djj.swgoh_bot_v2.entities.db.Player;
+import nl.djj.swgoh_bot_v2.entities.db.*;
 import nl.djj.swgoh_bot_v2.exceptions.HttpRetrieveError;
 import nl.djj.swgoh_bot_v2.exceptions.InsertionError;
 import nl.djj.swgoh_bot_v2.exceptions.RetrieveError;
@@ -52,14 +50,14 @@ public class GuildImpl extends BaseImpl {
         if (swgohIdentifier == -1) {
             swgohId = dao.configDao().getById(discordId).getSwgohId();
             guild = dao.guildDao().getById(swgohId);
-            if (guild != null && Duration.between(guild.getLastUpdated(), StringHelper.getCurrentDateTime()).toHours() < BotConstants.MAX_DATA_AGE) {
+            if (guild != null && guild.getLastUpdated() != null && Duration.between(guild.getLastUpdated(), StringHelper.getCurrentDateTime()).toHours() < BotConstants.MAX_DATA_AGE) {
                 return swgohId;
             }
         } else {
             swgohId = swgohIdentifier;
         }
         if (channel != null) {
-            channel.sendMessage("Guild data is older than: " + BotConstants.MAX_DATA_AGE + " hours\nRefreshing from SWGOH.gg").queue();
+            channel.sendMessage("Guild data is older than: " + BotConstants.MAX_DATA_AGE + " hours\nRefreshing from SWGOH.gg\n**PLEASE STAND BY, THIS CAN TAKE UP TO A MINUTE**").queue();
         }
         final JSONObject guildData = httpHelper.getJsonObject(SwgohGgEndpoint.GUILD_ENDPOINT.getUrl() + swgohId);
         final JSONObject guildInfo = guildData.getJSONObject("data");
@@ -71,12 +69,21 @@ public class GuildImpl extends BaseImpl {
         final LocalDateTime lastUpdated = StringHelper.getCurrentDateTime();
         guild = new Guild(swgohId, discordId, guildName, guildGp, guildMembers, StringHelper.getCurrentDateTime(), lastUpdated);
         this.dao.guildDao().save(guild);
+        final List<PlayerUnit> playerUnits = new ArrayList<>();
+        final List<UnitAbility> unitAbilities = new ArrayList<>();
         for (int i = 0; i < players.length(); i++) {
             final JSONObject playerJson = players.getJSONObject(i);
-            final JSONArray playerUnits = playerJson.getJSONArray("units");
+            final JSONArray playerUnitData = playerJson.getJSONArray("units");
             final Player player = this.implHelper.getProfileImpl().insertProfile(playerJson.getJSONObject("data"), guild);
-            this.implHelper.getUnitImpl().insertUnits(playerUnits, player);
+//            this.implHelper.getUnitImpl().insertUnits(playerUnitData, player);
+            Map<String, List<?>> data =this.implHelper.getUnitImpl().jsonToPlayerUnits(playerUnitData, player);
+            playerUnits.addAll((List<PlayerUnit>)data.get("units"));
+            unitAbilities.addAll((List<UnitAbility>) data.get("abilities"));
         }
+        logger.debug(className, "Inserting all units");
+        dao.playerUnitDao().saveAll(playerUnits);
+        logger.debug(className, "inserting all abilities");
+        dao.unitAbilityDao().saveAll(unitAbilities);
         return guildId;
     }
 

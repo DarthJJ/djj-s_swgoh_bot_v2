@@ -38,8 +38,8 @@ public class UnitAbilityDaoImpl extends BaseDaoImpl<UnitAbility, Integer> implem
     public void save(final UnitAbility ability) throws InsertionError {
         try {
             final List<UnitAbility> found = this.queryForFieldValuesArgs(Map.of(
-                    "playerUnit_id", ability.getPlayerUnit().getIdentifier(),
-                    "baseAbility_id", ability.getBaseAbility().getIdentifier()
+                    "player_unit", ability.getPlayerUnit().getIdentifier(),
+                    "base_ability", ability.getBaseAbility().getIdentifier()
             ));
             if (!found.isEmpty()) {
                 ability.setIdentifier(found.get(0).getIdentifier());

@@ -48,8 +48,13 @@ public class ProfileImpl extends BaseImpl {
      */
     public int getAllycodeByDiscord(final String discordId) {
         try {
-            return this.dao.playerDao().getByDiscordId(discordId).getAllycode();
+            final Player player = this.dao.playerDao().getByDiscordId(discordId);
+            if (player == null){
+                return -1;
+            }
+            return player.getAllycode();
         } catch (final RetrieveError retrieveError) {
+            logger.error(className, "getAllycodeByDiscord", retrieveError.getMessage());
             return -1;
         }
     }
@@ -143,7 +148,11 @@ public class ProfileImpl extends BaseImpl {
             return true;
         }
         try {
-            return dao.playerDao().getByDiscordId(discordId).getPermission().getLevel() <= requiredLevel.getLevel();
+            final Player player = dao.playerDao().getByDiscordId(discordId);
+            if (player == null){
+                return requiredLevel == Permission.USER;
+            }
+            return player.getPermission().getLevel() <= requiredLevel.getLevel();
         } catch (final RetrieveError exception) {
             return requiredLevel == Permission.USER;
         }

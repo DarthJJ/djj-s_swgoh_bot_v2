@@ -11,7 +11,7 @@ import nl.djj.swgoh_bot_v2.database.daos.UnitDaoImpl;
  **/
 @DatabaseTable(tableName = "units", daoClass = UnitDaoImpl.class)
 public class Unit {
-    @DatabaseField(id = true)
+    @DatabaseField(id = true, columnName = "base_id")
     private transient String baseId;
     @DatabaseField
     private transient String name;
@@ -23,7 +23,7 @@ public class Unit {
     private transient ForeignCollection<Ability> abilities;
     @ForeignCollectionField()
     private transient ForeignCollection<Abbreviation> abbreviations;
-    @ForeignCollectionField()
+    @ForeignCollectionField(columnName = "farming_locations")
     private transient ForeignCollection<FarmingLocation> farmingLocations;
 
     /**

@@ -10,19 +10,19 @@ import nl.djj.swgoh_bot_v2.database.daos.ConfigDaoImpl;
  **/
 @DatabaseTable(tableName = "config", daoClass = ConfigDaoImpl.class)
 public class Config {
-    @DatabaseField(id = true)
+    @DatabaseField(id = true, columnName = "guild_id")
     private transient String guildId;
-    @DatabaseField
+    @DatabaseField(columnName = "swgoh_id")
     private transient int swgohId;
     @DatabaseField
     private transient String prefix;
-    @DatabaseField
+    @DatabaseField(columnName = "moderation_role")
     private transient String moderationRole;
-    @DatabaseField
+    @DatabaseField(columnName = "ignore_role")
     private transient String ignoreRole;
-    @DatabaseField
+    @DatabaseField(columnName = "notify_channel")
     private transient String notifyChannel;
-    @DatabaseField
+    @DatabaseField(columnName = "bot_logging_channel")
     private transient String botLoggingChannel;
 
     /**

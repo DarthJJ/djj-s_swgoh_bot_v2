@@ -10,6 +10,7 @@ import nl.djj.swgoh_bot_v2.exceptions.RetrieveError;
 
 import java.sql.SQLException;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -47,7 +48,11 @@ public class PlayerDaoImpl extends BaseDaoImpl<Player, Integer> implements Playe
     @Override
     public Player getByDiscordId(final String discordId) throws RetrieveError {
         try {
-            return this.queryForEq("discordId", discordId).get(0);
+            final List<Player> found = this.queryForEq("discord_id", discordId);
+            if (found != null && !found.isEmpty()) {
+                return found.get(0);
+            }
+            return null;
         } catch (final SQLException | IndexOutOfBoundsException exception) {
             throw new RetrieveError(CLASS_NAME, "getByDiscordId", exception);
         }
@@ -74,10 +79,10 @@ public class PlayerDaoImpl extends BaseDaoImpl<Player, Integer> implements Playe
     @Override
     public Map<String, Integer> getGpForGuild(final int guildId) throws RetrieveError {
         try {
-            final String query = "SELECT name, galacticPower " +
+            final String query = "SELECT name, galactic_power " +
                     "FROM players " +
-                    "WHERE guild_id = ? " +
-                    "ORDER BY galacticPower DESC";
+                    "WHERE guild_id = ?::INTEGER " +
+                    "ORDER BY galactic_power DESC";
             final GenericRawResults<String[]> results = this.queryRaw(query, Integer.toString(guildId));
             final Map<String, Integer> returnValue = new LinkedHashMap<>();
             for (final String[] result : results) {
@@ -93,7 +98,7 @@ public class PlayerDaoImpl extends BaseDaoImpl<Player, Integer> implements Playe
     public Map<String, Integer> getRelicForGuild(final int guildId, final int relicLevel) throws RetrieveError {
         try {
             final String query = "SELECT t1.name, count(t2.relic) AS relics " + "FROM players AS t1 " +
-                    "INNER JOIN playerUnits AS t2 " +
+                    "INNER JOIN player_units AS t2 " +
                     "WHERE t1.guild_id = ? " +
                     "AND t2.player_id = t1.allycode " +
                     "AND t2.relic <= ? " +
@@ -128,6 +133,9 @@ public class PlayerDaoImpl extends BaseDaoImpl<Player, Integer> implements Playe
     public void disallowTicketCreation(final String discordId) throws InsertionError {
         try {
             final Player player = this.getByDiscordId(discordId);
+            if (player == null) {
+                return;
+            }
             player.setAllowedToCreateTickets(false);
             this.save(player);
 

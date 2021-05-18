@@ -16,17 +16,17 @@ import java.time.LocalDateTime;
 public class Guild {
     @DatabaseField(id = true)
     private transient int identifier;
-    @DatabaseField(unique = true)
+    @DatabaseField(unique = true, columnName = "discord_id")
     private transient String discordId;
     @DatabaseField
     private transient String name;
-    @DatabaseField
+    @DatabaseField(columnName = "galactic_power")
     private transient int galacticPower;
     @DatabaseField
     private transient int members;
-    @DatabaseField(persisterClass = LocalDateTimePersister.class)
+    @DatabaseField(persisterClass = LocalDateTimePersister.class, columnName = "last_updated")
     private transient LocalDateTime lastUpdated;
-    @DatabaseField(persisterClass = LocalDateTimePersister.class)
+    @DatabaseField(persisterClass = LocalDateTimePersister.class, columnName = "last_swgoh_updated")
     private transient LocalDateTime lastSwgohUpdated;
     @ForeignCollectionField()
     private transient ForeignCollection<Player> players;

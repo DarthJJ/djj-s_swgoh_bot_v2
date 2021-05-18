@@ -54,7 +54,7 @@ public class Update extends BaseCommand {
             case FLAG_GL_REQUIREMENTS -> this.implHelper.getUpdateImpl().updateGlRequirements(message);
             case FLAG_ABILITIES -> this.implHelper.getUpdateImpl().updateAbilities(message);
             case FLAG_LOCATIONS ->  this.implHelper.getUpdateImpl().updateLocations(message);
-            default -> message.error("This is not a valid flag, use '" + message.getGuildPrefix() + "help " + name + "'");
+            default -> unknownFlag(message);
         }
     }
 }
