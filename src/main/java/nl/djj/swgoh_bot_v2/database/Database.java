@@ -33,7 +33,8 @@ public class Database {
         try {
             this.logger = logger;
             com.j256.ormlite.logger.Logger.setGlobalLogLevel(Log.Level.ERROR);
-            final String databaseUrl = String.format("jdbc:postgresql://%s/%s?user=%s&password=%s&ssl=false", address, dbName, username, password);
+//            final String databaseUrl = String.format("jdbc:postgresql://%s/%s?user=%s&password=%s&ssl=false", address, dbName, username, password);
+            final String databaseUrl = "jdbc:sqlite:database/data.sqlite";
             connection = new JdbcConnectionSource(databaseUrl);
             dao = new DAO(connection);
         } catch (final SQLException exception) {

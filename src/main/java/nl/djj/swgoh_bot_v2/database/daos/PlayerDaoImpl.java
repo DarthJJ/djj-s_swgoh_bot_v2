@@ -81,7 +81,7 @@ public class PlayerDaoImpl extends BaseDaoImpl<Player, Integer> implements Playe
         try {
             final String query = "SELECT name, galactic_power " +
                     "FROM players " +
-                    "WHERE guild_id = ?::INTEGER " +
+                    "WHERE guild_id = ? " +
                     "ORDER BY galactic_power DESC";
             final GenericRawResults<String[]> results = this.queryRaw(query, Integer.toString(guildId));
             final Map<String, Integer> returnValue = new LinkedHashMap<>();

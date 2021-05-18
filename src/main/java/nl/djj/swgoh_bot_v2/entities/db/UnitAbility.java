@@ -9,7 +9,7 @@ import nl.djj.swgoh_bot_v2.database.daos.UnitAbilityDaoImpl;
  **/
 @DatabaseTable(tableName = "unit_abilities", daoClass = UnitAbilityDaoImpl.class)
 public class UnitAbility {
-    @DatabaseField(columnName = "id", generatedIdSequence = "unit_abilities_id_seq")
+    @DatabaseField(columnName = "id", generatedId = true)
     private transient int identifier;
     @DatabaseField(foreign = true, uniqueCombo = true, columnName = "player_unit", foreignAutoRefresh = true)
     private transient PlayerUnit playerUnit;

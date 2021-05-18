@@ -11,7 +11,7 @@ import nl.djj.swgoh_bot_v2.database.daos.GLRequirementDaoImpl;
  **/
 @DatabaseTable(tableName = "gl_requirements", daoClass = GLRequirementDaoImpl.class)
 public class GlRequirement {
-    @DatabaseField(columnName = "id", generatedIdSequence = "gl_requirements_id_seq")
+    @DatabaseField(columnName = "id", generatedId = true)
     private transient int identifier;
     @DatabaseField(uniqueCombo = true, columnName = "gl_event", persisterClass = GalacticLegendsPersister.class)
     private transient GalacticLegends glEvent;

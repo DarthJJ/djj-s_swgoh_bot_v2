@@ -9,7 +9,7 @@ import nl.djj.swgoh_bot_v2.database.daos.FarmingLocationDaoImpl;
  **/
 @DatabaseTable(tableName = "farming_locations", daoClass = FarmingLocationDaoImpl.class)
 public class FarmingLocation {
-    @DatabaseField(columnName = "id", generatedIdSequence = "farming_locations_id_seq")
+    @DatabaseField(columnName = "id", generatedId = true)
     private transient int identifier;
     @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private transient Unit unit;
