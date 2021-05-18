@@ -75,8 +75,15 @@ public class GuildImpl extends BaseImpl {
             final JSONObject playerJson = players.getJSONObject(i);
             final JSONArray playerUnitData = playerJson.getJSONArray("units");
             final Player player = this.implHelper.getProfileImpl().insertProfile(playerJson.getJSONObject("data"), guild);
-            this.implHelper.getUnitImpl().insertUnits(playerUnitData, player);
+//            this.implHelper.getUnitImpl().insertUnits(playerUnitData, player);
+            Map<String, List<?>> data =this.implHelper.getUnitImpl().jsonToPlayerUnits(playerUnitData, player);
+            playerUnits.addAll((List<PlayerUnit>)data.get("units"));
+            unitAbilities.addAll((List<UnitAbility>) data.get("abilities"));
         }
+        logger.debug(className, "Inserting all units");
+        dao.playerUnitDao().saveAll(playerUnits);
+        logger.debug(className, "inserting all abilities");
+        dao.unitAbilityDao().saveAll(unitAbilities);
         return guildId;
     }
 
