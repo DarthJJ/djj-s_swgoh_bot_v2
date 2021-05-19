@@ -82,7 +82,7 @@ public class PlayerUnitDaoImpl extends BaseDaoImpl<PlayerUnit, String> implement
                 this.executeRaw("INSERT INTO player_units " +
                         "SELECT * " +
                         "FROM player_units_x " +
-                        "ON CONFLICT(identifier) DO UPDATE player_units SET " +
+                        "ON CONFLICT(identifier) DO UPDATE SET " +
                         "player_id = player_units_x.player_id, " +
                         "unit_id = player_units_x.unit_id, " +
                         "rarity = player_units_x.rarity, " +
