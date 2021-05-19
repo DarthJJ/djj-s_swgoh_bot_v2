@@ -79,7 +79,10 @@ public class PlayerUnitDaoImpl extends BaseDaoImpl<PlayerUnit, String> implement
             if (System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("nux")) {
                 this.executeRaw("CREATE TEMP TABLE player_units_x AS SELECT * FROM player_units LIMIT 0");
                 this.executeRaw(query);
-                this.executeRaw("UPDATE player_units SET " +
+                this.executeRaw("INSERT INTO player_units " +
+                        "SELECT * " +
+                        "FROM player_units_x " +
+                        "ON CONFLICT(identifier) DO UPDATE player_units SET " +
                         "player_id = player_units_x.player_id, " +
                         "unit_id = player_units_x.unit_id, " +
                         "rarity = player_units_x.rarity, " +
