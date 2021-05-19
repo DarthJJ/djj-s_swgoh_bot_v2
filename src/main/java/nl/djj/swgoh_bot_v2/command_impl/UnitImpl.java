@@ -109,7 +109,15 @@ public class UnitImpl extends BaseImpl {
         profile.setRelics(dao.playerUnitDao().getRelics(player));
     }
 
-
+    /**
+     * Adds the playerUnits to the DB.
+     *
+     * @param playerUnits the units,
+     * @param player      the player.
+     * @throws RetrieveError  When retrieving from the DB goes wrong.
+     * @throws InsertionError When storing in the DB goes wrong.
+     * @return an Map with two lists.
+     */
     public Map<String, List<?>> jsonToPlayerUnits(final JSONArray playerUnits, final Player player) throws RetrieveError {
         logger.debug(className, "Creating playerUnits from JSON data");
         final List<PlayerUnit> units = new ArrayList<>();
@@ -155,40 +163,10 @@ public class UnitImpl extends BaseImpl {
      * @throws InsertionError When storing in the DB goes wrong.
      */
     public void insertUnits(final JSONArray playerUnits, final Player player) throws RetrieveError, InsertionError {
-        final List<UnitAbility> abilities = new ArrayList<>();
-        final List<PlayerUnit> units = new ArrayList<>();
-        final Map<String, Unit> baseUnits = dao.unitDao().getAllAsMap();
-        final Map<String, Ability> baseAbilities = dao.abilityDao().getAll();
-        for (int i = 0; i < playerUnits.length(); i++) {
-            final JSONObject unitData = playerUnits.optJSONObject(i).getJSONObject("data");
-            final String baseId = unitData.getString("base_id");
-            final int rarity = unitData.getInt("rarity");
-            final int galacticPower = unitData.getInt("power");
-            final int gear = unitData.getInt("gear_level");
-            final int relic = Math.max(-1, unitData.getInt("relic_tier") - 2);
-            final int speed = unitData.getJSONObject("stats").getInt("5");
-            final JSONArray abilityData = unitData.getJSONArray("ability_data");
-            final JSONArray gearPiecesArray = unitData.getJSONArray("gear");
-            int gearPieces = 0;
-            for (int j = 0; j < gearPiecesArray.length(); j++) {
-                if (gearPiecesArray.getJSONObject(j).getBoolean("is_obtained")) {
-                    gearPieces++;
-                }
-            }
-            final PlayerUnit playerUnit = new PlayerUnit(player, baseUnits.get(baseId), rarity, galacticPower, gear, gearPieces, relic, speed);
-            units.add(playerUnit);
-            for (int j = 0; j < abilityData.length(); j++) {
-                final StringBuilder abilityId = new StringBuilder(abilityData.getJSONObject(j).getString("id"));
-                if ("uniqueskill_GALACTICLEGEND01".equals(abilityId.toString())) {
-                    abilityId.append('_').append(baseId);
-                }
-                final int level = abilityData.getJSONObject(j).getInt("ability_tier");
-                abilities.add(new UnitAbility(playerUnit, baseAbilities.get(abilityId.toString()), level));
-            }
-        }
+        final Map<String, List<?>> returnValue = jsonToPlayerUnits(playerUnits, player);
         logger.debug(className, "Inserting playerUnits in the DB");
-        dao.playerUnitDao().saveAll(units);
+        dao.playerUnitDao().saveAll((List<PlayerUnit>) returnValue.get("units"));
         logger.debug(className, "Inserting unit abilities in the DB");
-        dao.unitAbilityDao().saveAll(abilities);
+        dao.unitAbilityDao().saveAll((List<UnitAbility>) returnValue.get("abilities"));
     }
 }

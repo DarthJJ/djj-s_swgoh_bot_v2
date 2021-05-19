@@ -13,9 +13,12 @@ import nl.djj.swgoh_bot_v2.exceptions.InsertionError;
 import nl.djj.swgoh_bot_v2.exceptions.RetrieveError;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -46,29 +49,29 @@ public class PlayerUnitDaoImpl extends BaseDaoImpl<PlayerUnit, String> implement
     public void saveAll(final List<PlayerUnit> playerUnits) throws InsertionError {
         try {
             final File file = new File("player_units.csv");
-            final FileWriter writer = new FileWriter(file);
-            for (final PlayerUnit unit : playerUnits) {
-                writer.append(unit.getIdentifier());
-                writer.append(";");
-                writer.append(Integer.toString(unit.getPlayer().getAllycode()));
-                writer.append(";");
-                writer.append(unit.getUnit().getBaseId());
-                writer.append(";");
-                writer.append(Integer.toString(unit.getRarity()));
-                writer.append(";");
-                writer.append(Integer.toString(unit.getGalacticPower()));
-                writer.append(";");
-                writer.append(Integer.toString(unit.getGear()));
-                writer.append(";");
-                writer.append(Integer.toString(unit.getGearPieces()));
-                writer.append(";");
-                writer.append(Integer.toString(unit.getRelic()));
-                writer.append(";");
-                writer.append(Integer.toString(unit.getSpeed()));
-                writer.append("\n");
+            try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(file.getAbsolutePath()), StandardCharsets.UTF_8)) {
+                for (final PlayerUnit unit : playerUnits) {
+                    writer.append(unit.getIdentifier());
+                    writer.append(";");
+                    writer.append(Integer.toString(unit.getPlayer().getAllycode()));
+                    writer.append(";");
+                    writer.append(unit.getUnit().getBaseId());
+                    writer.append(";");
+                    writer.append(Integer.toString(unit.getRarity()));
+                    writer.append(";");
+                    writer.append(Integer.toString(unit.getGalacticPower()));
+                    writer.append(";");
+                    writer.append(Integer.toString(unit.getGear()));
+                    writer.append(";");
+                    writer.append(Integer.toString(unit.getGearPieces()));
+                    writer.append(";");
+                    writer.append(Integer.toString(unit.getRelic()));
+                    writer.append(";");
+                    writer.append(Integer.toString(unit.getSpeed()));
+                    writer.append("\n");
+                }
+                writer.flush();
             }
-            writer.flush();
-            writer.close();
             final String query = String.format("COPY player_units(identifier, player_id, unit_id, rarity, galactic_power, gear, gear_pieces, relic, speed) " +
                     "FROM '%s'" +
                     "DELIMITER ';'" +

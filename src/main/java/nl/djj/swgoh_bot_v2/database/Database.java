@@ -25,11 +25,10 @@ public class Database {
      * @param logger   the logger.
      * @param username the username for DB access.
      * @param address  the DB location.
-     * @param port     the DB port.
      * @param password the password for DB access.
      * @param dbName   the DB to connect to.
      **/
-    public Database(final Logger logger, final String username, final String address, final String port, final String password, final String dbName) throws InitializationError {
+    public Database(final Logger logger, final String username, final String address, final String password, final String dbName) throws InitializationError {
         try {
             this.logger = logger;
             com.j256.ormlite.logger.Logger.setGlobalLogLevel(Log.Level.ERROR);

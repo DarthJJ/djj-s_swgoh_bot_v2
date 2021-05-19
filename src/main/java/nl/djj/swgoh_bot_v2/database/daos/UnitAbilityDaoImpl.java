@@ -7,14 +7,15 @@ import nl.djj.swgoh_bot_v2.entities.db.UnitAbility;
 import nl.djj.swgoh_bot_v2.exceptions.InsertionError;
 import nl.djj.swgoh_bot_v2.exceptions.RetrieveError;
 
+import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.concurrent.Callable;
 
 /**
  * @author DJJ
@@ -52,27 +53,27 @@ public class UnitAbilityDaoImpl extends BaseDaoImpl<UnitAbility, Integer> implem
     public void saveAll(final List<UnitAbility> abilities) throws InsertionError {
         try {
             final File file = new File("unit_abilities.csv");
-            final FileWriter writer = new FileWriter(file);
-            for(final UnitAbility ability : abilities){
-                writer.append(ability.getIdentifier());
-                writer.append(';');
-                writer.append(ability.getPlayerUnit().getIdentifier());
-                writer.append(';');
-                writer.append(ability.getBaseAbility().getIdentifier());
-                writer.append(';');
-                writer.append(Integer.toString(ability.getLevel()));
-                writer.append('\n');
+            try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(file.getAbsolutePath()), StandardCharsets.UTF_8)) {
+                for (final UnitAbility ability : abilities) {
+                    writer.append(ability.getIdentifier());
+                    writer.append(';');
+                    writer.append(ability.getPlayerUnit().getIdentifier());
+                    writer.append(';');
+                    writer.append(ability.getBaseAbility().getIdentifier());
+                    writer.append(';');
+                    writer.append(Integer.toString(ability.getLevel()));
+                    writer.append('\n');
+                }
+                writer.flush();
             }
-            writer.flush();
-            writer.close();
             final String query = String.format("COPY unit_abilities(identifier,player_unit, base_ability, level) " +
                     "FROM '%s'" +
                     "DELIMITER ';'" +
                     "CSV", file.getAbsolutePath());
-            if (System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("nux")){
+            if (System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("nux")) {
                 this.executeRaw(query);
                 file.delete();
-            }else {
+            } else {
                 Main.getLogger().debug(CLASS_NAME, "Not inserting unitAbilities due to running on Windows.");
             }
         } catch (final SQLException | IOException exception) {

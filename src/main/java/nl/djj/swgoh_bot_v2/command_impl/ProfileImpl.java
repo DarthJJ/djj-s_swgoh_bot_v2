@@ -49,7 +49,7 @@ public class ProfileImpl extends BaseImpl {
     public int getAllycodeByDiscord(final String discordId) {
         try {
             final Player player = this.dao.playerDao().getByDiscordId(discordId);
-            if (player == null){
+            if (player == null) {
                 return -1;
             }
             return player.getAllycode();
@@ -73,10 +73,11 @@ public class ProfileImpl extends BaseImpl {
 
     /**
      * Gets the player and inserts it in the DB.
+     *
      * @param allycode the allycode.
      * @return a player object.
-     * @throws InsertionError when something goes wrong inserting.
-     * @throws RetrieveError when something goes wrong retrieving.
+     * @throws InsertionError    when something goes wrong inserting.
+     * @throws RetrieveError     when something goes wrong retrieving.
      * @throws HttpRetrieveError the something goes wrong retrieving.
      */
     public Player getAndUpdatePlayer(final int allycode) throws InsertionError, RetrieveError, HttpRetrieveError {
@@ -149,7 +150,7 @@ public class ProfileImpl extends BaseImpl {
         }
         try {
             final Player player = dao.playerDao().getByDiscordId(discordId);
-            if (player == null){
+            if (player == null) {
                 return requiredLevel == Permission.USER;
             }
             return player.getPermission().getLevel() <= requiredLevel.getLevel();

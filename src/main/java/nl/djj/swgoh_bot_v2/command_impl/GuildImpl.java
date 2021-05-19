@@ -18,7 +18,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.*;
 
 import static java.util.Collections.reverseOrder;
@@ -65,9 +64,7 @@ public class GuildImpl extends BaseImpl {
         final String guildName = guildInfo.getString("name");
         final int guildMembers = guildInfo.getInt("member_count");
         final int guildGp = guildInfo.getInt("galactic_power");
-        final int guildId = guildInfo.getInt("id");
-        final LocalDateTime lastUpdated = StringHelper.getCurrentDateTime();
-        guild = new Guild(swgohId, discordId, guildName, guildGp, guildMembers, StringHelper.getCurrentDateTime(), lastUpdated);
+        guild = new Guild(swgohId, discordId, guildName, guildGp, guildMembers, StringHelper.getCurrentDateTime(), StringHelper.getCurrentDateTime());
         this.dao.guildDao().save(guild);
         final List<PlayerUnit> playerUnits = new ArrayList<>();
         final List<UnitAbility> unitAbilities = new ArrayList<>();
@@ -75,18 +72,15 @@ public class GuildImpl extends BaseImpl {
             final JSONObject playerJson = players.getJSONObject(i);
             final JSONArray playerUnitData = playerJson.getJSONArray("units");
             final Player player = this.implHelper.getProfileImpl().insertProfile(playerJson.getJSONObject("data"), guild);
-//            this.implHelper.getUnitImpl().insertUnits(playerUnitData, player);
-            Map<String, List<?>> data =this.implHelper.getUnitImpl().jsonToPlayerUnits(playerUnitData, player);
-            playerUnits.addAll((List<PlayerUnit>)data.get("units"));
+            final Map<String, List<?>> data = this.implHelper.getUnitImpl().jsonToPlayerUnits(playerUnitData, player);
+            playerUnits.addAll((List<PlayerUnit>) data.get("units"));
             unitAbilities.addAll((List<UnitAbility>) data.get("abilities"));
         }
         logger.debug(className, "Inserting all units");
         dao.playerUnitDao().saveAll(playerUnits);
-        logger.debug(className, "Done inserting all units");
         logger.debug(className, "Inserting all abilities");
         dao.unitAbilityDao().saveAll(unitAbilities);
-        logger.debug(className, "Done inserting all abilities");
-        return guildId;
+        return guild.getIdentifier();
     }
 
     /**

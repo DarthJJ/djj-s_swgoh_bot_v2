@@ -48,7 +48,7 @@ public class AbilityDaoImpl extends BaseDaoImpl<Ability, String> implements Abil
     public Map<String, Ability> getAll() throws RetrieveError {
         try {
             return queryForAll().stream().collect(Collectors.toMap(Ability::getIdentifier, ability -> ability));
-        } catch (final SQLException exception){
+        } catch (final SQLException exception) {
             throw new RetrieveError(CLASS_NAME, "getAll", exception);
         }
     }
