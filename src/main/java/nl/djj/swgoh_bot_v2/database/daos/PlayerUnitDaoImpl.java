@@ -77,10 +77,10 @@ public class PlayerUnitDaoImpl extends BaseDaoImpl<PlayerUnit, String> implement
                     "DELIMITER ';'" +
                     "CSV", file.getAbsolutePath());
             if (System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("nux")) {
-                this.executeRaw("CREATE TEMP TABLE player_unit_x AS SELECT * FROM player_unit LIMIT 0");
+                this.executeRaw("CREATE TEMP TABLE player_units_x AS SELECT * FROM player_units LIMIT 0");
                 this.executeRaw(query);
-                this.executeRaw("INSERT INTO player_unit SELECT * FROM player_unit_x ON CONFLICT (identifier) DO UPDATE");
-                this.executeRaw("DROP TABLE player_unit_x");
+                this.executeRaw("INSERT INTO player_units SELECT * FROM player_units_x ON CONFLICT (identifier) DO UPDATE");
+                this.executeRaw("DROP TABLE player_units_x");
                 file.delete();
             } else {
                 Main.getLogger().debug(CLASS_NAME, "Not inserting unitAbilities due to running on Windows.");
