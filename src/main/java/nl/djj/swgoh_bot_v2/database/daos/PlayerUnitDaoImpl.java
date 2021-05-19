@@ -72,7 +72,7 @@ public class PlayerUnitDaoImpl extends BaseDaoImpl<PlayerUnit, String> implement
                 }
                 writer.flush();
             }
-            final String query = String.format("COPY player_unit_x(identifier, player_id, unit_id, rarity, galactic_power, gear, gear_pieces, relic, speed) " +
+            final String query = String.format("COPY player_units_x(identifier, player_id, unit_id, rarity, galactic_power, gear, gear_pieces, relic, speed) " +
                     "FROM '%s'" +
                     "DELIMITER ';'" +
                     "CSV", file.getAbsolutePath());
