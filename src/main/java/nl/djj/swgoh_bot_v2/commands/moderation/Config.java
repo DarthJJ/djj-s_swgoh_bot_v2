@@ -12,11 +12,11 @@ import nl.djj.swgoh_bot_v2.helpers.Logger;
  * @author DJJ
  */
 public class Config extends BaseCommand {
-    private static final transient String FLAG_SET_GUILD = "setSwgohId";
+    private static final transient String FLAG_SET_GUILD = "guildId";
     private static final transient String FLAG_GET_CONFIG = "getConfig";
-    private static final transient String FLAG_SET_PREFIX = "setPrefix";
-    private static final transient String FLAG_SET_IGNORE_ROLE = "setIgnoreRole";
-    private static final transient String FLAG_SET_NOTIFY_CHANNEL = "setNotifyChannel";
+    private static final transient String FLAG_SET_PREFIX = "prefix";
+    private static final transient String FLAG_SET_IGNORE_ROLE = "ignoreRole";
+    private static final transient String FLAG_SET_NOTIFY_CHANNEL = "notifyChannel";
 
     /**
      * Constructor.

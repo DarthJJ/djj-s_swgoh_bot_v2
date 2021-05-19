@@ -47,8 +47,15 @@ public class HttpHelper {
      */
     public JSONArray getJsonArray(final String url) throws HttpRetrieveError {
         logger.debug(className, "Retrieving from: " + url);
-        try (InputStream stream = new URL(url).openStream()) {
-            final BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
+        try {
+            URLConnection connection = new URL(url).openConnection();
+            connection.addRequestProperty("User-Agent", "swgohBot");
+            connection.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9");
+            connection.setRequestProperty("Accept-Charset", "UTF-8");
+            connection.setReadTimeout(100000);
+            connection.setConnectTimeout(100000);
+            connection.connect();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
             return stringToJSonArray(reader);
         } catch (final IOException exception) {
             throw new HttpRetrieveError(className, "getJsonArray", exception);
@@ -63,10 +70,17 @@ public class HttpHelper {
      */
     public JSONObject getJsonObject(final String url) throws HttpRetrieveError {
         logger.debug(className, "Retrieving from: " + url);
-        try (InputStream stream = new URL(url).openStream()) {
-            final BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
+        try {
+            URLConnection connection = new URL(url).openConnection();
+            connection.addRequestProperty("User-Agent", "swgohBot");
+            connection.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9");
+            connection.setRequestProperty("Accept-Charset", "UTF-8");
+            connection.setReadTimeout(100000);
+            connection.setConnectTimeout(100000);
+            connection.connect();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
             return stringToJsonObject(reader);
-        } catch (final IOException exception) {
+        } catch (final IOException exception){
             throw new HttpRetrieveError(className, "getJsonObject", exception);
         }
     }

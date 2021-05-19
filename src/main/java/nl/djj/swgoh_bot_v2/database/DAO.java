@@ -37,6 +37,7 @@ public class DAO {
         player = new PlayerDaoImpl(connection);
         playerUnit = new PlayerUnitDaoImpl(connection);
         unitAbility = new UnitAbilityDaoImpl(connection);
+        unitAbility.setObjectCache(true);
         config = new ConfigDaoImpl(connection);
         presence = new PresenceDaoImpl(connection);
         glRequirement = new GLRequirementDaoImpl(connection);

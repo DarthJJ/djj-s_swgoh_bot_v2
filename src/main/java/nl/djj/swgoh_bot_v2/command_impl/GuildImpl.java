@@ -82,8 +82,10 @@ public class GuildImpl extends BaseImpl {
         }
         logger.debug(className, "Inserting all units");
         dao.playerUnitDao().saveAll(playerUnits);
-        logger.debug(className, "inserting all abilities");
+        logger.debug(className, "Done inserting all units");
+        logger.debug(className, "Inserting all abilities");
         dao.unitAbilityDao().saveAll(unitAbilities);
+        logger.debug(className, "Done inserting all abilities");
         return guildId;
     }
 

@@ -107,7 +107,9 @@ public final class Message {
     }
 
     private void send(final String message) {
-        getChannel().sendMessage(message).queue();
+        if (message != null) {
+            getChannel().sendMessage(message).queue();
+        }
     }
 
     private void send(final MessageEmbed message) {
