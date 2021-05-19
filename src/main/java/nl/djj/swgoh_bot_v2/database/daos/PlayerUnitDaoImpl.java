@@ -73,6 +73,7 @@ public class PlayerUnitDaoImpl extends BaseDaoImpl<PlayerUnit, String> implement
                     "FROM '%s'" +
                     "DELIMITER ';'" +
                     "CSV", file.getAbsolutePath());
+            Main.getLogger().debug(CLASS_NAME, "OS: " + System.getProperty("os.name"));
             if (System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("nix")) {
                 this.executeRaw(query);
                 file.delete();
