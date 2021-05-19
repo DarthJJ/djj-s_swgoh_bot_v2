@@ -73,12 +73,16 @@ public class UnitAbilityDaoImpl extends BaseDaoImpl<UnitAbility, Integer> implem
             if (System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("nux")) {
                 this.executeRaw("CREATE TEMP TABLE unit_abilities_x AS SELECT * FROM unit_abilities LIMIT 0");
                 this.executeRaw(query);
-                this.executeRaw("UPDATE unit_abilities SET " +
-                        "player_unit = unit_abilities_x.player_unit, " +
-                        "base_ability = unit_abilities_x.base_ability, " +
-                        "level = unit_abilities_x.level " +
+                this.executeRaw("INSERT INTO unit_abilities (identifier, player_unit, base_ability, level) " +
+                        "SELECT identifier, player_unit, base_ability, level " +
                         "FROM unit_abilities_x " +
-                        "WHERE unit_abilities.identifier = unit_abilities_x.identifier;");
+                        "ON CONFLICT (identifier) " +
+                        "DO " +
+                        "UPDATE " +
+                        "SET " +
+                        "player_unit = excluded.player_unit, " +
+                        "base_ability = excluded.base_ability, " +
+                        "level = excluded.level;");
                 this.executeRaw("DROP TABLE unit_abilities_x");
                 file.delete();
             } else {
