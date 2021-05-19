@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * @author DJJ
@@ -85,7 +86,11 @@ public class ProfileImpl extends BaseImpl {
         final JSONObject playerInfo = playerData.getJSONObject("data");
         final JSONArray playerUnits = playerData.getJSONArray("units");
         final Player player = insertProfile(playerInfo, null);
-        this.implHelper.getUnitImpl().insertUnits(playerUnits, player);
+        final Map<String, List<?>> data = this.implHelper.getUnitImpl().jsonToPlayerUnits(playerUnits, player);
+        logger.debug(className, "Inserting all units");
+        dao.playerUnitDao().saveAll((List<PlayerUnit>) data.get("units"));
+        logger.debug(className, "Inserting all abilities");
+        dao.unitAbilityDao().saveAll((List<UnitAbility>) data.get("abilities"));
         return player;
     }
 

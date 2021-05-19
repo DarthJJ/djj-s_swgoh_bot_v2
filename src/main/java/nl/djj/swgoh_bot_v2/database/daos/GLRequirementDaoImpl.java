@@ -28,7 +28,7 @@ public class GLRequirementDaoImpl extends BaseDaoImpl<GlRequirement, Integer> im
     @Override
     public List<GlRequirement> getForEvent(final String eventId) throws RetrieveError {
         try {
-            return this.queryForEq("glEvent", eventId.toUpperCase(Locale.ROOT));
+            return this.queryForEq("gl_event", eventId.toUpperCase(Locale.ROOT));
         } catch (final SQLException exception) {
             throw new RetrieveError(CLASS_NAME, "getForEvent", exception);
         }

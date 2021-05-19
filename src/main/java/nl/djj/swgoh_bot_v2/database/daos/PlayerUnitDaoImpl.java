@@ -72,12 +72,15 @@ public class PlayerUnitDaoImpl extends BaseDaoImpl<PlayerUnit, String> implement
                 }
                 writer.flush();
             }
-            final String query = String.format("COPY player_units(identifier, player_id, unit_id, rarity, galactic_power, gear, gear_pieces, relic, speed) " +
+            final String query = String.format("COPY player_unit_x(identifier, player_id, unit_id, rarity, galactic_power, gear, gear_pieces, relic, speed) " +
                     "FROM '%s'" +
                     "DELIMITER ';'" +
                     "CSV", file.getAbsolutePath());
             if (System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("nux")) {
+                this.executeRaw("CREATE TEMP TABLE player_unit_x AS SELECT * FROM tbl LIMIT 0");
                 this.executeRaw(query);
+                this.executeRaw("INSERT INTO player_unit SELECT * FROM player_unit_x ON CONFLICT (identifier) DO UPDATE");
+                this.executeRaw("DROP TABLE player_unit_x");
                 file.delete();
             } else {
                 Main.getLogger().debug(CLASS_NAME, "Not inserting unitAbilities due to running on Windows.");
