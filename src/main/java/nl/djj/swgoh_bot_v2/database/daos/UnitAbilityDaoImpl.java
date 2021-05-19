@@ -69,7 +69,7 @@ public class UnitAbilityDaoImpl extends BaseDaoImpl<UnitAbility, Integer> implem
                     "FROM '%s'" +
                     "DELIMITER ';'" +
                     "CSV", file.getAbsolutePath());
-            if (System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("nix")){
+            if (System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("nux")){
                 this.executeRaw(query);
                 file.delete();
             }else {
