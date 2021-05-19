@@ -79,7 +79,7 @@ public class PlayerUnitDaoImpl extends BaseDaoImpl<PlayerUnit, String> implement
             if (System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("nux")) {
                 this.executeRaw("CREATE TEMP TABLE player_units_x AS SELECT * FROM player_units LIMIT 0");
                 this.executeRaw(query);
-                this.executeRaw("INSERT INTO player_units SELECT * FROM player_units_x ON CONFLICT (identifier) DO UPDATE SET " +
+                this.executeRaw("UPDATE player_units SET " +
                         "player_id = player_units_x.player_id, " +
                         "unit_id = player_units_x.unit_id, " +
                         "rarity = player_units_x.rarity, " +
@@ -87,7 +87,9 @@ public class PlayerUnitDaoImpl extends BaseDaoImpl<PlayerUnit, String> implement
                         "gear = player_units_x.gear, " +
                         "gear_pieces = player_units_x.gear_pieces, " +
                         "relic = player_units_x.relic, " +
-                        "speed = player_units_x.speed;");
+                        "speed = player_units_x.speed" +
+                        "FROM player_units_x " +
+                        "WHERE player_units.identifier = player_units_x.identifier;");
                 this.executeRaw("DROP TABLE player_units_x");
                 file.delete();
             } else {
