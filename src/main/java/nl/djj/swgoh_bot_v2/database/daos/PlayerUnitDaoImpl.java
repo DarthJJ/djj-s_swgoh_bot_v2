@@ -76,21 +76,24 @@ public class PlayerUnitDaoImpl extends BaseDaoImpl<PlayerUnit, String> implement
                     "FROM '%s'" +
                     "DELIMITER ';'" +
                     "CSV", file.getAbsolutePath());
-            if (System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("nux")) {
-                this.executeRaw("CREATE TEMP TABLE player_units_x AS SELECT * FROM player_units LIMIT 0");
+            if (System.getProperty("os.nameCREATE TEMP TABLE player_units_x AS SELECT * FROM player_units LIMIT 0").toLowerCase(Locale.ROOT).contains("nux")) {
+                this.executeRaw("");
                 this.executeRaw(query);
-                this.executeRaw("INSERT INTO player_units " +
+                this.executeRaw("INSERT INTO player_units (identifier, player_id, unit_id, rarity, galactic_power, gear, gear_pieces, relic, speed) " +
                         "SELECT identifier, player_id, unit_id, rarity, galactic_power, gear, gear_pieces, relic, speed " +
                         "FROM player_units_x " +
-                        "ON CONFLICT(identifier) DO UPDATE SET " +
-                        "player_id = player_units_x.player_id, " +
-                        "unit_id = player_units_x.unit_id, " +
-                        "rarity = player_units_x.rarity, " +
-                        "galactic_power = player_units_x.galactic_power, " +
-                        "gear = player_units_x.gear, " +
-                        "gear_pieces = player_units_x.gear_pieces, " +
-                        "relic = player_units_x.relic, " +
-                        "speed = player_units_x.speed;");
+                        "ON CONFLICT (identifier) " +
+                        "DO " +
+                        "UPDATE " +
+                        "SET " +
+                        "player_id = excluded.player_id," +
+                        "unit_id = excluded.unit_id," +
+                        "rarity = excluded.rarity," +
+                        "galactic_power = excluded.galactic_power," +
+                        "gear = excluded.gear," +
+                        "gear_pieces = excluded.gear_pieces," +
+                        "relic = excluded.relic," +
+                        "speed = excluded.speed;");
                 this.executeRaw("DROP TABLE player_units_x");
                 file.delete();
             } else {
