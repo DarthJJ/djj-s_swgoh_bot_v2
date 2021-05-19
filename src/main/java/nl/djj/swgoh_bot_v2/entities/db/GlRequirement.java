@@ -11,8 +11,8 @@ import nl.djj.swgoh_bot_v2.database.daos.GLRequirementDaoImpl;
  **/
 @DatabaseTable(tableName = "gl_requirements", daoClass = GLRequirementDaoImpl.class)
 public class GlRequirement {
-    @DatabaseField(columnName = "id", generatedId = true)
-    private transient int identifier;
+    @DatabaseField(id = true)
+    private transient String identifier;
     @DatabaseField(uniqueCombo = true, columnName = "gl_event", persisterClass = GalacticLegendsPersister.class)
     private transient GalacticLegends glEvent;
     @DatabaseField(uniqueCombo = true, columnName = "base_id")
@@ -31,12 +31,14 @@ public class GlRequirement {
 
     /**
      * Constructor.
-     * @param glEvent the GL Event.
-     * @param baseId the unit baseId.
-     * @param gearLevel the required gearLevel.
+     *
+     * @param glEvent    the GL Event.
+     * @param baseId     the unit baseId.
+     * @param gearLevel  the required gearLevel.
      * @param relicLevel the required relicLevel.
      */
     public GlRequirement(final GalacticLegends glEvent, final String baseId, final int gearLevel, final int relicLevel) {
+        this.identifier = glEvent.getKey() + "_" + baseId;
         this.glEvent = glEvent;
         this.baseId = baseId;
         this.gearLevel = gearLevel;
@@ -59,7 +61,7 @@ public class GlRequirement {
         return relicLevel;
     }
 
-    public int getIdentifier() {
+    public String getIdentifier() {
         return identifier;
     }
 }

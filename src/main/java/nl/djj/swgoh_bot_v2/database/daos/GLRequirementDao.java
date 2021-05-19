@@ -32,10 +32,5 @@ public interface GLRequirementDao extends Dao<GlRequirement, Integer> {
      */
     void save(final GlRequirement requirement) throws InsertionError;
 
-    /**
-     * Clears the table.
-     * @throws DeletionError when something goes wrong.
-     */
-    void clear() throws DeletionError;
 
 }

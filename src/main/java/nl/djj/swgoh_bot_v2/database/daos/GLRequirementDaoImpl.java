@@ -42,13 +42,4 @@ public class GLRequirementDaoImpl extends BaseDaoImpl<GlRequirement, Integer> im
             throw new InsertionError(CLASS_NAME, "save", exception);
         }
     }
-
-    @Override
-    public void clear() throws DeletionError {
-        try {
-            this.updateRaw("DELETE FROM glRequirements WHERE 1 = 1;");
-        } catch (final SQLException exception) {
-            throw new DeletionError(CLASS_NAME, "clear", exception);
-        }
-    }
 }
