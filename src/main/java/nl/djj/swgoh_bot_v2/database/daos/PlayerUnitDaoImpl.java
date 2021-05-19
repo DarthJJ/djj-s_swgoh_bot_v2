@@ -4,6 +4,7 @@ import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.support.ConnectionSource;
+import nl.djj.swgoh_bot_v2.Main;
 import nl.djj.swgoh_bot_v2.config.SwgohConstants;
 import nl.djj.swgoh_bot_v2.entities.db.Guild;
 import nl.djj.swgoh_bot_v2.entities.db.Player;
@@ -12,9 +13,11 @@ import nl.djj.swgoh_bot_v2.exceptions.InsertionError;
 import nl.djj.swgoh_bot_v2.exceptions.RetrieveError;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.concurrent.Callable;
 
 /**
  * @author DJJ
@@ -42,13 +45,41 @@ public class PlayerUnitDaoImpl extends BaseDaoImpl<PlayerUnit, String> implement
     @Override
     public void saveAll(final List<PlayerUnit> playerUnits) throws InsertionError {
         try {
-            this.callBatchTasks((Callable<Void>) () -> {
-                for (final PlayerUnit playerUnit : playerUnits) {
-                    this.save(playerUnit);
-                }
-                return null;
-            });
-        } catch (final SQLException exception) {
+            final File file = new File("player_units.csv");
+            final FileWriter writer = new FileWriter(file);
+            for (final PlayerUnit unit : playerUnits) {
+                writer.append(unit.getIdentifier());
+                writer.append(";");
+                writer.append(Integer.toString(unit.getPlayer().getAllycode()));
+                writer.append(";");
+                writer.append(unit.getUnit().getBaseId());
+                writer.append(";");
+                writer.append(Integer.toString(unit.getRarity()));
+                writer.append(";");
+                writer.append(Integer.toString(unit.getGalacticPower()));
+                writer.append(";");
+                writer.append(Integer.toString(unit.getGear()));
+                writer.append(";");
+                writer.append(Integer.toString(unit.getGearPieces()));
+                writer.append(";");
+                writer.append(Integer.toString(unit.getRelic()));
+                writer.append(";");
+                writer.append(Integer.toString(unit.getSpeed()));
+                writer.append("\n");
+            }
+            writer.flush();
+            writer.close();
+            final String query = String.format("COPY player_units(identifier, player_id, unit_id, rarity, galactic_power, gear, gear_pieces, relic, speed) " +
+                    "FROM '%s'" +
+                    "DELIMITER ';'" +
+                    "CSV", file.getAbsolutePath());
+            if (System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("nix")) {
+                this.executeRaw(query);
+                file.delete();
+            } else {
+                Main.getLogger().debug(CLASS_NAME, "Not inserting unitAbilities due to running on Windows.");
+            }
+        } catch (final SQLException | IOException exception) {
             throw new InsertionError(CLASS_NAME, "saveAll", exception);
         }
     }

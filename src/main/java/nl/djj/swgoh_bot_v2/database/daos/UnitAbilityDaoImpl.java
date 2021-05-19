@@ -2,6 +2,7 @@ package nl.djj.swgoh_bot_v2.database.daos;
 
 import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.support.ConnectionSource;
+import nl.djj.swgoh_bot_v2.Main;
 import nl.djj.swgoh_bot_v2.entities.db.UnitAbility;
 import nl.djj.swgoh_bot_v2.exceptions.InsertionError;
 import nl.djj.swgoh_bot_v2.exceptions.RetrieveError;
@@ -50,8 +51,8 @@ public class UnitAbilityDaoImpl extends BaseDaoImpl<UnitAbility, Integer> implem
     @Override
     public void saveAll(final List<UnitAbility> abilities) throws InsertionError {
         try {
-            File file = new File("test.csv");
-            FileWriter writer = new FileWriter(file);
+            final File file = new File("unit_abilities.csv");
+            final FileWriter writer = new FileWriter(file);
             for(final UnitAbility ability : abilities){
                 writer.append(ability.getIdentifier());
                 writer.append(';');
@@ -71,6 +72,8 @@ public class UnitAbilityDaoImpl extends BaseDaoImpl<UnitAbility, Integer> implem
             if (System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("nix")){
                 this.executeRaw(query);
                 file.delete();
+            }else {
+                Main.getLogger().debug(CLASS_NAME, "Not inserting unitAbilities due to running on Windows.");
             }
         } catch (final SQLException | IOException exception) {
             throw new InsertionError(CLASS_NAME, "saveAll", exception);
