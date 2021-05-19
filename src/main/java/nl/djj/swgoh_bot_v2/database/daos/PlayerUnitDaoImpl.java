@@ -87,7 +87,7 @@ public class PlayerUnitDaoImpl extends BaseDaoImpl<PlayerUnit, String> implement
                         "gear = player_units_x.gear, " +
                         "gear_pieces = player_units_x.gear_pieces, " +
                         "relic = player_units_x.relic, " +
-                        "speed = player_units_x.speed" +
+                        "speed = player_units_x.speed " +
                         "FROM player_units_x " +
                         "WHERE player_units.identifier = player_units_x.identifier;");
                 this.executeRaw("DROP TABLE player_units_x");
