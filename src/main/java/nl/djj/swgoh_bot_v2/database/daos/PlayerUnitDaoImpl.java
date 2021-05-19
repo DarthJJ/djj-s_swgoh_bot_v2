@@ -80,7 +80,7 @@ public class PlayerUnitDaoImpl extends BaseDaoImpl<PlayerUnit, String> implement
                 this.executeRaw("CREATE TEMP TABLE player_units_x AS SELECT * FROM player_units LIMIT 0");
                 this.executeRaw(query);
                 this.executeRaw("INSERT INTO player_units " +
-                        "SELECT * " +
+                        "SELECT identifier, player_id, unit_id, rarity, galactic_power, gear, gear_pieces, relic, speed " +
                         "FROM player_units_x " +
                         "ON CONFLICT(identifier) DO UPDATE SET " +
                         "player_id = player_units_x.player_id, " +
