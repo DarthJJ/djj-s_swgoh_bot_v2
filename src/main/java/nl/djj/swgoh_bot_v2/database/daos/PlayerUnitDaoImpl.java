@@ -76,8 +76,8 @@ public class PlayerUnitDaoImpl extends BaseDaoImpl<PlayerUnit, String> implement
                     "FROM '%s'" +
                     "DELIMITER ';'" +
                     "CSV", file.getAbsolutePath());
-            if (System.getProperty("os.nameCREATE TEMP TABLE player_units_x AS SELECT * FROM player_units LIMIT 0").toLowerCase(Locale.ROOT).contains("nux")) {
-                this.executeRaw("");
+            if (System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("nux")) {
+                this.executeRaw("CREATE TEMP TABLE player_units_x AS SELECT * FROM player_units LIMIT 0");
                 this.executeRaw(query);
                 this.executeRaw("INSERT INTO player_units (identifier, player_id, unit_id, rarity, galactic_power, gear, gear_pieces, relic, speed) " +
                         "SELECT identifier, player_id, unit_id, rarity, galactic_power, gear, gear_pieces, relic, speed " +
