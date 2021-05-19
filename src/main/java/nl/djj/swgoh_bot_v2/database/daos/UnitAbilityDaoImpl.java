@@ -66,12 +66,20 @@ public class UnitAbilityDaoImpl extends BaseDaoImpl<UnitAbility, Integer> implem
                 }
                 writer.flush();
             }
-            final String query = String.format("COPY unit_abilities(identifier,player_unit, base_ability, level) " +
+            final String query = String.format("COPY unit_abilities_x(identifier,player_unit, base_ability, level) " +
                     "FROM '%s'" +
                     "DELIMITER ';'" +
                     "CSV", file.getAbsolutePath());
             if (System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("nux")) {
+                this.executeRaw("CREATE TEMP TABLE unit_abilities_x AS SELECT * FROM unit_abilities LIMIT 0");
                 this.executeRaw(query);
+                this.executeRaw("UPDATE unit_abilities SET " +
+                        "player_unit = unit_abilities_x.player_unit, " +
+                        "base_ability = unit_abilities_x.base_ability, " +
+                        "level = unit_abilities_x.level " +
+                        "FROM unit_abilities_x " +
+                        "WHERE unit_abilities.identifier = unit_abilities_x.identifier;");
+                this.executeRaw("DROP TABLE unit_abilities_x");
                 file.delete();
             } else {
                 Main.getLogger().debug(CLASS_NAME, "Not inserting unitAbilities due to running on Windows.");
