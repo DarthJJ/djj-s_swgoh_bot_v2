@@ -43,26 +43,59 @@ public class Database {
     /**
      * Called to created the database.
      */
+    //CHECKSTYLE.OFF: CyclomaticComplexityCheck
+    //CHECKSTYLE.OFF: NPathComplexityCheck
     public void createDatabase() {
         logger.info(className, "creating Database");
         try {
-            TableUtils.createTableIfNotExists(connection, Ability.class);
-            TableUtils.createTableIfNotExists(connection, Abbreviation.class);
-            TableUtils.createTableIfNotExists(connection, Command.class);
-            TableUtils.createTableIfNotExists(connection, CommandUsage.class);
-            TableUtils.createTableIfNotExists(connection, Config.class);
-            TableUtils.createTableIfNotExists(connection, FarmingLocation.class);
-            TableUtils.createTableIfNotExists(connection, GlRequirement.class);
-            TableUtils.createTableIfNotExists(connection, Guild.class);
-            TableUtils.createTableIfNotExists(connection, Player.class);
-            TableUtils.createTableIfNotExists(connection, PlayerUnit.class);
-            TableUtils.createTableIfNotExists(connection, Presence.class);
-            TableUtils.createTableIfNotExists(connection, Unit.class);
-            TableUtils.createTableIfNotExists(connection, UnitAbility.class);
+            if (!dao.abilityDao().isTableExists()) {
+                TableUtils.createTableIfNotExists(connection, Ability.class);
+            }
+            if (!dao.abbreviationDao().isTableExists()) {
+                TableUtils.createTableIfNotExists(connection, Abbreviation.class);
+            }
+            if (!dao.commandDao().isTableExists()) {
+                TableUtils.createTableIfNotExists(connection, Command.class);
+            }
+            if (!dao.commandUsageDao().isTableExists()) {
+                TableUtils.createTableIfNotExists(connection, CommandUsage.class);
+            }
+            if (!dao.configDao().isTableExists()) {
+                TableUtils.createTableIfNotExists(connection, Config.class);
+            }
+            if (!dao.farmingLocationDao().isTableExists()) {
+                TableUtils.createTableIfNotExists(connection, FarmingLocation.class);
+            }
+            if (!dao.flagDao().isTableExists()) {
+                TableUtils.createTableIfNotExists(connection, Flag.class);
+            }
+            if (!dao.glRequirementDao().isTableExists()) {
+                TableUtils.createTableIfNotExists(connection, GlRequirement.class);
+            }
+            if (!dao.guildDao().isTableExists()) {
+                TableUtils.createTableIfNotExists(connection, Guild.class);
+            }
+            if (!dao.playerDao().isTableExists()) {
+                TableUtils.createTableIfNotExists(connection, Player.class);
+            }
+            if (!dao.playerUnitDao().isTableExists()) {
+                TableUtils.createTableIfNotExists(connection, PlayerUnit.class);
+            }
+            if (!dao.presenceDao().isTableExists()) {
+                TableUtils.createTableIfNotExists(connection, Presence.class);
+            }
+            if (!dao.unitDao().isTableExists()) {
+                TableUtils.createTableIfNotExists(connection, Unit.class);
+            }
+            if (!dao.unitAbilityDao().isTableExists()) {
+                TableUtils.createTableIfNotExists(connection, UnitAbility.class);
+            }
         } catch (final SQLException exception) {
             logger.error(className, "createDatabase", exception.getMessage());
         }
     }
+    //CHECKSTYLE.ON: CyclomaticComplexityCheck
+    //CHECKSTYLE.ON: NPathComplexityCheck
 
     public DAO dao() {
         return dao;

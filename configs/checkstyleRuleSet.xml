@@ -42,7 +42,7 @@
         </module>
         <module name="ClassDataAbstractionCoupling">
             <property name="excludedClasses" value="boolean, byte, char, double, float, int, long, short, void, Boolean, Byte, Character, Double, Float, Integer, Long, Short, Void, Object, Class, String, StringBuffer, StringBuilder, ArrayIndexOutOfBoundsException, Exception, RuntimeException, IllegalArgumentException, IllegalStateException, IndexOutOfBoundsException, NullPointerException, Throwable, SecurityException, UnsupportedOperationException, List, ArrayList, Deque, Queue, LinkedList, Set, HashSet, SortedSet, TreeSet, Map, HashMap, SortedMap, TreeMap, Stack, Color, Dimension, GridBagLayout, JButton, JPanel, Point, File, BufferedInputStream, BufferedOutputStream, FileInputStream, FileOutputStream" />
-            <property name="max" value="15"/>
+            <property name="max" value="16"/>
         </module>
         <module name="EmptyStatement" />
         <module name="DefaultComesLast" />
