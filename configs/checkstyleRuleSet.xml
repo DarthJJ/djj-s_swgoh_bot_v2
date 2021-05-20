@@ -48,7 +48,9 @@
         <module name="DefaultComesLast" />
         <module name="MissingSwitchDefault" />
         <module name="EmptyBlock" />
-        <module name="ExecutableStatementCount" />
+        <module name="ExecutableStatementCount" >
+            <property name="max" value="32"/>
+        </module>
         <module name="ExplicitInitialization" />
         <module name="IllegalThrows" />
         <module name="InnerAssignment" />

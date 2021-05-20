@@ -8,7 +8,9 @@ import nl.djj.swgoh_bot_v2.exceptions.RetrieveError;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
 /**
  * @author DJJ
@@ -36,9 +38,18 @@ public class AbilityDaoImpl extends BaseDaoImpl<Ability, String> implements Abil
     @Override
     public List<Ability> getByUnitId(final String unitId) throws RetrieveError {
         try {
-            return this.queryForEq("unitId", unitId);
+            return this.queryForEq("unit_id", unitId);
         } catch (final SQLException exception) {
             throw new RetrieveError(CLASS_NAME, "getByUnitId", exception);
+        }
+    }
+
+    @Override
+    public Map<String, Ability> getAll() throws RetrieveError {
+        try {
+            return queryForAll().stream().collect(Collectors.toMap(Ability::getIdentifier, ability -> ability));
+        } catch (final SQLException exception) {
+            throw new RetrieveError(CLASS_NAME, "getAll", exception);
         }
     }
 

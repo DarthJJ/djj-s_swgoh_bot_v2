@@ -7,9 +7,9 @@ import nl.djj.swgoh_bot_v2.database.daos.FarmingLocationDaoImpl;
 /**
  * @author DJJ
  **/
-@DatabaseTable(tableName = "farmingLocations", daoClass = FarmingLocationDaoImpl.class)
+@DatabaseTable(tableName = "farming_locations", daoClass = FarmingLocationDaoImpl.class)
 public class FarmingLocation {
-    @DatabaseField(generatedId = true)
+    @DatabaseField(columnName = "id", generatedId = true)
     private transient int identifier;
     @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private transient Unit unit;

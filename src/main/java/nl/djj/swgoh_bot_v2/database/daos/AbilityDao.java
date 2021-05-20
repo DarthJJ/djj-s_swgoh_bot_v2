@@ -6,6 +6,7 @@ import nl.djj.swgoh_bot_v2.exceptions.InsertionError;
 import nl.djj.swgoh_bot_v2.exceptions.RetrieveError;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author DJJ
@@ -18,6 +19,7 @@ public interface AbilityDao extends Dao<Ability, String> {
 
     /**
      * gets an ability for the given id.
+     *
      * @param identifier the id.
      * @return the ability.
      * @throws RetrieveError when something goes wrong.
@@ -26,6 +28,7 @@ public interface AbilityDao extends Dao<Ability, String> {
 
     /**
      * Gets all the abilities for the given unit.
+     *
      * @param unitId the unit id to search for.
      * @return a list with abilities.
      * @throws RetrieveError when something goes wrong.
@@ -33,7 +36,16 @@ public interface AbilityDao extends Dao<Ability, String> {
     List<Ability> getByUnitId(final String unitId) throws RetrieveError;
 
     /**
+     * Gets all abilities in a map, key = abilityId.
+     *
+     * @return a map with abilities.
+     * @throws RetrieveError when something goes wrong.
+     */
+    Map<String, Ability> getAll() throws RetrieveError;
+
+    /**
      * Saves the unit ability to the DB.
+     *
      * @param ability the ability to save.
      * @throws InsertionError when something goes wrong.
      */
@@ -41,6 +53,7 @@ public interface AbilityDao extends Dao<Ability, String> {
 
     /**
      * Saves a list of unit abilities to the DB.
+     *
      * @param abilities the list of abilities.
      * @throws InsertionError when something goes wrong.
      */

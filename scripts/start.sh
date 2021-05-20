@@ -8,3 +8,4 @@ trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
 trap 'echo "\"${last_command}\" command failed with exit code $?."' EXIT
 cd LIVE
 nohup java -jar bot.jar &
+ps aux | grep bot.jar

@@ -50,7 +50,6 @@ public final class Main {
             final String discordToken;
             final String dbName;
             final String address = dotenv.get("DB_ADDRESS");
-            final String port = dotenv.get("DB_PORT");
             if (debug) {
                 discordToken = dotenv.get("BETA_DISCORD_TOKEN");
                 dbName = dotenv.get("DB_NAME_BETA");
@@ -58,7 +57,7 @@ public final class Main {
                 discordToken = dotenv.get("PUBLIC_DISCORD_TOKEN_V2");
                 dbName = dotenv.get("DB_NAME");
             }
-            final Database database = new Database(logger, username, address, port, password, dbName);
+            final Database database = new Database(logger, username, address, password, dbName);
             database.createDatabase();
             implHelper = new ImplHelper(logger, database.dao());
             commandLoader = new CommandLoader(implHelper, logger, database.dao());

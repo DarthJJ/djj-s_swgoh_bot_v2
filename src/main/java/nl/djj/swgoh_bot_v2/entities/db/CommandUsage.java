@@ -7,13 +7,13 @@ import nl.djj.swgoh_bot_v2.database.daos.CommandUsageDaoImpl;
 /**
  * @author DJJ
  **/
-@DatabaseTable(tableName = "commandUsage", daoClass = CommandUsageDaoImpl.class)
+@DatabaseTable(tableName = "command_usage", daoClass = CommandUsageDaoImpl.class)
 public class CommandUsage {
     @DatabaseField(columnName = "id", generatedId = true)
     private transient int identifier;
-    @DatabaseField(uniqueCombo = true)
+    @DatabaseField(uniqueCombo = true, columnName = "command_name")
     private transient String commandName;
-    @DatabaseField(uniqueCombo = true)
+    @DatabaseField(uniqueCombo = true, columnName = "flag_name")
     private transient String flagName;
     @DatabaseField
     private transient int usage;

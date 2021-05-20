@@ -77,6 +77,7 @@ public class Logger {
         if (debugMode) {
             System.out.println(ANSI_GREEN + DEBUG_PREFIX + SEPARATOR + className + SEPARATOR + message + ANSI_RESET);
         }
+        appendToFile(DEBUG_PREFIX, message);
     }
 
     /**

@@ -33,7 +33,6 @@ public final class MessageHelper {
     //    private static final String RARITY_ICON = "\u2605";
     private static final String TABLE_FORMAT = "%-15s%-3s%-15s%n";
     private static final String UNIT_TABLE_FORMAT = "%-30s%-3s%-15s%n";
-    private static final String HELP_TABLE_FORMAT = "%-10s%-3s%-15s%n";
     private static final String PROFILE_TABLE_FORMAT = "%-8s%-15s%-3s%-15s%n";
     private static final String GUILD_TABLE_FORMAT = "%-11s%-15s%-3s%-15s%n";
     private static final String GL_OVERVIEW_FORMAT = "%-28s%-5s%-5s%-5s%-6s%n";
@@ -90,20 +89,14 @@ public final class MessageHelper {
     public static List<MessageEmbed> formatGenericHelpText(final Map<String, List<BaseCommand>> helpText) {
         final List<MessageEmbed> returnValue = new ArrayList<>();
         EmbedBuilder builder = new EmbedBuilder(baseEmbed());
-        builder.appendDescription("Commands available for you");
         for (final Map.Entry<String, List<BaseCommand>> entry : helpText.entrySet()) {
-            final StringBuilder helpString = new StringBuilder();
+            builder.appendDescription("Commands available for you: \nCategory: " + entry.getKey());
             for (final BaseCommand command : entry.getValue()) {
-                helpString.append(String.format(HELP_TABLE_FORMAT, command.getName(), " = ", command.getDescription()));
+                builder.addField(new MessageEmbed.Field(command.getName(), "```" + command.getDescription() + "```", false));
             }
-            helpString.append('\n');
-            builder.addField(new MessageEmbed.Field(entry.getKey(), "```" + helpString + "```", false));
-            if (builder.length() >= MessageEmbed.EMBED_MAX_LENGTH_BOT - 500) {
-                returnValue.add(builder.build());
-                builder = new EmbedBuilder(baseEmbed());
-            }
+            returnValue.add(builder.build());
+            builder = new EmbedBuilder(baseEmbed());
         }
-        returnValue.add(builder.build());
         return returnValue;
     }
 

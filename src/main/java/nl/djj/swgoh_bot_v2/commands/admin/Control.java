@@ -50,7 +50,7 @@ public class Control extends BaseCommand {
             case FLAG_DISABLE -> this.implHelper.getCommandImpl().disableCommand(message);
             case FLAG_ENABLE_MAINTENANCE -> this.implHelper.getControlImpl().enableUpdateMode(message);
             case FLAG_DISABLE_MAINTENANCE -> this.implHelper.getControlImpl().disableUpdateMode(message);
-            default -> message.error("This is not a valid flag, use '" + message.getGuildPrefix() + " help " + name + "'");
+            default -> unknownFlag(message);
         }
     }
 }

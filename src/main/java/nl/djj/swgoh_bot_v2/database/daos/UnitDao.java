@@ -6,6 +6,7 @@ import nl.djj.swgoh_bot_v2.exceptions.InsertionError;
 import nl.djj.swgoh_bot_v2.exceptions.RetrieveError;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author DJJ
@@ -44,4 +45,11 @@ public interface UnitDao extends Dao<Unit, String> {
      * @throws RetrieveError when something goes wrong.
      */
     List<Unit> getAll() throws RetrieveError;
+
+    /**
+     * Gets all the units in the DB as a map.
+     * @return the map.
+     * @throws RetrieveError when something goes wrong.
+     */
+    Map<String, Unit> getAllAsMap() throws RetrieveError;
 }

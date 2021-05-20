@@ -25,16 +25,15 @@ public class Database {
      * @param logger   the logger.
      * @param username the username for DB access.
      * @param address  the DB location.
-     * @param port     the DB port.
      * @param password the password for DB access.
      * @param dbName   the DB to connect to.
      **/
-    public Database(final Logger logger, final String username, final String address, final String port, final String password, final String dbName) throws InitializationError {
+    public Database(final Logger logger, final String username, final String address, final String password, final String dbName) throws InitializationError {
         try {
             this.logger = logger;
             com.j256.ormlite.logger.Logger.setGlobalLogLevel(Log.Level.ERROR);
-            final String databaseUrl = String.format("jdbc:mysql://%s:%s/%s", address, port, dbName);
-            connection = new JdbcConnectionSource(databaseUrl, username, password);
+            final String databaseUrl = String.format("jdbc:postgresql://%s/%s?user=%s&password=%s&ssl=false", address, dbName, username, password);
+            connection = new JdbcConnectionSource(databaseUrl);
             dao = new DAO(connection);
         } catch (final SQLException exception) {
             throw new InitializationError(className, "Constructor", exception);

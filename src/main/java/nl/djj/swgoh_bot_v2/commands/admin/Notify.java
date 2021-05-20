@@ -42,7 +42,7 @@ public class Notify extends BaseCommand {
         if (FLAG_MESSAGE.equals(message.getFlag())) {
             this.implHelper.getControlImpl().sendMessage(message, String.join(" ", message.getArgs()));
         } else {
-            message.error("this is not a valid flag, use '" + message.getGuildPrefix() + "help " + name + "'");
+            unknownFlag(message);
         }
     }
 }
