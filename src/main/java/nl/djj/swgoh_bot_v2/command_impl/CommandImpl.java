@@ -73,4 +73,13 @@ public class CommandImpl extends BaseImpl {
             logger.error(className, "updateCommandUsage", error.getMessage());
         }
     }
+
+    /**
+     * Retrieves the enabled status for the flag.
+     * @param name then name of the flag.
+     * @return a boolean value.
+     */
+    public boolean getFlagEnabledStatus(final String name) {
+        return dao.flagDao().isEnabled(name);
+    }
 }

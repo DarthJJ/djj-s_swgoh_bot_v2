@@ -99,12 +99,12 @@ public class ProfileImpl extends BaseImpl {
     public void registerUser(final Message message) {
         try {
             if (dao.playerDao().exists(message.getAllycode())) {
-                message.getChannel().sendMessage("You are already registered").queue();
+                message.error("You are already registered");
                 return;
             }
             final int allycode = Integer.parseInt(String.join(", ", message.getArgs()).replace("-", ""));
             if (StringHelper.isInvalidAllycode(String.valueOf(allycode))) {
-                message.getChannel().sendMessage("Allycode validation error, syntax: <xxx-xxx-xxx>").queue();
+                message.error("Allycode validation error, syntax: xxx-xxx-xxx");
                 return;
             }
             this.httpHelper.getJsonObject(SwgohGgEndpoint.PLAYER_ENDPOINT.getUrl() + allycode);
@@ -240,10 +240,16 @@ public class ProfileImpl extends BaseImpl {
         double totalCompletion = 0.0;
         for (final GlRequirement requirement : requirements) {
             final PlayerUnit unit = dao.playerUnitDao().getForPlayer(player, requirement.getBaseId());
-            final long zetas = unit.getAbilities().stream().filter(unitAbility -> unitAbility.getBaseAbility().isZeta() && unitAbility.getBaseAbility().getTierMax() == unitAbility.getLevel()).count();
-            final GLUnit compare = new GLUnit(unit.getUnit().getName(), unit.getGear(), unit.getGearPieces(), unit.getRelic(), unit.getRarity(), (int) zetas);
-            compare.setCompleteness(CalculationHelper.calculateCompletion(unit.getRarity(), compare.getGearLevel(), compare.getRelicLevel(), unit.getGearPieces(),
-                    SwgohConstants.MAX_RARITY_LEVEL, requirement.getRelicLevel(), requirement.getGearLevel()));
+            final GLUnit compare;
+            if (unit == null) {
+                compare = new GLUnit(requirement.getBaseId(), 0, 0, 0, 0, 0);
+                compare.setCompleteness(0.0);
+            } else {
+                final long zetas = unit.getAbilities().stream().filter(unitAbility -> unitAbility.getBaseAbility().isZeta() && unitAbility.getBaseAbility().getTierMax() == unitAbility.getLevel()).count();
+                compare = new GLUnit(unit.getUnit().getName(), unit.getGear(), unit.getGearPieces(), unit.getRelic(), unit.getRarity(), (int) zetas);
+                compare.setCompleteness(CalculationHelper.calculateCompletion(unit.getRarity(), compare.getGearLevel(), compare.getRelicLevel(), unit.getGearPieces(),
+                        SwgohConstants.MAX_RARITY_LEVEL, requirement.getRelicLevel(), requirement.getGearLevel()));
+            }
             totalCompletion += compare.getCompleteness();
             compares.add(compare);
         }

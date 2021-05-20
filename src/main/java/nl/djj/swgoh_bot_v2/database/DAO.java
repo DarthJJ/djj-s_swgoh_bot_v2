@@ -22,6 +22,7 @@ public class DAO {
     private final transient GLRequirementDao glRequirement;
     private final transient CommandDao command;
     private final transient CommandUsageDao commandUsage;
+    private final transient FlagDao flagDao;
 
     /**
      * Constructor.
@@ -43,6 +44,7 @@ public class DAO {
         glRequirement = new GLRequirementDaoImpl(connection);
         command = new CommandDaoImpl(connection);
         commandUsage = new CommandUsageDaoImpl(connection);
+        flagDao = new FlagDaoImpl(connection);
 
     }
 
@@ -135,5 +137,12 @@ public class DAO {
      */
     public CommandUsageDao commandUsageDao() {
         return commandUsage;
+    }
+
+    /**
+     * @return the Flag DAO.
+     */
+    public FlagDao flagDao() {
+        return flagDao;
     }
 }
