@@ -135,14 +135,14 @@ public class PlayerUnitDaoImpl extends BaseDaoImpl<PlayerUnit, String> implement
 
     @Override
     public int getZetaCount(final Player player, @Nullable final String unitId) throws RetrieveError {
-        String query = "SELECT count() FROM unitAbilities as t1 " +
-                "INNER JOIN playerUnits AS t2 " +
+        String query = "SELECT count(*) FROM unit_abilities as t1 " +
+                "INNER JOIN player_units AS t2 " +
+                "ON t2.identifier = t1.player_unit " +
                 "INNER JOIN abilities AS t3 " +
-                "WHERE t2.player_id = ? " +
-                "AND t2.identifier = t1.playerUnit_id " +
-                "AND t3.identifier = t1.baseAbility_id " +
-                "AND t3.zeta = 1 " +
-                "AND t1.level = t3.tierMax ";
+                "ON t3.identifier = t1.base_ability " +
+                "WHERE t2.player_id = ? ::INTEGER " +
+                "AND t3.zeta = true " +
+                "AND t1.level = t3.tier_max ";
         if (unitId != null) {
             query += "AND t2.unit_id = ?";
         }
@@ -160,12 +160,12 @@ public class PlayerUnitDaoImpl extends BaseDaoImpl<PlayerUnit, String> implement
 
     @Override
     public int getGearCount(final Guild guild, final int gearLevel, @Nullable final String unitId) throws RetrieveError {
-        String query = "SELECT COUNT() " +
-                "FROM playerUnits AS t1 " +
+        String query = "SELECT COUNT(*) " +
+                "FROM player_units AS t1 " +
                 "INNER JOIN players AS t2 " +
-                "WHERE t2.guild_id = ? " +
-                "AND t2.allycode = t1.player_id " +
-                "AND t1.gear = ? ";
+                "ON t2.allycode = t1.player_id " +
+                "WHERE t2.guild_id = ? ::INTEGER " +
+                "AND t1.gear = ? ::INTEGER ";
         if (unitId != null) {
             query += "AND t1.unit_id = ?";
         }
@@ -185,16 +185,16 @@ public class PlayerUnitDaoImpl extends BaseDaoImpl<PlayerUnit, String> implement
 
     @Override
     public int getZetaCount(final Guild guild, @Nullable final String unitId) throws RetrieveError {
-        String query = "SELECT count() FROM unitAbilities as t1 " +
-                "INNER JOIN playerUnits AS t2  " +
+        String query = "SELECT count(*) FROM unit_abilities as t1 " +
+                "INNER JOIN player_units AS t2  " +
+                "ON t2.identifier = t1.player_unit " +
                 "INNER JOIN abilities AS t3  " +
+                "ON t3.identifier = t1.base_ability " +
                 "INNER JOIN players AS t4 " +
-                "WHERE t4.guild_id = ? " +
-                "AND t2.player_id = t4.allycode " +
-                "AND t2.identifier = t1.playerUnit_id  " +
-                "AND t3.identifier = t1.baseAbility_id " +
-                "AND t3.zeta = 1 " +
-                "AND t1.level = t3.tierMax ";
+                "ON t4.allycode = t2.player_id " +
+                "WHERE t4.guild_id = ? ::INTEGER " +
+                "AND t3.zeta = true " +
+                "AND t1.level = t3.tier_max ";
         if (unitId != null) {
             query += "AND t2.unit_id = ?";
         }
@@ -218,10 +218,10 @@ public class PlayerUnitDaoImpl extends BaseDaoImpl<PlayerUnit, String> implement
             for (final int level : SwgohConstants.RELIC_LEVELS) {
                 final String query = "SELECT count(t2.relic) AS relics " +
                         "FROM players AS t1 " +
-                        "INNER JOIN playerUnits AS t2 " +
-                        "WHERE t1.guild_id = ? " +
-                        "AND t2.player_id = t1.allycode " +
-                        "AND t2.relic = ? ";
+                        "INNER JOIN player_units AS t2 " +
+                        "ON t2.player_id = t1.allycode " +
+                        "WHERE t1.guild_id = ? ::INTEGER " +
+                        "AND t2.relic = ? ::INTEGER";
                 returnValue.put(level, (int) this.queryRawValue(query, Integer.toString(guild.getIdentifier()), Integer.toString(level)));
             }
             return returnValue;
@@ -235,10 +235,10 @@ public class PlayerUnitDaoImpl extends BaseDaoImpl<PlayerUnit, String> implement
         try {
             String query = "SELECT count(t2.relic) AS relics " +
                     "FROM players AS t1 " +
-                    "INNER JOIN playerUnits AS t2 " +
-                    "WHERE t1.guild_id = ? " +
-                    "AND t2.player_id = t1.allycode " +
-                    "AND t2.relic = ? ";
+                    "INNER JOIN player_units AS t2 " +
+                    "ON t2.player_id = t1.allycode " +
+                    "WHERE t1.guild_id = ? ::INTEGER " +
+                    "AND t2.relic = ? ::INTEGER ";
             if (baseId != null) {
                 query += "AND t2.unit_id = ?";
             }
@@ -257,12 +257,12 @@ public class PlayerUnitDaoImpl extends BaseDaoImpl<PlayerUnit, String> implement
     @Override
     public int getRarityCountForUnit(final Guild guild, final int level, @Nullable final String baseId) throws RetrieveError {
         try {
-            String query = "SELECT count(t2.rarity) AS rarity " +
+            String query = "SELECT count(t2.relic) AS relics " +
                     "FROM players AS t1 " +
-                    "INNER JOIN playerUnits AS t2 " +
-                    "WHERE t1.guild_id = ? " +
-                    "AND t2.player_id = t1.allycode " +
-                    "AND t2.rarity = ? ";
+                    "INNER JOIN player_units AS t2 " +
+                    "ON t2.player_id = t1.allycode " +
+                    "WHERE t1.guild_id = ? ::INTEGER " +
+                    "AND t2.relic = ? ::INTEGER ";
             if (baseId != null) {
                 query += "AND t2.unit_id = ?";
             }

@@ -13,7 +13,7 @@ public class Ability {
     private transient String identifier;
     @DatabaseField
     private transient String name;
-    @DatabaseField
+    @DatabaseField(columnName = "tier_max")
     private transient int tierMax;
     @DatabaseField
     private transient boolean zeta;
