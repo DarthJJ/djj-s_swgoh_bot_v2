@@ -25,9 +25,9 @@ public class AbbreviationDaoImpl extends BaseDaoImpl<Abbreviation, Integer> impl
     }
 
     @Override
-    public List<Abbreviation> getById(final int unitId) throws RetrieveError {
+    public List<Abbreviation> getById(final int identifier) throws RetrieveError {
         try {
-            return this.queryForEq("unitId", unitId);
+            return this.queryForEq("unitId", identifier);
         } catch (final SQLException exception) {
             throw new RetrieveError(CLASS_NAME, "getById", exception);
         }

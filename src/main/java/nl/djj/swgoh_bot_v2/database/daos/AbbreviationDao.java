@@ -19,11 +19,11 @@ public interface AbbreviationDao extends Dao<Abbreviation, Integer> {
 
     /**
      * Gets the abbreviation for the given unit id.
-     * @param id the unit id to search for.
+     * @param identifier the unit id to search for.
      * @return a list with abbreviations.
      * @throws RetrieveError when something goes wrong.
      */
-    List<Abbreviation> getById(final int id) throws RetrieveError;
+    List<Abbreviation> getById(final int identifier) throws RetrieveError;
 
     /**
      * Gets the abbreviation for the given unit.
