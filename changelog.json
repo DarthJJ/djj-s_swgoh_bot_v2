@@ -1,15 +1,17 @@
 {
-  "version": 1.1,
+  "version": 2.0,
   "add": [
-    "first functionality"
+    "Flag function toggles"
   ],
   "change": [
-    "version number to double"
+    "Message formatting for 'profile gl'"
   ],
   "fix": [
-    ""
+    "guild compare",
+    "profile compare",
+    "notify command"
   ],
   "remove": [
-    ""
+    "unnecessary icons in messages"
   ]
 }
