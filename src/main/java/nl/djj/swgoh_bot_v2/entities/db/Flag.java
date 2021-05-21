@@ -51,4 +51,8 @@ public class Flag {
     public boolean isEnabled() {
         return enabled;
     }
+
+    public String getIdentifier() {
+        return identifier;
+    }
 }
