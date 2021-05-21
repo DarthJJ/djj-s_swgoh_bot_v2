@@ -72,7 +72,6 @@ public class UpdateImpl extends BaseImpl {
         logger.info(className, "Updating the GL Requirements");
         final JSONObject requirementData;
         try {
-            dao.glRequirementDao().clear();
             requirementData = httpHelper.getJsonObject(SwgohGgEndpoint.GL_CHECKLIST_ENDPOINT.getUrl());
             final JSONArray unitReqData = requirementData.getJSONArray("units");
             for (int i = 0; i < unitReqData.length(); i++) {
@@ -89,7 +88,7 @@ public class UpdateImpl extends BaseImpl {
             }
             logger.info(className, "Done updating the GL Requirements");
             message.done("Units updated!");
-        } catch (final InsertionError | HttpRetrieveError | DeletionError error) {
+        } catch (final InsertionError | HttpRetrieveError error) {
             logger.error(className, "updateGLRequirements", error.getMessage());
             message.error(error.getMessage());
         }

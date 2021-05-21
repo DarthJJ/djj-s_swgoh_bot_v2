@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.hooks.EventListener;
 import nl.djj.swgoh_bot_v2.Main;
 import nl.djj.swgoh_bot_v2.helpers.Logger;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author DJJ
@@ -25,7 +26,7 @@ public class ReadyListener implements EventListener {
      * @param event the event fired.
      */
     @Override
-    public void onEvent(final GenericEvent event) {
+    public void onEvent(final @NotNull GenericEvent event) {
         if (event instanceof ReadyEvent) {
             logger.info(className, "API Ready");
         }

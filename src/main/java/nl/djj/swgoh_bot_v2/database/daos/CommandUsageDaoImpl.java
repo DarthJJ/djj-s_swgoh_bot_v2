@@ -7,6 +7,7 @@ import nl.djj.swgoh_bot_v2.exceptions.InsertionError;
 import nl.djj.swgoh_bot_v2.exceptions.RetrieveError;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,10 +27,14 @@ public class CommandUsageDaoImpl extends BaseDaoImpl<CommandUsage, Integer> impl
     @Override
     public CommandUsage getByName(final String commandName, final String flagName) throws RetrieveError {
         try {
-            return this.queryForFieldValuesArgs(Map.of(
-                    "commandName", commandName,
-                    "flagName", flagName
-            )).get(0);
+            final List<CommandUsage> result = this.queryForFieldValuesArgs(Map.of(
+                    "command_name", commandName,
+                    "flag_name", flagName
+            ));
+            if (result != null && !result.isEmpty()) {
+                return result.get(0);
+            }
+            return new CommandUsage(commandName, flagName);
         } catch (final SQLException | IndexOutOfBoundsException exception) {
             throw new RetrieveError(CLASS_NAME, "getByName", exception);
         }

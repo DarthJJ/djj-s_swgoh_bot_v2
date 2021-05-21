@@ -22,6 +22,7 @@ public class DAO {
     private final transient GLRequirementDao glRequirement;
     private final transient CommandDao command;
     private final transient CommandUsageDao commandUsage;
+    private final transient FlagDao flagDao;
 
     /**
      * Constructor.
@@ -37,11 +38,13 @@ public class DAO {
         player = new PlayerDaoImpl(connection);
         playerUnit = new PlayerUnitDaoImpl(connection);
         unitAbility = new UnitAbilityDaoImpl(connection);
+        unitAbility.setObjectCache(true);
         config = new ConfigDaoImpl(connection);
         presence = new PresenceDaoImpl(connection);
         glRequirement = new GLRequirementDaoImpl(connection);
         command = new CommandDaoImpl(connection);
         commandUsage = new CommandUsageDaoImpl(connection);
+        flagDao = new FlagDaoImpl(connection);
 
     }
 
@@ -134,5 +137,12 @@ public class DAO {
      */
     public CommandUsageDao commandUsageDao() {
         return commandUsage;
+    }
+
+    /**
+     * @return the Flag DAO.
+     */
+    public FlagDao flagDao() {
+        return flagDao;
     }
 }

@@ -2,7 +2,6 @@ package nl.djj.swgoh_bot_v2.database.daos;
 
 import com.j256.ormlite.dao.Dao;
 import nl.djj.swgoh_bot_v2.entities.db.GlRequirement;
-import nl.djj.swgoh_bot_v2.exceptions.DeletionError;
 import nl.djj.swgoh_bot_v2.exceptions.InsertionError;
 import nl.djj.swgoh_bot_v2.exceptions.RetrieveError;
 
@@ -32,10 +31,5 @@ public interface GLRequirementDao extends Dao<GlRequirement, Integer> {
      */
     void save(final GlRequirement requirement) throws InsertionError;
 
-    /**
-     * Clears the table.
-     * @throws DeletionError when something goes wrong.
-     */
-    void clear() throws DeletionError;
 
 }

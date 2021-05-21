@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public class Presence {
     @DatabaseField(columnName = "id", generatedId = true)
     private transient int identifier;
-    @DatabaseField
+    @DatabaseField(columnName = "user_id")
     private transient String userId;
     @DatabaseField
     private transient String username;

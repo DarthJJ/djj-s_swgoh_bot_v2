@@ -3,9 +3,7 @@ package nl.djj.swgoh_bot_v2.command_impl;
 import nl.djj.swgoh_bot_v2.config.SwgohConstants;
 import nl.djj.swgoh_bot_v2.database.DAO;
 import nl.djj.swgoh_bot_v2.entities.compare.ProfileCompare;
-import nl.djj.swgoh_bot_v2.entities.db.Player;
-import nl.djj.swgoh_bot_v2.entities.db.PlayerUnit;
-import nl.djj.swgoh_bot_v2.entities.db.UnitAbility;
+import nl.djj.swgoh_bot_v2.entities.db.*;
 import nl.djj.swgoh_bot_v2.exceptions.InsertionError;
 import nl.djj.swgoh_bot_v2.exceptions.RetrieveError;
 import nl.djj.swgoh_bot_v2.helpers.Logger;
@@ -118,10 +116,14 @@ public class UnitImpl extends BaseImpl {
      * @param player      the player.
      * @throws RetrieveError  When retrieving from the DB goes wrong.
      * @throws InsertionError When storing in the DB goes wrong.
+     * @return an Map with two lists.
      */
-    public void insertUnits(final JSONArray playerUnits, final Player player) throws RetrieveError, InsertionError {
-        final List<UnitAbility> abilities = new ArrayList<>();
+    public Map<String, List<?>> jsonToPlayerUnits(final JSONArray playerUnits, final Player player) throws RetrieveError {
+        logger.debug(className, "Creating playerUnits from JSON data");
         final List<PlayerUnit> units = new ArrayList<>();
+        final List<UnitAbility> abilities = new ArrayList<>();
+        final Map<String, Unit> baseUnits = dao.unitDao().getAllAsMap();
+        final Map<String, Ability> baseAbilities = dao.abilityDao().getAll();
         for (int i = 0; i < playerUnits.length(); i++) {
             final JSONObject unitData = playerUnits.optJSONObject(i).getJSONObject("data");
             final String baseId = unitData.getString("base_id");
@@ -138,20 +140,33 @@ public class UnitImpl extends BaseImpl {
                     gearPieces++;
                 }
             }
-            final PlayerUnit playerUnit = new PlayerUnit(player, dao.unitDao().getById(baseId), rarity, galacticPower, gear, gearPieces, relic, speed);
-            units.add(playerUnit);
+            final PlayerUnit playerUnit = new PlayerUnit(player, baseUnits.get(baseId), rarity, galacticPower, gear, gearPieces, relic, speed);
             for (int j = 0; j < abilityData.length(); j++) {
                 final StringBuilder abilityId = new StringBuilder(abilityData.getJSONObject(j).getString("id"));
                 if ("uniqueskill_GALACTICLEGEND01".equals(abilityId.toString())) {
-                    abilityId.append('_').append(baseId);
+                    abilityId.append('_').append(playerUnit.getUnit().getBaseId());
                 }
                 final int level = abilityData.getJSONObject(j).getInt("ability_tier");
-                abilities.add(new UnitAbility(playerUnit, dao.abilityDao().getById(abilityId.toString()), level));
+                abilities.add(new UnitAbility(playerUnit, baseAbilities.get(abilityId.toString()), level));
             }
+            units.add(playerUnit);
         }
+        return Map.of("units", units, "abilities", abilities);
+    }
+
+    /**
+     * Adds the playerUnits to the DB.
+     *
+     * @param playerUnits the units,
+     * @param player      the player.
+     * @throws RetrieveError  When retrieving from the DB goes wrong.
+     * @throws InsertionError When storing in the DB goes wrong.
+     */
+    public void insertUnits(final JSONArray playerUnits, final Player player) throws RetrieveError, InsertionError {
+        final Map<String, List<?>> returnValue = jsonToPlayerUnits(playerUnits, player);
         logger.debug(className, "Inserting playerUnits in the DB");
-        dao.playerUnitDao().saveAll(units);
+        dao.playerUnitDao().saveAll((List<PlayerUnit>) returnValue.get("units"));
         logger.debug(className, "Inserting unit abilities in the DB");
-        dao.unitAbilityDao().saveAll(abilities);
+        dao.unitAbilityDao().saveAll((List<UnitAbility>) returnValue.get("abilities"));
     }
 }

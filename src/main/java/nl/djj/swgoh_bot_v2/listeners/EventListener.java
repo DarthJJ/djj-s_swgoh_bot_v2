@@ -56,13 +56,17 @@ public class EventListener extends ListenerAdapter {
         final Message message = Message.initFromEvent(event, guildPrefix);
         message.setAllycode(implHelper.getProfileImpl().getAllycodeByDiscord(message.getAuthorId()));
         message.working();
-        final BaseCommand command = commands.getCommand(message.getCommand(), event.getAuthor().getId().equals(BotConstants.OWNER_ID));
+        final BaseCommand command = commands.getCommand(message.getCommand(), event.getAuthor().getId());
         if (command == null) {
             message.error("This command doesn't exist or isn't enabled, please use: '" + guildPrefix + "help");
             return;
         }
         if (command.isFlagRequired() && (message.getFlag().isEmpty() || !command.getFlags().containsKey(message.getFlag()))) {
             command.unknownFlag(message);
+            return;
+        }
+        if (command.isFlagRequired() && !message.getFlag().isEmpty() && !commands.isFlagEnabled(command, message.getFlag(), event.getAuthor().getId())) {
+            message.error("This flag isn't enabled, please use: '" + guildPrefix + "help " + command.getName() + "', to see what is enabled for you");
             return;
         }
         if (command.getFlags().containsKey(message.getFlag()) && command.getFlags().get(message.getFlag()).isRegistrationNeeded() && message.getAllycode() == -1) {

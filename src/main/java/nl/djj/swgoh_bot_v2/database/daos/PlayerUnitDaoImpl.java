@@ -4,6 +4,7 @@ import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.support.ConnectionSource;
+import nl.djj.swgoh_bot_v2.Main;
 import nl.djj.swgoh_bot_v2.config.SwgohConstants;
 import nl.djj.swgoh_bot_v2.entities.db.Guild;
 import nl.djj.swgoh_bot_v2.entities.db.Player;
@@ -12,9 +13,14 @@ import nl.djj.swgoh_bot_v2.exceptions.InsertionError;
 import nl.djj.swgoh_bot_v2.exceptions.RetrieveError;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.concurrent.Callable;
 
 /**
  * @author DJJ
@@ -42,13 +48,58 @@ public class PlayerUnitDaoImpl extends BaseDaoImpl<PlayerUnit, String> implement
     @Override
     public void saveAll(final List<PlayerUnit> playerUnits) throws InsertionError {
         try {
-            this.callBatchTasks((Callable<Void>) () -> {
-                for (final PlayerUnit playerUnit : playerUnits) {
-                    this.save(playerUnit);
+            final File file = new File("player_units.csv");
+            try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(file.getAbsolutePath()), StandardCharsets.UTF_8)) {
+                for (final PlayerUnit unit : playerUnits) {
+                    writer.append(unit.getIdentifier());
+                    writer.append(";");
+                    writer.append(Integer.toString(unit.getPlayer().getAllycode()));
+                    writer.append(";");
+                    writer.append(unit.getUnit().getBaseId());
+                    writer.append(";");
+                    writer.append(Integer.toString(unit.getRarity()));
+                    writer.append(";");
+                    writer.append(Integer.toString(unit.getGalacticPower()));
+                    writer.append(";");
+                    writer.append(Integer.toString(unit.getGear()));
+                    writer.append(";");
+                    writer.append(Integer.toString(unit.getGearPieces()));
+                    writer.append(";");
+                    writer.append(Integer.toString(unit.getRelic()));
+                    writer.append(";");
+                    writer.append(Integer.toString(unit.getSpeed()));
+                    writer.append("\n");
                 }
-                return null;
-            });
-        } catch (final SQLException exception) {
+                writer.flush();
+            }
+            final String query = String.format("COPY player_units_x(identifier, player_id, unit_id, rarity, galactic_power, gear, gear_pieces, relic, speed) " +
+                    "FROM '%s'" +
+                    "DELIMITER ';'" +
+                    "CSV", file.getAbsolutePath());
+            if (System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("nux")) {
+                this.executeRaw("CREATE TEMP TABLE player_units_x AS SELECT * FROM player_units LIMIT 0");
+                this.executeRaw(query);
+                this.executeRaw("INSERT INTO player_units (identifier, player_id, unit_id, rarity, galactic_power, gear, gear_pieces, relic, speed) " +
+                        "SELECT identifier, player_id, unit_id, rarity, galactic_power, gear, gear_pieces, relic, speed " +
+                        "FROM player_units_x " +
+                        "ON CONFLICT (identifier) " +
+                        "DO " +
+                        "UPDATE " +
+                        "SET " +
+                        "player_id = excluded.player_id," +
+                        "unit_id = excluded.unit_id," +
+                        "rarity = excluded.rarity," +
+                        "galactic_power = excluded.galactic_power," +
+                        "gear = excluded.gear," +
+                        "gear_pieces = excluded.gear_pieces," +
+                        "relic = excluded.relic," +
+                        "speed = excluded.speed;");
+                this.executeRaw("DROP TABLE player_units_x");
+                file.delete();
+            } else {
+                Main.getLogger().debug(CLASS_NAME, "Not inserting unitAbilities due to running on Windows.");
+            }
+        } catch (final SQLException | IOException exception) {
             throw new InsertionError(CLASS_NAME, "saveAll", exception);
         }
     }
@@ -84,14 +135,14 @@ public class PlayerUnitDaoImpl extends BaseDaoImpl<PlayerUnit, String> implement
 
     @Override
     public int getZetaCount(final Player player, @Nullable final String unitId) throws RetrieveError {
-        String query = "SELECT count() FROM unitAbilities as t1 " +
-                "INNER JOIN playerUnits AS t2 " +
+        String query = "SELECT count(*) FROM unit_abilities as t1 " +
+                "INNER JOIN player_units AS t2 " +
+                "ON t2.identifier = t1.player_unit " +
                 "INNER JOIN abilities AS t3 " +
-                "WHERE t2.player_id = ? " +
-                "AND t2.identifier = t1.playerUnit_id " +
-                "AND t3.identifier = t1.baseAbility_id " +
-                "AND t3.zeta = 1 " +
-                "AND t1.level = t3.tierMax ";
+                "ON t3.identifier = t1.base_ability " +
+                "WHERE t2.player_id = ? ::INTEGER " +
+                "AND t3.zeta = true " +
+                "AND t1.level = t3.tier_max ";
         if (unitId != null) {
             query += "AND t2.unit_id = ?";
         }
@@ -109,12 +160,12 @@ public class PlayerUnitDaoImpl extends BaseDaoImpl<PlayerUnit, String> implement
 
     @Override
     public int getGearCount(final Guild guild, final int gearLevel, @Nullable final String unitId) throws RetrieveError {
-        String query = "SELECT COUNT() " +
-                "FROM playerUnits AS t1 " +
+        String query = "SELECT COUNT(*) " +
+                "FROM player_units AS t1 " +
                 "INNER JOIN players AS t2 " +
-                "WHERE t2.guild_id = ? " +
-                "AND t2.allycode = t1.player_id " +
-                "AND t1.gear = ? ";
+                "ON t2.allycode = t1.player_id " +
+                "WHERE t2.guild_id = ? ::INTEGER " +
+                "AND t1.gear = ? ::INTEGER ";
         if (unitId != null) {
             query += "AND t1.unit_id = ?";
         }
@@ -134,16 +185,16 @@ public class PlayerUnitDaoImpl extends BaseDaoImpl<PlayerUnit, String> implement
 
     @Override
     public int getZetaCount(final Guild guild, @Nullable final String unitId) throws RetrieveError {
-        String query = "SELECT count() FROM unitAbilities as t1 " +
-                "INNER JOIN playerUnits AS t2  " +
+        String query = "SELECT count(*) FROM unit_abilities as t1 " +
+                "INNER JOIN player_units AS t2  " +
+                "ON t2.identifier = t1.player_unit " +
                 "INNER JOIN abilities AS t3  " +
+                "ON t3.identifier = t1.base_ability " +
                 "INNER JOIN players AS t4 " +
-                "WHERE t4.guild_id = ? " +
-                "AND t2.player_id = t4.allycode " +
-                "AND t2.identifier = t1.playerUnit_id  " +
-                "AND t3.identifier = t1.baseAbility_id " +
-                "AND t3.zeta = 1 " +
-                "AND t1.level = t3.tierMax ";
+                "ON t4.allycode = t2.player_id " +
+                "WHERE t4.guild_id = ? ::INTEGER " +
+                "AND t3.zeta = true " +
+                "AND t1.level = t3.tier_max ";
         if (unitId != null) {
             query += "AND t2.unit_id = ?";
         }
@@ -167,10 +218,10 @@ public class PlayerUnitDaoImpl extends BaseDaoImpl<PlayerUnit, String> implement
             for (final int level : SwgohConstants.RELIC_LEVELS) {
                 final String query = "SELECT count(t2.relic) AS relics " +
                         "FROM players AS t1 " +
-                        "INNER JOIN playerUnits AS t2 " +
-                        "WHERE t1.guild_id = ? " +
-                        "AND t2.player_id = t1.allycode " +
-                        "AND t2.relic = ? ";
+                        "INNER JOIN player_units AS t2 " +
+                        "ON t2.player_id = t1.allycode " +
+                        "WHERE t1.guild_id = ? ::INTEGER " +
+                        "AND t2.relic = ? ::INTEGER";
                 returnValue.put(level, (int) this.queryRawValue(query, Integer.toString(guild.getIdentifier()), Integer.toString(level)));
             }
             return returnValue;
@@ -184,10 +235,10 @@ public class PlayerUnitDaoImpl extends BaseDaoImpl<PlayerUnit, String> implement
         try {
             String query = "SELECT count(t2.relic) AS relics " +
                     "FROM players AS t1 " +
-                    "INNER JOIN playerUnits AS t2 " +
-                    "WHERE t1.guild_id = ? " +
-                    "AND t2.player_id = t1.allycode " +
-                    "AND t2.relic = ? ";
+                    "INNER JOIN player_units AS t2 " +
+                    "ON t2.player_id = t1.allycode " +
+                    "WHERE t1.guild_id = ? ::INTEGER " +
+                    "AND t2.relic = ? ::INTEGER ";
             if (baseId != null) {
                 query += "AND t2.unit_id = ?";
             }
@@ -206,12 +257,12 @@ public class PlayerUnitDaoImpl extends BaseDaoImpl<PlayerUnit, String> implement
     @Override
     public int getRarityCountForUnit(final Guild guild, final int level, @Nullable final String baseId) throws RetrieveError {
         try {
-            String query = "SELECT count(t2.rarity) AS rarity " +
+            String query = "SELECT count(t2.relic) AS relics " +
                     "FROM players AS t1 " +
-                    "INNER JOIN playerUnits AS t2 " +
-                    "WHERE t1.guild_id = ? " +
-                    "AND t2.player_id = t1.allycode " +
-                    "AND t2.rarity = ? ";
+                    "INNER JOIN player_units AS t2 " +
+                    "ON t2.player_id = t1.allycode " +
+                    "WHERE t1.guild_id = ? ::INTEGER " +
+                    "AND t2.relic = ? ::INTEGER ";
             if (baseId != null) {
                 query += "AND t2.unit_id = ?";
             }

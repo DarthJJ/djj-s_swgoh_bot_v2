@@ -6,6 +6,7 @@ log
 *.sqlite-shm
 *.sqlite-wal
 .env
+*.csv
 # Ignore Gradle GUI config
 gradle-app.setting
 

@@ -12,7 +12,9 @@ import nl.djj.swgoh_bot_v2.commands.moderation.Config;
 import nl.djj.swgoh_bot_v2.commands.swgoh.Guild;
 import nl.djj.swgoh_bot_v2.commands.swgoh.Need;
 import nl.djj.swgoh_bot_v2.commands.swgoh.Profile;
+import nl.djj.swgoh_bot_v2.config.BotConstants;
 import nl.djj.swgoh_bot_v2.database.DAO;
+import nl.djj.swgoh_bot_v2.entities.Flag;
 import nl.djj.swgoh_bot_v2.entities.Message;
 import nl.djj.swgoh_bot_v2.entities.db.Command;
 import nl.djj.swgoh_bot_v2.exceptions.InitializationError;
@@ -77,6 +79,11 @@ public class CommandLoader {
             if (!dao.commandDao().exist(command.getName())) {
                 dao.commandDao().save(new Command(command.getName(), false));
             }
+            for (final Map.Entry<String, Flag> entry : command.getFlags().entrySet()) {
+                if (!dao.flagDao().exists(entry.getValue().getName())) {
+                    dao.flagDao().save(new nl.djj.swgoh_bot_v2.entities.db.Flag(entry.getValue().getName(), command.getName(), false));
+                }
+            }
             commands.put(command.getName().toLowerCase(Locale.ENGLISH), command);
             logger.info(className, "Loaded command: " + command.getName());
             aliases.put(command.getName().toLowerCase(Locale.ENGLISH), command.getName().toLowerCase(Locale.ENGLISH));
@@ -96,7 +103,17 @@ public class CommandLoader {
             return;
         }
         if (command != null) {
-            message.done(MessageHelper.formatSpecificHelpText(command.getName(), command.getDescription(), command.getFlags(), message.getGuildPrefix()));
+            if (this.implHelper.getProfileImpl().isAllowed(message.getAuthorId(), command.getRequiredLevel())) {
+                final Map<String, Flag> flags = new LinkedHashMap<>();
+                for (final Map.Entry<String, Flag> entry : command.getFlags().entrySet()){
+                    if (this.implHelper.getCommandImpl().getFlagEnabledStatus(entry.getKey())){
+                        flags.put(entry.getKey(), entry.getValue());
+                    }
+                }
+                message.done(MessageHelper.formatSpecificHelpText(command.getName(), command.getDescription(), flags, message.getGuildPrefix()));
+                return;
+            }
+            message.error("You are not authorized for this command.\nNaughty boy / girl / Black Hawk");
             return;
         }
         final Map<String, List<BaseCommand>> helpText = new ConcurrentHashMap<>();
@@ -130,15 +147,26 @@ public class CommandLoader {
     }
 
     /**
-     * @param name          the name to search for.
-     * @param ownerOverride if the issuer is the botOwner.
+     * @param name     the name to search for.
+     * @param authorId the authorId.
      * @return the command found.
      */
-    public BaseCommand getCommand(final String name, final boolean ownerOverride) {
+    public BaseCommand getCommand(final String name, final String authorId) {
         final BaseCommand command = getCommand(name);
-        if (command != null && (this.implHelper.getCommandImpl().getCommandEnabledStatus(command.getName()) || ownerOverride)) {
+        if (command != null && (this.implHelper.getCommandImpl().getCommandEnabledStatus(command.getName()) || authorId.equals(BotConstants.OWNER_ID))) {
             return command;
         }
         return null;
+    }
+
+    /**
+     * @param command the baseCommand.
+     * @param name the name of the flag.
+     * @param authorId the author id.
+     * @return if enabled yes or no.
+     */
+    public boolean isFlagEnabled(final BaseCommand command, final String name, final String authorId) {
+        final Flag flag = command.getFlags().get(name);
+        return flag != null && (this.implHelper.getCommandImpl().getFlagEnabledStatus(name) || authorId.equals(BotConstants.OWNER_ID));
     }
 }

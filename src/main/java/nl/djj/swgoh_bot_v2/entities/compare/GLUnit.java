@@ -4,7 +4,8 @@ package nl.djj.swgoh_bot_v2.entities.compare;
  * @author DJJ
  **/
 public class GLUnit {
-    private final transient String unitName;
+    private final transient String baseId;
+    private final transient String abbreviation;
     private final transient int gearLevel;
     private final transient int gearPieces;
     private final transient int relicLevel;
@@ -15,15 +16,17 @@ public class GLUnit {
     /**
      * Constructor.
      *
-     * @param unitName   the unit name.
-     * @param gearLevel  the gearLevel.
-     * @param gearPieces the gearPieces.
-     * @param relicLevel the relicLevel.
-     * @param rarity     the rarity level.
-     * @param zetas      the zetas.
+     * @param baseId       the unit name.
+     * @param abbreviation the unit abbreviation.
+     * @param gearLevel    the gearLevel.
+     * @param gearPieces   the gearPieces.
+     * @param relicLevel   the relicLevel.
+     * @param rarity       the rarity level.
+     * @param zetas        the zetas.
      */
-    public GLUnit(final String unitName, final int gearLevel, final int gearPieces, final int relicLevel, final int rarity, final int zetas) {
-        this.unitName = unitName;
+    public GLUnit(final String baseId, final String abbreviation, final int gearLevel, final int gearPieces, final int relicLevel, final int rarity, final int zetas) {
+        this.baseId = baseId;
+        this.abbreviation = abbreviation;
         this.gearLevel = gearLevel;
         this.gearPieces = gearPieces;
         this.relicLevel = relicLevel;
@@ -31,8 +34,8 @@ public class GLUnit {
         this.zetas = zetas;
     }
 
-    public String getUnitName() {
-        return unitName;
+    public String getBaseId() {
+        return baseId;
     }
 
     public void setCompleteness(final double completeness) {
@@ -57,6 +60,10 @@ public class GLUnit {
 
     public int getZetas() {
         return zetas;
+    }
+
+    public String getAbbreviation() {
+        return abbreviation;
     }
 
     public double getCompleteness() {

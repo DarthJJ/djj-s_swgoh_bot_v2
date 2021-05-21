@@ -9,7 +9,7 @@ import nl.djj.swgoh_bot_v2.database.daos.PlayerUnitDaoImpl;
 /**
  * @author DJJ
  **/
-@DatabaseTable(tableName = "playerUnits", daoClass = PlayerUnitDaoImpl.class)
+@DatabaseTable(tableName = "player_units", daoClass = PlayerUnitDaoImpl.class)
 public class PlayerUnit {
     @DatabaseField(id = true)
     private transient String identifier;
@@ -19,17 +19,17 @@ public class PlayerUnit {
     private transient Unit unit;
     @DatabaseField
     private transient int rarity;
-    @DatabaseField
+    @DatabaseField(columnName = "galactic_power")
     private transient int galacticPower;
     @DatabaseField
     private transient int gear;
-    @DatabaseField
+    @DatabaseField(columnName = "gear_pieces")
     private transient int gearPieces;
     @DatabaseField
     private transient int relic;
     @DatabaseField
     private transient int speed;
-    @ForeignCollectionField()
+    @ForeignCollectionField(eager = true)
     private transient ForeignCollection<UnitAbility> abilities;
 
     /**
@@ -41,14 +41,15 @@ public class PlayerUnit {
 
     /**
      * Constructor.
-     * @param player the owner.
-     * @param unit the base unit.
-     * @param rarity the rarity level.
+     *
+     * @param player        the owner.
+     * @param unit          the base unit.
+     * @param rarity        the rarity level.
      * @param galacticPower the GP.
-     * @param gear the gear level.
-     * @param gearPieces the equipped gear pieces.
-     * @param relic the relic level.
-     * @param speed the speed.
+     * @param gear          the gear level.
+     * @param gearPieces    the equipped gear pieces.
+     * @param relic         the relic level.
+     * @param speed         the speed.
      */
     public PlayerUnit(final Player player, final Unit unit, final int rarity, final int galacticPower, final int gear, final int gearPieces, final int relic, final int speed) {
         this.identifier = unit.getBaseId() + "_" + player.getAllycode();
@@ -105,4 +106,5 @@ public class PlayerUnit {
     public String getIdentifier() {
         return identifier;
     }
+
 }

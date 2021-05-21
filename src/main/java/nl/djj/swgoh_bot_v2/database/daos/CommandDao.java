@@ -29,7 +29,7 @@ public interface CommandDao extends Dao<Command, String> {
     void save(final Command command) throws InsertionError;
 
     /**
-     * Gets an command by name.
+     * Gets a command by name.
      * @param name the name of the command.
      * @return the command object.
      * @throws RetrieveError when something goes wrong.

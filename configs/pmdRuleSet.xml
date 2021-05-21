@@ -33,6 +33,7 @@
         <exclude name="AvoidThrowingRawExceptionTypes"/>
         <exclude name="GodClass"/>
         <exclude name="DataClass"/>
+        <exclude name="AvoidDeeplyNestedIfStmts"/>
     </rule>
     <rule ref="category/java/multithreading.xml">
         <exclude name="UseConcurrentHashMap"/>

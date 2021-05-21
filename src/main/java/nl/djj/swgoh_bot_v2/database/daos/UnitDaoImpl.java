@@ -9,7 +9,9 @@ import nl.djj.swgoh_bot_v2.exceptions.RetrieveError;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
 /**
  * @author DJJ
@@ -61,6 +63,15 @@ public class UnitDaoImpl extends BaseDaoImpl<Unit, String> implements UnitDao {
     public List<Unit> getAll() throws RetrieveError {
         try {
             return this.queryForAll();
+        } catch (final SQLException exception) {
+            throw new RetrieveError(CLASS_NAME, "getAll", exception);
+        }
+    }
+
+    @Override
+    public Map<String, Unit> getAllAsMap() throws RetrieveError {
+        try {
+            return this.queryForAll().stream().collect(Collectors.toMap(Unit::getBaseId, unit -> unit));
         } catch (final SQLException exception) {
             throw new RetrieveError(CLASS_NAME, "getAll", exception);
         }

@@ -27,16 +27,11 @@ public final class MessageHelper {
     private static final String REACTION_POSITIVE = "U+1F44D";
     private static final String REACTION_ERROR = "U+274C";
     private static final String REACTION_DONE = "U+2705";
-    private static final String GEAR_ICON = "\u2699";
-    private static final String RELIC_ICON = "\uD83D\uDCDC";
-    private static final String ZETA_ICON = "\u2742";
-    //    private static final String RARITY_ICON = "\u2605";
     private static final String TABLE_FORMAT = "%-15s%-3s%-15s%n";
     private static final String UNIT_TABLE_FORMAT = "%-30s%-3s%-15s%n";
-    private static final String HELP_TABLE_FORMAT = "%-10s%-3s%-15s%n";
     private static final String PROFILE_TABLE_FORMAT = "%-8s%-15s%-3s%-15s%n";
     private static final String GUILD_TABLE_FORMAT = "%-11s%-15s%-3s%-15s%n";
-    private static final String GL_OVERVIEW_FORMAT = "%-28s%-5s%-5s%-5s%-6s%n";
+    private static final String GL_OVERVIEW_FORMAT = "%-10s%-5s%-5s%-5s%-6s%n";
 
     /**
      * Constructor.
@@ -90,20 +85,14 @@ public final class MessageHelper {
     public static List<MessageEmbed> formatGenericHelpText(final Map<String, List<BaseCommand>> helpText) {
         final List<MessageEmbed> returnValue = new ArrayList<>();
         EmbedBuilder builder = new EmbedBuilder(baseEmbed());
-        builder.appendDescription("Commands available for you");
         for (final Map.Entry<String, List<BaseCommand>> entry : helpText.entrySet()) {
-            final StringBuilder helpString = new StringBuilder();
+            builder.appendDescription("Commands available for you: \nCategory: " + entry.getKey());
             for (final BaseCommand command : entry.getValue()) {
-                helpString.append(String.format(HELP_TABLE_FORMAT, command.getName(), " = ", command.getDescription()));
+                builder.addField(new MessageEmbed.Field(command.getName(), "```" + command.getDescription() + "```", false));
             }
-            helpString.append('\n');
-            builder.addField(new MessageEmbed.Field(entry.getKey(), "```" + helpString + "```", false));
-            if (builder.length() >= MessageEmbed.EMBED_MAX_LENGTH_BOT - 500) {
-                returnValue.add(builder.build());
-                builder = new EmbedBuilder(baseEmbed());
-            }
+            returnValue.add(builder.build());
+            builder = new EmbedBuilder(baseEmbed());
         }
-        returnValue.add(builder.build());
         return returnValue;
     }
 
@@ -138,12 +127,12 @@ public final class MessageHelper {
     public static MessageEmbed formatConfig(final Config config) {
         final EmbedBuilder builder = new EmbedBuilder(baseEmbed());
         builder.appendDescription("Bot configuration");
-        builder.addField(new MessageEmbed.Field("SWGOH ID", Integer.toString(config.getSwgohId()), false));
-        builder.addField(new MessageEmbed.Field("Prefix", config.getPrefix(), false));
-        builder.addField(new MessageEmbed.Field("ModRole", config.getModerationRole(), false));
-        builder.addField(new MessageEmbed.Field("Presence Ignore role", config.getIgnoreRole(), false));
-        builder.addField(new MessageEmbed.Field("BotNotifyChannel", config.getNotifyChannel(), false));
-        builder.addField(new MessageEmbed.Field("BotLoggingChannel", config.getBotLoggingChannel(), false));
+        builder.addField(new MessageEmbed.Field("Guild SWGOH ID (guildId)", Integer.toString(config.getSwgohId()), false));
+        builder.addField(new MessageEmbed.Field("Bot Prefix (prefix)", config.getPrefix(), false));
+        builder.addField(new MessageEmbed.Field("ModRole (modRole)", config.getModerationRole(), false));
+        builder.addField(new MessageEmbed.Field("Presence Ignore role (ignoreRole)", config.getIgnoreRole(), false));
+        builder.addField(new MessageEmbed.Field("BotNotifyChannel (notifyChannel)", config.getNotifyChannel(), false));
+        builder.addField(new MessageEmbed.Field("BotLoggingChannel (loggingChannel)", config.getBotLoggingChannel(), false));
         return builder.build();
     }
 
@@ -346,10 +335,15 @@ public final class MessageHelper {
      */
     public static MessageEmbed formatPlayerGLStatus(final PlayerGLStatus playerGlStatus) {
         final EmbedBuilder embed = new EmbedBuilder(baseEmbed());
-        embed.setDescription("GL Status for: " + playerGlStatus.getGlEvent() + "\nTotal Completion: **" + new DecimalFormat("##.##%").format(playerGlStatus.getTotalCompleteness()) + "**");
-        final StringBuilder status = new StringBuilder(String.format(GL_OVERVIEW_FORMAT, "name", GEAR_ICON, RELIC_ICON, ZETA_ICON, "status"));
+        embed.setDescription("GL Status for: " + playerGlStatus.getGlEvent() +
+                "\nTotal Completion: **" + new DecimalFormat("##.##%").format(playerGlStatus.getTotalCompleteness()) + "**\n" +
+                "S = Star Count\n" +
+                "G = Gear level\n" +
+                "R = Relic level");
+        final StringBuilder status = new StringBuilder(String.format(GL_OVERVIEW_FORMAT, "name", "S", "G", "R", "status"));
         for (final GLUnit compare : playerGlStatus.getUnits()) {
-            status.append(String.format(GL_OVERVIEW_FORMAT, compare.getUnitName(), compare.getGearLevel(), compare.getRelicLevel(), compare.getZetas(), new DecimalFormat("##.##%").format(compare.getCompleteness())));
+            status.append(String.format(GL_OVERVIEW_FORMAT, compare.getAbbreviation(), compare.getRarity(), compare.getGearLevel(),
+                    Integer.toString(compare.getRelicLevel()).replace("-1", "n/a"), new DecimalFormat("##.##%").format(compare.getCompleteness())));
         }
         embed.addField("status", "```" + status + "```", false);
         return embed.build();

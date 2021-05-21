@@ -20,9 +20,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 /**
  * @author DJJ
@@ -48,8 +46,13 @@ public class ProfileImpl extends BaseImpl {
      */
     public int getAllycodeByDiscord(final String discordId) {
         try {
-            return this.dao.playerDao().getByDiscordId(discordId).getAllycode();
+            final Player player = this.dao.playerDao().getByDiscordId(discordId);
+            if (player == null) {
+                return -1;
+            }
+            return player.getAllycode();
         } catch (final RetrieveError retrieveError) {
+            logger.error(className, "getAllycodeByDiscord", retrieveError.getMessage());
             return -1;
         }
     }
@@ -68,10 +71,11 @@ public class ProfileImpl extends BaseImpl {
 
     /**
      * Gets the player and inserts it in the DB.
+     *
      * @param allycode the allycode.
      * @return a player object.
-     * @throws InsertionError when something goes wrong inserting.
-     * @throws RetrieveError when something goes wrong retrieving.
+     * @throws InsertionError    when something goes wrong inserting.
+     * @throws RetrieveError     when something goes wrong retrieving.
      * @throws HttpRetrieveError the something goes wrong retrieving.
      */
     public Player getAndUpdatePlayer(final int allycode) throws InsertionError, RetrieveError, HttpRetrieveError {
@@ -79,7 +83,11 @@ public class ProfileImpl extends BaseImpl {
         final JSONObject playerInfo = playerData.getJSONObject("data");
         final JSONArray playerUnits = playerData.getJSONArray("units");
         final Player player = insertProfile(playerInfo, null);
-        this.implHelper.getUnitImpl().insertUnits(playerUnits, player);
+        final Map<String, List<?>> data = this.implHelper.getUnitImpl().jsonToPlayerUnits(playerUnits, player);
+        logger.debug(className, "Inserting all units");
+        dao.playerUnitDao().saveAll((List<PlayerUnit>) data.get("units"));
+        logger.debug(className, "Inserting all abilities");
+        dao.unitAbilityDao().saveAll((List<UnitAbility>) data.get("abilities"));
         return player;
     }
 
@@ -91,12 +99,12 @@ public class ProfileImpl extends BaseImpl {
     public void registerUser(final Message message) {
         try {
             if (dao.playerDao().exists(message.getAllycode())) {
-                message.getChannel().sendMessage("You are already registered").queue();
+                message.error("You are already registered");
                 return;
             }
             final int allycode = Integer.parseInt(String.join(", ", message.getArgs()).replace("-", ""));
             if (StringHelper.isInvalidAllycode(String.valueOf(allycode))) {
-                message.getChannel().sendMessage("Allycode validation error, syntax: <xxx-xxx-xxx>").queue();
+                message.error("Allycode validation error, syntax: xxx-xxx-xxx");
                 return;
             }
             this.httpHelper.getJsonObject(SwgohGgEndpoint.PLAYER_ENDPOINT.getUrl() + allycode);
@@ -143,7 +151,11 @@ public class ProfileImpl extends BaseImpl {
             return true;
         }
         try {
-            return dao.playerDao().getByDiscordId(discordId).getPermission().getLevel() <= requiredLevel.getLevel();
+            final Player player = dao.playerDao().getByDiscordId(discordId);
+            if (player == null) {
+                return requiredLevel == Permission.USER;
+            }
+            return player.getPermission().getLevel() <= requiredLevel.getLevel();
         } catch (final RetrieveError exception) {
             return requiredLevel == Permission.USER;
         }
@@ -228,13 +240,21 @@ public class ProfileImpl extends BaseImpl {
         double totalCompletion = 0.0;
         for (final GlRequirement requirement : requirements) {
             final PlayerUnit unit = dao.playerUnitDao().getForPlayer(player, requirement.getBaseId());
-            final long zetas = unit.getAbilities().stream().filter(unitAbility -> unitAbility.getBaseAbility().isZeta() && unitAbility.getBaseAbility().getTierMax() == unitAbility.getLevel()).count();
-            final GLUnit compare = new GLUnit(unit.getUnit().getName(), unit.getGear(), unit.getGearPieces(), unit.getRelic(), unit.getRarity(), (int) zetas);
-            compare.setCompleteness(CalculationHelper.calculateCompletion(unit.getRarity(), compare.getGearLevel(), compare.getRelicLevel(), unit.getGearPieces(),
-                    SwgohConstants.MAX_RARITY_LEVEL, requirement.getRelicLevel(), requirement.getGearLevel()));
+            final GLUnit compare;
+            final String abbreviation = dao.abbreviationDao().getByUnitId(requirement.getBaseId());
+            if (unit == null) {
+                compare = new GLUnit(requirement.getBaseId(), abbreviation, 0, 0, 0, 0, 0);
+                compare.setCompleteness(0.0);
+            } else {
+                final long zetas = unit.getAbilities().stream().filter(unitAbility -> unitAbility.getBaseAbility().isZeta() && unitAbility.getBaseAbility().getTierMax() == unitAbility.getLevel()).count();
+                compare = new GLUnit(requirement.getBaseId(), abbreviation, unit.getGear(), unit.getGearPieces(), unit.getRelic(), unit.getRarity(), (int) zetas);
+                compare.setCompleteness(CalculationHelper.calculateCompletion(unit.getRarity(), compare.getGearLevel(), compare.getRelicLevel(), unit.getGearPieces(),
+                        SwgohConstants.MAX_RARITY_LEVEL, requirement.getRelicLevel(), requirement.getGearLevel()));
+            }
             totalCompletion += compare.getCompleteness();
             compares.add(compare);
         }
+        compares.sort(Comparator.comparing(GLUnit::getCompleteness));
         return new PlayerGLStatus(eventName, compares, totalCompletion / requirements.size());
     }
 
