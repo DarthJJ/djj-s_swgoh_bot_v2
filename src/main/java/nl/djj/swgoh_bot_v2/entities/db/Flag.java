@@ -10,8 +10,10 @@ import nl.djj.swgoh_bot_v2.database.daos.FlagDao;
 @DatabaseTable(tableName = "flags", daoClass = FlagDao.class)
 public class Flag {
     @DatabaseField(id = true)
+    private transient String identifier;
+    @DatabaseField(uniqueCombo = true)
     private transient String name;
-    @DatabaseField(columnName = "parent_command")
+    @DatabaseField(uniqueCombo = true, columnName = "parent_command")
     private transient String parentCommand;
     @DatabaseField
     private transient boolean enabled;
@@ -31,6 +33,7 @@ public class Flag {
      * @param enabled       the enabled status.
      */
     public Flag(final String name, final String parentCommand, final boolean enabled) {
+        this.identifier = parentCommand + "_" + name;
         this.name = name;
         this.parentCommand = parentCommand;
         this.enabled = enabled;
@@ -47,5 +50,9 @@ public class Flag {
 
     public boolean isEnabled() {
         return enabled;
+    }
+
+    public String getIdentifier() {
+        return identifier;
     }
 }

@@ -7,6 +7,8 @@ import nl.djj.swgoh_bot_v2.exceptions.InsertionError;
 import nl.djj.swgoh_bot_v2.exceptions.RetrieveError;
 
 import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author DJJ
@@ -23,9 +25,9 @@ public class FlagDaoImpl extends BaseDaoImpl<Flag, String> implements FlagDao {
     }
 
     @Override
-    public boolean isEnabled(final String flagName) {
+    public boolean isEnabled(final String parentCommand, final String flagName) {
         try {
-            return this.getByName(flagName).isEnabled();
+            return this.getByName(parentCommand, flagName).isEnabled();
         } catch (final RetrieveError exception) {
             return false;
         }
@@ -41,19 +43,23 @@ public class FlagDaoImpl extends BaseDaoImpl<Flag, String> implements FlagDao {
     }
 
     @Override
-    public Flag getByName(final String name) throws RetrieveError {
+    public Flag getByName(final String parentCommand, final String name) throws RetrieveError {
         try {
-            return this.queryForId(name);
+            final List<Flag> result = this.queryForFieldValuesArgs(Map.of("name", name, "parent_command", parentCommand));
+            if (result == null || result.isEmpty()) {
+                return null;
+            }
+            return result.get(0);
         } catch (final SQLException exception) {
             throw new RetrieveError(CLASS_NAME, "getByName", exception);
         }
     }
 
     @Override
-    public boolean exists(final String flagName) {
+    public boolean exists(final String parentCommand, final String flagName) {
         try {
-            return this.idExists(flagName);
-        } catch (final SQLException exception) {
+            return this.getByName(parentCommand, flagName) != null;
+        } catch (final RetrieveError exception) {
             return false;
         }
     }

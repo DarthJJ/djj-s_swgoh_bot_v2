@@ -77,9 +77,10 @@ public class CommandImpl extends BaseImpl {
     /**
      * Retrieves the enabled status for the flag.
      * @param name then name of the flag.
+     * @param parentCommand  the name of the parentCommand.
      * @return a boolean value.
      */
-    public boolean getFlagEnabledStatus(final String name) {
-        return dao.flagDao().isEnabled(name);
+    public boolean getFlagEnabledStatus(final String parentCommand, final String name) {
+        return dao.flagDao().isEnabled(parentCommand, name);
     }
 }

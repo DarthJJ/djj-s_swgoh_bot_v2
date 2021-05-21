@@ -80,7 +80,7 @@ public class CommandLoader {
                 dao.commandDao().save(new Command(command.getName(), false));
             }
             for (final Map.Entry<String, Flag> entry : command.getFlags().entrySet()) {
-                if (!dao.flagDao().exists(entry.getValue().getName())) {
+                if (!dao.flagDao().exists(command.getName(), entry.getValue().getName())) {
                     dao.flagDao().save(new nl.djj.swgoh_bot_v2.entities.db.Flag(entry.getValue().getName(), command.getName(), false));
                 }
             }
@@ -105,8 +105,8 @@ public class CommandLoader {
         if (command != null) {
             if (this.implHelper.getProfileImpl().isAllowed(message.getAuthorId(), command.getRequiredLevel())) {
                 final Map<String, Flag> flags = new LinkedHashMap<>();
-                for (final Map.Entry<String, Flag> entry : command.getFlags().entrySet()){
-                    if (this.implHelper.getCommandImpl().getFlagEnabledStatus(entry.getKey())){
+                for (final Map.Entry<String, Flag> entry : command.getFlags().entrySet()) {
+                    if (this.implHelper.getCommandImpl().getFlagEnabledStatus(command.getName(), entry.getKey())) {
                         flags.put(entry.getKey(), entry.getValue());
                     }
                 }
@@ -160,13 +160,13 @@ public class CommandLoader {
     }
 
     /**
-     * @param command the baseCommand.
-     * @param name the name of the flag.
+     * @param command  the baseCommand.
+     * @param name     the name of the flag.
      * @param authorId the author id.
      * @return if enabled yes or no.
      */
     public boolean isFlagEnabled(final BaseCommand command, final String name, final String authorId) {
         final Flag flag = command.getFlags().get(name);
-        return flag != null && (this.implHelper.getCommandImpl().getFlagEnabledStatus(name) || authorId.equals(BotConstants.OWNER_ID));
+        return flag != null && (this.implHelper.getCommandImpl().getFlagEnabledStatus(command.getName(), name) || authorId.equals(BotConstants.OWNER_ID));
     }
 }
