@@ -135,14 +135,14 @@ public class PlayerUnitDaoImpl extends BaseDaoImpl<PlayerUnit, String> implement
 
     @Override
     public int getZetaCount(final Player player, @Nullable final String unitId) throws RetrieveError {
-        String query = "SELECT count() FROM unitAbilities as t1 " +
-                "INNER JOIN playerUnits AS t2 " +
+        String query = "SELECT count(*) FROM unit_abilities as t1 " +
+                "INNER JOIN player_units AS t2 " +
+                "ON t2.identifier = t1.player_unit " +
                 "INNER JOIN abilities AS t3 " +
-                "WHERE t2.player_id = ? " +
-                "AND t2.identifier = t1.playerUnit_id " +
-                "AND t3.identifier = t1.baseAbility_id " +
-                "AND t3.zeta = 1 " +
-                "AND t1.level = t3.tierMax ";
+                "ON t3.identifier = t1.base_ability " +
+                "WHERE t2.player_id = ? ::INTEGER " +
+                "AND t3.zeta = true " +
+                "AND t1.level = t3.tier_max ";
         if (unitId != null) {
             query += "AND t2.unit_id = ?";
         }
