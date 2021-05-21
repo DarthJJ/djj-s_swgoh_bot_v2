@@ -45,7 +45,7 @@ public class ConfigDaoImpl extends BaseDaoImpl<Config, String> implements Config
 
     @Override
     public List<String> getAllNotificationChannels() throws RetrieveError {
-        final String query = "SELECT notifyChannel FROM config";
+        final String query = "SELECT notify_channel FROM config";
         try {
             final GenericRawResults<String[]> results = this.queryRaw(query);
             final List<String> returnValue = new ArrayList<>();

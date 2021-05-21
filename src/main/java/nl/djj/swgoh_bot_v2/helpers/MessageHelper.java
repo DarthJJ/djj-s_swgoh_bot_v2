@@ -127,12 +127,12 @@ public final class MessageHelper {
     public static MessageEmbed formatConfig(final Config config) {
         final EmbedBuilder builder = new EmbedBuilder(baseEmbed());
         builder.appendDescription("Bot configuration");
-        builder.addField(new MessageEmbed.Field("SWGOH ID", Integer.toString(config.getSwgohId()), false));
-        builder.addField(new MessageEmbed.Field("Prefix", config.getPrefix(), false));
-        builder.addField(new MessageEmbed.Field("ModRole", config.getModerationRole(), false));
-        builder.addField(new MessageEmbed.Field("Presence Ignore role", config.getIgnoreRole(), false));
-        builder.addField(new MessageEmbed.Field("BotNotifyChannel", config.getNotifyChannel(), false));
-        builder.addField(new MessageEmbed.Field("BotLoggingChannel", config.getBotLoggingChannel(), false));
+        builder.addField(new MessageEmbed.Field("Guild SWGOH ID (guildId)", Integer.toString(config.getSwgohId()), false));
+        builder.addField(new MessageEmbed.Field("Bot Prefix (prefix)", config.getPrefix(), false));
+        builder.addField(new MessageEmbed.Field("ModRole (modRole)", config.getModerationRole(), false));
+        builder.addField(new MessageEmbed.Field("Presence Ignore role (ignoreRole)", config.getIgnoreRole(), false));
+        builder.addField(new MessageEmbed.Field("BotNotifyChannel (notifyChannel)", config.getNotifyChannel(), false));
+        builder.addField(new MessageEmbed.Field("BotLoggingChannel (loggingChannel)", config.getBotLoggingChannel(), false));
         return builder.build();
     }
 
