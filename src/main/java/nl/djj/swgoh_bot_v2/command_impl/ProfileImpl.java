@@ -241,12 +241,13 @@ public class ProfileImpl extends BaseImpl {
         for (final GlRequirement requirement : requirements) {
             final PlayerUnit unit = dao.playerUnitDao().getForPlayer(player, requirement.getBaseId());
             final GLUnit compare;
+            final String abbreviation = dao.abbreviationDao().getByUnitId(requirement.getBaseId());
             if (unit == null) {
-                compare = new GLUnit(requirement.getBaseId(), 0, 0, 0, 0, 0);
+                compare = new GLUnit(requirement.getBaseId(), abbreviation, 0, 0, 0, 0, 0);
                 compare.setCompleteness(0.0);
             } else {
                 final long zetas = unit.getAbilities().stream().filter(unitAbility -> unitAbility.getBaseAbility().isZeta() && unitAbility.getBaseAbility().getTierMax() == unitAbility.getLevel()).count();
-                compare = new GLUnit(unit.getUnit().getName(), unit.getGear(), unit.getGearPieces(), unit.getRelic(), unit.getRarity(), (int) zetas);
+                compare = new GLUnit(requirement.getBaseId(), abbreviation, unit.getGear(), unit.getGearPieces(), unit.getRelic(), unit.getRarity(), (int) zetas);
                 compare.setCompleteness(CalculationHelper.calculateCompletion(unit.getRarity(), compare.getGearLevel(), compare.getRelicLevel(), unit.getGearPieces(),
                         SwgohConstants.MAX_RARITY_LEVEL, requirement.getRelicLevel(), requirement.getGearLevel()));
             }

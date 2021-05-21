@@ -342,7 +342,7 @@ public final class MessageHelper {
                 "R = Relic level");
         final StringBuilder status = new StringBuilder(String.format(GL_OVERVIEW_FORMAT, "name", "S", "G", "R", "status"));
         for (final GLUnit compare : playerGlStatus.getUnits()) {
-            status.append(String.format(GL_OVERVIEW_FORMAT, compare.getUnitName(), compare.getRarity(), compare.getGearLevel(),
+            status.append(String.format(GL_OVERVIEW_FORMAT, compare.getAbbreviation(), compare.getRarity(), compare.getGearLevel(),
                     Integer.toString(compare.getRelicLevel()).replace("-1", "n/a"), new DecimalFormat("##.##%").format(compare.getCompleteness())));
         }
         embed.addField("status", "```" + status + "```", false);

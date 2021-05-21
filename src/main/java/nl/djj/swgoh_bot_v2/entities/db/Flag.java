@@ -11,7 +11,7 @@ import nl.djj.swgoh_bot_v2.database.daos.FlagDao;
 public class Flag {
     @DatabaseField(id = true)
     private transient String name;
-    @DatabaseField
+    @DatabaseField(columnName = "parent_command")
     private transient String parentCommand;
     @DatabaseField
     private transient boolean enabled;
