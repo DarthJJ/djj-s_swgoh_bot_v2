@@ -15,6 +15,8 @@ public class Abbreviation {
     private transient Unit unit;
     @DatabaseField(uniqueCombo = true)
     private transient String abbreviation;
+    @DatabaseField
+    private transient String unitName;
 
     /**
      * Constructor.
@@ -31,6 +33,7 @@ public class Abbreviation {
     public Abbreviation(final Unit unit, final String abbreviation) {
         this.unit = unit;
         this.abbreviation = abbreviation;
+        this.unitName = unit.getName();
     }
 
     public Unit getUnit() {
@@ -43,5 +46,9 @@ public class Abbreviation {
 
     public int getIdentifier() {
         return identifier;
+    }
+
+    public String getUnitName() {
+        return unitName;
     }
 }

@@ -83,6 +83,27 @@ public class GuildImpl extends BaseImpl {
         return guild.getIdentifier();
     }
 
+    public void unitOverview(final Message message) {
+        if (message.getArgs().isEmpty()) {
+            message.error("Please provide a searchKey");
+            return;
+        }
+        try {
+            final Unit unit = dao.unitDao().getById(dao.abbreviationDao().resolveUnitId(String.join(" ", message.getArgs())));
+            final Guild guild = dao.guildDao().getByDiscordId(message.getGuildId());
+            Map<String, PlayerUnit> guildData = new TreeMap<>();
+            for (final Player player : guild.getPlayers()) {
+                final PlayerUnit playerUnit = dao.playerUnitDao().getForPlayer(player, unit.getBaseId());
+                guildData.put(player.getName(), Objects.requireNonNullElseGet(playerUnit, () -> new PlayerUnit(player, unit, 0, 0, 0, 0, 0, 0)));
+                message.done(MessageHelper.formatGuildUnitData(guild, guildData));
+            }
+
+
+        } catch (final RetrieveError error) {
+            message.error(error.getMessage());
+        }
+    }
+
     /**
      * creates an Relic overview for the guild.
      *

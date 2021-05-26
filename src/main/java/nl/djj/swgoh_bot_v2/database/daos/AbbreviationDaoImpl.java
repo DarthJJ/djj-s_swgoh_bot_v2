@@ -63,4 +63,9 @@ public class AbbreviationDaoImpl extends BaseDaoImpl<Abbreviation, Integer> impl
             throw new DeletionError(CLASS_NAME, "clear", exception);
         }
     }
+
+    @Override
+    public String resolveUnitId(final String searchKey) throws RetrieveError {
+        return null;
+    }
 }
