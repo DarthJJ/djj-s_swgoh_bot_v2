@@ -95,7 +95,7 @@ public class GuildImpl extends BaseImpl {
             for (final Player player : guild.getPlayers()) {
                 final PlayerUnit playerUnit = dao.playerUnitDao().getForPlayer(player, unit.getBaseId());
                 guildData.put(player.getName(), Objects.requireNonNullElseGet(playerUnit, () -> new PlayerUnit(player, unit, 0, 0, 0, 0, 0, 0)));
-                message.done(MessageHelper.formatGuildUnitData(guild, guildData));
+//                message.done(MessageHelper.formatGuildUnitData(guild, guildData));
             }
 
 
