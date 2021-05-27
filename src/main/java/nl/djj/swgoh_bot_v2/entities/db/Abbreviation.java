@@ -15,7 +15,7 @@ public class Abbreviation {
     private transient Unit unit;
     @DatabaseField(uniqueCombo = true)
     private transient String abbreviation;
-    @DatabaseField
+    @DatabaseField(columnName = "unit_name")
     private transient String unitName;
 
     /**

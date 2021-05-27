@@ -115,7 +115,6 @@ public class UnitImpl extends BaseImpl {
      * @param playerUnits the units,
      * @param player      the player.
      * @throws RetrieveError  When retrieving from the DB goes wrong.
-     * @throws InsertionError When storing in the DB goes wrong.
      * @return an Map with two lists.
      */
     public Map<String, List<?>> jsonToPlayerUnits(final JSONArray playerUnits, final Player player) throws RetrieveError {
@@ -131,6 +130,7 @@ public class UnitImpl extends BaseImpl {
             final int galacticPower = unitData.getInt("power");
             final int gear = unitData.getInt("gear_level");
             final int relic = Math.max(-1, unitData.getInt("relic_tier") - 2);
+            final int level = unitData.getInt("level");
             final int speed = unitData.getJSONObject("stats").getInt("5");
             final JSONArray abilityData = unitData.getJSONArray("ability_data");
             final JSONArray gearPiecesArray = unitData.getJSONArray("gear");
@@ -140,14 +140,14 @@ public class UnitImpl extends BaseImpl {
                     gearPieces++;
                 }
             }
-            final PlayerUnit playerUnit = new PlayerUnit(player, baseUnits.get(baseId), rarity, galacticPower, gear, gearPieces, relic, speed);
+            final PlayerUnit playerUnit = new PlayerUnit(player, baseUnits.get(baseId), rarity, level, galacticPower, gear, gearPieces, relic, speed);
             for (int j = 0; j < abilityData.length(); j++) {
                 final StringBuilder abilityId = new StringBuilder(abilityData.getJSONObject(j).getString("id"));
                 if ("uniqueskill_GALACTICLEGEND01".equals(abilityId.toString())) {
                     abilityId.append('_').append(playerUnit.getUnit().getBaseId());
                 }
-                final int level = abilityData.getJSONObject(j).getInt("ability_tier");
-                abilities.add(new UnitAbility(playerUnit, baseAbilities.get(abilityId.toString()), level));
+                final int abbLevel = abilityData.getJSONObject(j).getInt("ability_tier");
+                abilities.add(new UnitAbility(playerUnit, baseAbilities.get(abilityId.toString()), abbLevel));
             }
             units.add(playerUnit);
         }

@@ -10,6 +10,7 @@ import nl.djj.swgoh_bot_v2.entities.GithubIssueStatus;
 import nl.djj.swgoh_bot_v2.entities.Message;
 import nl.djj.swgoh_bot_v2.entities.compare.*;
 import nl.djj.swgoh_bot_v2.entities.db.Config;
+import nl.djj.swgoh_bot_v2.entities.db.PlayerUnit;
 import org.json.JSONArray;
 
 import java.awt.*;
@@ -32,6 +33,7 @@ public final class MessageHelper {
     private static final String PROFILE_TABLE_FORMAT = "%-8s%-15s%-3s%-15s%n";
     private static final String GUILD_TABLE_FORMAT = "%-11s%-15s%-3s%-15s%n";
     private static final String GL_OVERVIEW_FORMAT = "%-10s%-5s%-5s%-5s%-6s%n";
+    private static final String GUILD_UNIT_FORMAT = "%-15s%-3s%-3s%-3s%-3s%-3s%-3s%-3s%n";
 
     /**
      * Constructor.
@@ -395,11 +397,12 @@ public final class MessageHelper {
 
     /**
      * Creates an embed for the mod speed overview.
+     *
      * @param garbage the amount of garbage mods.
-     * @param plus10 the amount of mods with +10;
-     * @param plus15 the amount of mods with +15;
-     * @param plus20 the amount of mods with +20;
-     * @param plus25 the amount of mods with +25;
+     * @param plus10  the amount of mods with +10;
+     * @param plus15  the amount of mods with +15;
+     * @param plus20  the amount of mods with +20;
+     * @param plus25  the amount of mods with +25;
      * @return a messageEmbed.
      */
     public static MessageEmbed formatModMessage(final int garbage, final int plus10, final int plus15, final int plus20, final int plus25) {
@@ -416,8 +419,9 @@ public final class MessageHelper {
 
     /**
      * Creates an embed for the need overview.
-     * @param result the list with units and rarities.
-     * @param type the type of farming requested.
+     *
+     * @param result     the list with units and rarities.
+     * @param type       the type of farming requested.
      * @param percentage the completion percentage.
      * @return a messageEmbed.
      */
@@ -426,11 +430,51 @@ public final class MessageHelper {
         embed.setDescription("Need status for: " + type + "\nCompletion: " + new DecimalFormat("##.##%").format(percentage));
         final StringBuilder fieldValue = new StringBuilder();
         fieldValue.append(String.format(UNIT_TABLE_FORMAT, "Unit:", ":", "Rarity:"));
-        for (final Map.Entry<String, Integer> entry : result.entrySet()){
+        for (final Map.Entry<String, Integer> entry : result.entrySet()) {
             fieldValue.append(String.format(UNIT_TABLE_FORMAT, entry.getKey(), ":", entry.getValue()));
         }
         embed.addField("status", "```" + fieldValue + "```", false);
         return embed.build();
+    }
+
+    public static List<MessageEmbed> formatGuildUnitData(final String unitName, final Map<String, PlayerUnit> playerData) {
+        EmbedBuilder embed = new EmbedBuilder(baseEmbed());
+        embed.setDescription("Unit information for: **" + unitName + "**\n" +
+                "R = Star count\n" +
+                "L = Level\n" +
+                "G = Gear level\n" +
+                "G# = Gear pieces\n" +
+                "Re = Relic level\n" +
+                "Z = # of equipped zetas\n" +
+                "GP = Galactic power");
+        int count = 0;
+        final int maxCount = 10;
+        final List<MessageEmbed> embeds = new ArrayList<>();
+        StringBuilder fieldData = new StringBuilder(String.format(GUILD_UNIT_FORMAT, "player", "R", "L", "G", "G#", "Re", "Z", "GP"));
+        for (final Map.Entry<String, PlayerUnit> entry : playerData.entrySet()) {
+            count++;
+            fieldData.append(String.format(GUILD_UNIT_FORMAT,
+                    entry.getKey(),
+                    entry.getValue().getRarity(),
+                    entry.getValue().getLevel(),
+                    entry.getValue().getGear(),
+                    entry.getValue().getGearPieces(),
+                    entry.getValue().getRelic(),
+                    entry.getValue().getAbilities().stream().filter(unitAbility -> unitAbility.getBaseAbility().isZeta()).count(),
+                    StringHelper.formatNumber(entry.getValue().getGalacticPower())));
+            if (count == maxCount) {
+                count = 0;
+                embed.addField(Integer.toString(embed.getFields().size() + 1), "```" + fieldData + "```", false);
+                fieldData = new StringBuilder(String.format(GUILD_UNIT_FORMAT, "player", "R", "L", "G", "G#", "Re", "Z", "GP"));
+                if (embed.length() > MessageEmbed.EMBED_MAX_LENGTH_BOT - 500) {
+                    embeds.add(embed.build());
+                    embed = new EmbedBuilder(baseEmbed());
+                }
+            }
+        }
+        embed.addField(Integer.toString(embed.getFields().size() + 1), "```" + fieldData + "```", false);
+        embeds.add(embed.build());
+        return embeds;
     }
 
 //CHECKSTYLE.ON: MultipleStringLiteralsCheck

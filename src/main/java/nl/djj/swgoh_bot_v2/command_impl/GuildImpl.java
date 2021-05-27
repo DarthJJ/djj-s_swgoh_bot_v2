@@ -19,6 +19,7 @@ import org.json.JSONObject;
 
 import java.time.Duration;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.Collections.reverseOrder;
 import static java.util.stream.Collectors.toMap;
@@ -90,16 +91,21 @@ public class GuildImpl extends BaseImpl {
         }
         try {
             final Unit unit = dao.unitDao().getById(dao.abbreviationDao().resolveUnitId(String.join(" ", message.getArgs())));
-            final Guild guild = dao.guildDao().getByDiscordId(message.getGuildId());
+            final Guild guild = dao.guildDao().getById(getAndUpdateGuildData(message.getGuildId(), -1, message.getChannel()));
             Map<String, PlayerUnit> guildData = new TreeMap<>();
             for (final Player player : guild.getPlayers()) {
                 final PlayerUnit playerUnit = dao.playerUnitDao().getForPlayer(player, unit.getBaseId());
-                guildData.put(player.getName(), Objects.requireNonNullElseGet(playerUnit, () -> new PlayerUnit(player, unit, 0, 0, 0, 0, 0, 0)));
-//                message.done(MessageHelper.formatGuildUnitData(guild, guildData));
+                guildData.put(player.getName(), Objects.requireNonNullElseGet(playerUnit, () -> new PlayerUnit(player, unit, 0, 0, 0, 0, 0, 0, 0)));
             }
-
-
-        } catch (final RetrieveError error) {
+            guildData = guildData.entrySet().stream()
+                    .sorted((e1, e2) -> Integer.compare(e2.getValue().getLevel(), e1.getValue().getLevel()))
+                    .sorted((e1, e2) -> Integer.compare(e2.getValue().getRelic(), e1.getValue().getRelic()))
+                    .sorted((e1, e2) -> Integer.compare(e2.getValue().getGear(), e1.getValue().getGear()))
+                    .sorted((e1, e2) -> Integer.compare(e2.getValue().getGearPieces(), e1.getValue().getGearPieces()))
+                    .sorted((e1, e2) -> Integer.compare(e2.getValue().getGalacticPower(), e1.getValue().getGalacticPower()))
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+            message.done(MessageHelper.formatGuildUnitData(unit.getBaseId(), guildData));
+        } catch (final RetrieveError | HttpRetrieveError | InsertionError error) {
             message.error(error.getMessage());
         }
     }
