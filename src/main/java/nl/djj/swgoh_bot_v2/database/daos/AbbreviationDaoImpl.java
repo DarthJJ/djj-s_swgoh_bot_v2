@@ -8,10 +8,8 @@ import nl.djj.swgoh_bot_v2.exceptions.DeletionError;
 import nl.djj.swgoh_bot_v2.exceptions.InsertionError;
 import nl.djj.swgoh_bot_v2.exceptions.RetrieveError;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * @author DJJ
@@ -68,16 +66,16 @@ public class AbbreviationDaoImpl extends BaseDaoImpl<Abbreviation, Integer> impl
     }
 
     @Override
-    public String resolveUnitId(String searchKey) throws RetrieveError {
+    public String resolveUnitId(final String searchKey) throws RetrieveError {
         try {
             final String query = "SELECT unit_id " +
                     "FROM abbreviations " +
                     "WHERE unit_id ILIKE ?" +
                     "OR abbreviation ILIKE ?" +
                     "OR unit_name ILIKE ?";
-            final GenericRawResults<String[]> results= this.queryRaw(query, searchKey, searchKey, searchKey);
+            final GenericRawResults<String[]> results = this.queryRaw(query, searchKey, searchKey, searchKey);
             return results.getResults().get(0)[0];
-        } catch (final SQLException | IndexOutOfBoundsException exception){
+        } catch (final SQLException | IndexOutOfBoundsException exception) {
             throw new RetrieveError(CLASS_NAME, "resolveUnitId", exception);
         }
     }

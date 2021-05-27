@@ -437,6 +437,12 @@ public final class MessageHelper {
         return embed.build();
     }
 
+    /**
+     * Creates a list of embeds for the guild unit overview.
+     * @param unitName the name of the unit.
+     * @param playerData the player data.
+     * @return a list of embeds.
+     */
     public static List<MessageEmbed> formatGuildUnitData(final String unitName, final Map<String, PlayerUnit> playerData) {
         EmbedBuilder embed = new EmbedBuilder(baseEmbed());
         embed.setDescription("Unit information for: **" + unitName + "**\n" +

@@ -19,7 +19,6 @@ import org.json.JSONObject;
 
 import java.time.Duration;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static java.util.Collections.reverseOrder;
 import static java.util.stream.Collectors.toMap;
@@ -84,6 +83,10 @@ public class GuildImpl extends BaseImpl {
         return guild.getIdentifier();
     }
 
+    /**
+     * Generates the guild overview for the given unit.
+     * @param message the message object.
+     */
     public void unitOverview(final Message message) {
         if (message.getArgs().isEmpty()) {
             message.error("Please provide a searchKey");
@@ -103,7 +106,7 @@ public class GuildImpl extends BaseImpl {
                     .sorted((e1, e2) -> Integer.compare(e2.getValue().getGear(), e1.getValue().getGear()))
                     .sorted((e1, e2) -> Integer.compare(e2.getValue().getGearPieces(), e1.getValue().getGearPieces()))
                     .sorted((e1, e2) -> Integer.compare(e2.getValue().getGalacticPower(), e1.getValue().getGalacticPower()))
-                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+                    .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
             message.done(MessageHelper.formatGuildUnitData(unit.getBaseId(), guildData));
         } catch (final RetrieveError | HttpRetrieveError | InsertionError error) {
             message.error(error.getMessage());

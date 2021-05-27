@@ -49,6 +49,7 @@ public class PlayerUnit {
      * @param player        the owner.
      * @param unit          the base unit.
      * @param rarity        the rarity level.
+     * @param level         the level of the unit.
      * @param galacticPower the GP.
      * @param gear          the gear level.
      * @param gearPieces    the equipped gear pieces.
