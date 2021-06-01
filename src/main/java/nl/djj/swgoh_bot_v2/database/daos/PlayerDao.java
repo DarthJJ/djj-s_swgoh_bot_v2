@@ -84,4 +84,5 @@ public interface PlayerDao extends Dao<Player, Integer> {
      * @param discordId the user to disallow.
      */
     void disallowTicketCreation(String discordId) throws InsertionError;
+
 }

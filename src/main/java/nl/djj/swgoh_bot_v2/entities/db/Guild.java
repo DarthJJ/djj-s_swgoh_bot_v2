@@ -90,4 +90,5 @@ public class Guild {
     public ForeignCollection<Player> getPlayers() {
         return players;
     }
+
 }

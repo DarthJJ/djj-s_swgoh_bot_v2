@@ -290,7 +290,7 @@ public class ProfileImpl extends BaseImpl {
         final int allycode = playerData.getInt("ally_code");
         final String name = playerData.getString("name");
         final int galacticPower = playerData.getInt("galactic_power");
-        final String url = SwgohGgEndpoint.PLAYER_ENDPOINT.getUrl() + playerData.getString("url");
+        final String url = SwgohGgEndpoint.PLAYER_ENDPOINT.getUrl() + playerData.getString("url").substring(1, playerData.getString("url").length() - 1);
         final LocalDateTime lastUpdated = StringHelper.getCurrentDateTime();
         final LocalDateTime lastUpdatedSwgoh = StringHelper.parseSwgohDate(playerData.getString("last_updated"));
         Player player = dao.playerDao().getById(allycode);

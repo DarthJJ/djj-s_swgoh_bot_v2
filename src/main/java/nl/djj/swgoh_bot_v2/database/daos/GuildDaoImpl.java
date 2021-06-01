@@ -7,6 +7,7 @@ import nl.djj.swgoh_bot_v2.exceptions.InsertionError;
 import nl.djj.swgoh_bot_v2.exceptions.RetrieveError;
 
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * @author DJJ
@@ -37,6 +38,19 @@ public class GuildDaoImpl extends BaseDaoImpl<Guild, Integer> implements GuildDa
             this.createOrUpdate(guild);
         } catch (final SQLException exception) {
             throw new InsertionError(CLASS_NAME, "save", exception);
+        }
+    }
+
+    @Override
+    public Guild getByDiscordId(final String guildId) throws RetrieveError {
+        try {
+            final List<Guild> result = this.queryForEq("discord_id", guildId);
+            if (result.isEmpty()) {
+                throw new RetrieveError(CLASS_NAME, "getByDiscordId", new SQLException("Nothing found"));
+            }
+            return result.get(0);
+        } catch (final SQLException exception) {
+            throw new RetrieveError(CLASS_NAME, "getByDiscordId", exception);
         }
     }
 }
