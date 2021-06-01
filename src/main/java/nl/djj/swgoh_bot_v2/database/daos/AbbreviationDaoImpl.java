@@ -1,6 +1,7 @@
 package nl.djj.swgoh_bot_v2.database.daos;
 
 import com.j256.ormlite.dao.BaseDaoImpl;
+import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.support.ConnectionSource;
 import nl.djj.swgoh_bot_v2.entities.db.Abbreviation;
 import nl.djj.swgoh_bot_v2.exceptions.DeletionError;
@@ -61,6 +62,21 @@ public class AbbreviationDaoImpl extends BaseDaoImpl<Abbreviation, Integer> impl
             this.updateRaw("DELETE FROM abbreviations WHERE 1 = 1;");
         } catch (final SQLException exception) {
             throw new DeletionError(CLASS_NAME, "clear", exception);
+        }
+    }
+
+    @Override
+    public String resolveUnitId(final String searchKey) throws RetrieveError {
+        try {
+            final String query = "SELECT unit_id " +
+                    "FROM abbreviations " +
+                    "WHERE unit_id ILIKE ?" +
+                    "OR abbreviation ILIKE ?" +
+                    "OR unit_name ILIKE ?";
+            final GenericRawResults<String[]> results = this.queryRaw(query, searchKey, searchKey, searchKey);
+            return results.getResults().get(0)[0];
+        } catch (final SQLException | IndexOutOfBoundsException exception) {
+            throw new RetrieveError(CLASS_NAME, "resolveUnitId", exception);
         }
     }
 }

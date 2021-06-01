@@ -84,6 +84,36 @@ public class GuildImpl extends BaseImpl {
     }
 
     /**
+     * Generates the guild overview for the given unit.
+     * @param message the message object.
+     */
+    public void unitOverview(final Message message) {
+        if (message.getArgs().isEmpty()) {
+            message.error("Please provide a searchKey");
+            return;
+        }
+        try {
+            final Unit unit = dao.unitDao().getById(dao.abbreviationDao().resolveUnitId(String.join(" ", message.getArgs())));
+            final Guild guild = dao.guildDao().getById(getAndUpdateGuildData(message.getGuildId(), -1, message.getChannel()));
+            Map<String, PlayerUnit> guildData = new TreeMap<>();
+            for (final Player player : guild.getPlayers()) {
+                final PlayerUnit playerUnit = dao.playerUnitDao().getForPlayer(player, unit.getBaseId());
+                guildData.put(player.getName(), Objects.requireNonNullElseGet(playerUnit, () -> new PlayerUnit(player, unit, 0, 0, 0, 0, 0, 0, 0)));
+            }
+            guildData = guildData.entrySet().stream()
+                    .sorted((e1, e2) -> Integer.compare(e2.getValue().getLevel(), e1.getValue().getLevel()))
+                    .sorted((e1, e2) -> Integer.compare(e2.getValue().getRelic(), e1.getValue().getRelic()))
+                    .sorted((e1, e2) -> Integer.compare(e2.getValue().getGear(), e1.getValue().getGear()))
+                    .sorted((e1, e2) -> Integer.compare(e2.getValue().getGearPieces(), e1.getValue().getGearPieces()))
+                    .sorted((e1, e2) -> Integer.compare(e2.getValue().getGalacticPower(), e1.getValue().getGalacticPower()))
+                    .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+            message.done(MessageHelper.formatGuildUnitData(unit.getBaseId(), guildData));
+        } catch (final RetrieveError | HttpRetrieveError | InsertionError error) {
+            message.error(error.getMessage());
+        }
+    }
+
+    /**
      * creates an Relic overview for the guild.
      *
      * @param message the guild info.

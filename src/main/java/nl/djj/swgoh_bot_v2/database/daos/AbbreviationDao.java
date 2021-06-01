@@ -45,4 +45,12 @@ public interface AbbreviationDao extends Dao<Abbreviation, Integer> {
      * @throws DeletionError when something goes wrong.
      */
     void clear() throws DeletionError;
+
+    /**
+     * Resolves the given searchKey (name, abbreviation, Id) to an unitId.
+     * @param searchKey the key to search for.
+     * @return found id.
+     * @throws RetrieveError when something goes wrong.
+     */
+    String resolveUnitId(final String searchKey) throws RetrieveError;
 }
