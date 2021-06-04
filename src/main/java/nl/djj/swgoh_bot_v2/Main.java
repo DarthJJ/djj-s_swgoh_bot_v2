@@ -22,7 +22,7 @@ import javax.security.auth.login.LoginException;
  * @author DJJ
  */
 public final class Main {
-    private final transient boolean debug;
+    private static transient boolean DEBUG;
     private static transient Logger logger;
     private transient CommandLoader commandLoader;
     private transient ImplHelper implHelper;
@@ -42,15 +42,15 @@ public final class Main {
         super();
         final Dotenv dotenv = Dotenv.configure().filename(".env").load();
         GithubConstants.init(dotenv.get("GITHUB_OWNER"), dotenv.get("GITHUB_REPO"), dotenv.get("GITHUB_OAUTH"));
-        debug = Boolean.parseBoolean(dotenv.get("DEBUG_MODE"));
-        logger = new Logger(debug);
+        DEBUG = Boolean.parseBoolean(dotenv.get("DEBUG_MODE"));
+        logger = new Logger(DEBUG);
         try {
             final String username = dotenv.get("DB_USER");
             final String password = dotenv.get("DB_PASS");
             final String discordToken;
             final String dbName;
             final String address = dotenv.get("DB_ADDRESS");
-            if (debug) {
+            if (DEBUG) {
                 discordToken = dotenv.get("BETA_DISCORD_TOKEN");
                 dbName = dotenv.get("DB_NAME_BETA");
             } else {
@@ -72,7 +72,7 @@ public final class Main {
         try {
             final JDABuilder builder = JDABuilder.createDefault(token);
             builder.addEventListeners(new EventListener(commandLoader, implHelper), new ReadyListener());
-            if (debug) {
+            if (DEBUG) {
                 builder.setActivity(Activity.listening("Being developed"));
             } else {
                 builder.setActivity(Activity.streaming("Star Wars", "https://www.youtube.com/watch?v=YddwkMJG1Jo"));
@@ -107,4 +107,13 @@ public final class Main {
     public static void setMaintenanceMode(final boolean maintenanceMode) {
         MAINTENANCE_MODE = maintenanceMode;
     }
+
+    /**
+     *
+     * @return debug mode.
+     */
+    public static boolean getDebug() {
+        return DEBUG;
+    }
+
 }
