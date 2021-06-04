@@ -70,7 +70,7 @@ public class UnitAbilityDaoImpl extends BaseDaoImpl<UnitAbility, Integer> implem
                     "FROM '%s'" +
                     "DELIMITER ';'" +
                     "CSV", file.getAbsolutePath());
-            if (System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("nux")) {
+            if (!Main.getDebug()) {
                 this.executeRaw("CREATE TEMP TABLE unit_abilities_x AS SELECT * FROM unit_abilities LIMIT 0");
                 this.executeRaw(query);
                 this.executeRaw("INSERT INTO unit_abilities (identifier, player_unit, base_ability, level) " +
