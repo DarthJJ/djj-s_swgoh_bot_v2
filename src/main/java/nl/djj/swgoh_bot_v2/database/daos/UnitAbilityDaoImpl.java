@@ -15,7 +15,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * @author DJJ
@@ -70,7 +69,9 @@ public class UnitAbilityDaoImpl extends BaseDaoImpl<UnitAbility, Integer> implem
                     "FROM '%s'" +
                     "DELIMITER ';'" +
                     "CSV", file.getAbsolutePath());
-            if (!Main.getDebug()) {
+            if (Main.isDebug()) {
+                Main.getLogger().debug(CLASS_NAME, "Not inserting unitAbilities due to running on Windows.");
+            } else {
                 this.executeRaw("CREATE TEMP TABLE unit_abilities_x AS SELECT * FROM unit_abilities LIMIT 0");
                 this.executeRaw(query);
                 this.executeRaw("INSERT INTO unit_abilities (identifier, player_unit, base_ability, level) " +
@@ -85,8 +86,6 @@ public class UnitAbilityDaoImpl extends BaseDaoImpl<UnitAbility, Integer> implem
                         "level = excluded.level;");
                 this.executeRaw("DROP TABLE unit_abilities_x");
                 file.delete();
-            } else {
-                Main.getLogger().debug(CLASS_NAME, "Not inserting unitAbilities due to running on Windows.");
             }
         } catch (final SQLException | IOException exception) {
             throw new InsertionError(CLASS_NAME, "saveAll", exception);

@@ -76,7 +76,9 @@ public class PlayerUnitDaoImpl extends BaseDaoImpl<PlayerUnit, String> implement
                     "FROM '%s'" +
                     "DELIMITER ';'" +
                     "CSV", file.getAbsolutePath());
-            if (!Main.getDebug()) {
+            if (Main.isDebug()) {
+                Main.getLogger().debug(CLASS_NAME, "Not inserting unitAbilities due to running on Windows.");
+            } else {
                 this.executeRaw("CREATE TEMP TABLE player_units_x AS SELECT * FROM player_units LIMIT 0");
                 this.executeRaw(query);
                 this.executeRaw("INSERT INTO player_units (identifier, player_id, unit_id, rarity, galactic_power, gear, gear_pieces, relic, speed) " +
@@ -96,8 +98,6 @@ public class PlayerUnitDaoImpl extends BaseDaoImpl<PlayerUnit, String> implement
                         "speed = excluded.speed;");
                 this.executeRaw("DROP TABLE player_units_x");
                 file.delete();
-            } else {
-                Main.getLogger().debug(CLASS_NAME, "Not inserting unitAbilities due to running on Windows.");
             }
         } catch (final SQLException | IOException exception) {
             throw new InsertionError(CLASS_NAME, "saveAll", exception);

@@ -112,7 +112,7 @@ public final class Main {
      *
      * @return debug mode.
      */
-    public static boolean getDebug() {
+    public static boolean isDebug() {
         return DEBUG;
     }
 
