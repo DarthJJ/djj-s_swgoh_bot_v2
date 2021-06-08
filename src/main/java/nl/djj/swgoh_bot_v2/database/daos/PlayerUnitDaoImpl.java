@@ -262,7 +262,7 @@ public class PlayerUnitDaoImpl extends BaseDaoImpl<PlayerUnit, String> implement
                     "INNER JOIN player_units AS t2 " +
                     "ON t2.player_id = t1.allycode " +
                     "WHERE t1.guild_id = ? ::INTEGER " +
-                    "AND t2.relic = ? ::INTEGER ";
+                    "AND t2.rarity = ? ::INTEGER ";
             if (baseId != null) {
                 query += "AND t2.unit_id = ?";
             }
