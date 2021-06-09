@@ -1,17 +1,15 @@
 {
-  "version": 2.0,
+  "version": 2.1,
   "add": [
-    "Flag function toggles"
+    "report command, use !#help report"
   ],
   "change": [
-    "Message formatting for 'profile gl'"
+    "N/a"
   ],
   "fix": [
-    "guild compare",
-    "profile compare",
-    "notify command"
+    "guild compare"
   ],
   "remove": [
-    "unnecessary icons in messages"
+    "N/a"
   ]
 }
