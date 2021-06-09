@@ -26,7 +26,7 @@ public class ReportImpl extends BaseImpl {
      * Constructor.
      *
      * @param logger the logger.
-     * @param dao  the DB Handler.
+     * @param dao    the DB Handler.
      **/
     public ReportImpl(final Logger logger, final DAO dao) {
         super(logger, dao, ReportImpl.class.getName());
@@ -95,7 +95,9 @@ public class ReportImpl extends BaseImpl {
             final long issueId = github.getRepository(GithubConstants.getOWNER() + "/" + GithubConstants.getREPO()).createIssue("Bot created issue by: " + message.getAuthor())
                     .body(message.getArgs().stream().map(String::toString).collect(Collectors.joining(" ")))
                     .label("BotInbox").create().getNumber();
-            message.done("Issue is created, for future reference about this issue, use ID: **" + issueId + "**\nThanks for your support and contribution");
+            message.done("Issue is created, for future reference about this issue, use ID: **" + issueId + "**\n" +
+                    "You can also view the status of your ticket here: **" + GithubConstants.getGithubIssuesUrl() + "/" + issueId + "**\n" +
+                    "Thanks for your support and contribution");
         } catch (final IOException exception) {
             message.error("Something went wrong creating the issue, try again later");
         }
@@ -103,6 +105,7 @@ public class ReportImpl extends BaseImpl {
 
     /**
      * Disallows the tagged user of creating tickets.
+     *
      * @param message the message.
      */
     public void disallowUser(final Message message) {
