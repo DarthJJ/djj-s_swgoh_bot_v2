@@ -220,7 +220,7 @@ public class ProfileImpl extends BaseImpl {
             final Player player = getAndUpdateProfileData(message, -1);
             final GalacticLegends glEvent = GalacticLegends.getByKey(message.getArgs().get(0));
             final List<GlRequirement> requirements = dao.glRequirementDao().getForEvent(glEvent.getKey());
-            message.done(MessageHelper.formatPlayerGLStatus(getGlStatus(glEvent.getName(), dao.playerDao().getById(player.getAllycode()), requirements)));
+            message.done(MessageHelper.formatPlayerGLStatus(getGlStatus(glEvent.getName(), dao.playerDao().getById(player.getAllycode()), requirements), player.getLastUpdatedSwgoh()));
         } catch (final RetrieveError | InsertionError | HttpRetrieveError error) {
             message.error(error.getMessage());
         }

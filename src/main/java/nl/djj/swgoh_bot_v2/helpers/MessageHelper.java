@@ -15,6 +15,7 @@ import org.json.JSONArray;
 
 import java.awt.*;
 import java.text.DecimalFormat;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -333,15 +334,17 @@ public final class MessageHelper {
      * Formats a message for the playerGLStatus.
      *
      * @param playerGlStatus the playerGLStatus.
+     * @param swgohUpdated   the update Time on SWGOH
      * @return a message embed.
      */
-    public static MessageEmbed formatPlayerGLStatus(final PlayerGLStatus playerGlStatus) {
+    public static MessageEmbed formatPlayerGLStatus(final PlayerGLStatus playerGlStatus, final LocalDateTime swgohUpdated) {
         final EmbedBuilder embed = new EmbedBuilder(baseEmbed());
         embed.setDescription("GL Status for: " + playerGlStatus.getGlEvent() +
                 "\nTotal Completion: **" + new DecimalFormat("##.##%").format(playerGlStatus.getTotalCompleteness()) + "**\n" +
                 "S = Star Count\n" +
                 "G = Gear level\n" +
                 "R = Relic level");
+        embed.addField("SWGOH Updated", "This profile has been last updated at: \n" + StringHelper.localDateTimeToString(swgohUpdated), false);
         final StringBuilder status = new StringBuilder(String.format(GL_OVERVIEW_FORMAT, "name", "S", "G", "R", "status"));
         for (final GLUnit compare : playerGlStatus.getUnits()) {
             status.append(String.format(GL_OVERVIEW_FORMAT, compare.getAbbreviation(), compare.getRarity(), compare.getGearLevel(),
@@ -439,7 +442,8 @@ public final class MessageHelper {
 
     /**
      * Creates a list of embeds for the guild unit overview.
-     * @param unitName the name of the unit.
+     *
+     * @param unitName   the name of the unit.
      * @param playerData the player data.
      * @return a list of embeds.
      */
