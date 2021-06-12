@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import nl.djj.swgoh_bot_v2.commands.BaseCommand;
 import nl.djj.swgoh_bot_v2.config.BotConstants;
+import nl.djj.swgoh_bot_v2.config.GithubConstants;
 import nl.djj.swgoh_bot_v2.config.SwgohConstants;
 import nl.djj.swgoh_bot_v2.entities.Flag;
 import nl.djj.swgoh_bot_v2.entities.GithubIssueStatus;
@@ -481,6 +482,17 @@ public final class MessageHelper {
         embed.addField(Integer.toString(embed.getFields().size() + 1), "```" + fieldData + "```", false);
         embeds.add(embed.build());
         return embeds;
+    }
+
+    public static MessageEmbed formatAboutMessage(final int noOfServers, final int noCommandsExecuted) {
+        final EmbedBuilder builder = new EmbedBuilder(baseEmbed());
+        builder.setDescription("About this bot");
+        builder.addField("Main Developer", "Darth JarJar", false);
+        builder.addField("Contributors", "TinTin\nDer Kaisert", false);
+        builder.addField("Github", GithubConstants.getGithubUrl(),false);
+        builder.addField("Information:", "Running on: " + noOfServers +"\n" +
+                "Commands executed: " + noCommandsExecuted, false);
+        return builder.build();
     }
 
 //CHECKSTYLE.ON: MultipleStringLiteralsCheck
