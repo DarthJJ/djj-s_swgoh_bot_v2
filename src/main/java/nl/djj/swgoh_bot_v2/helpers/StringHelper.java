@@ -32,6 +32,7 @@ public final class StringHelper {
         return !ALLYCODE_REGEX.matcher(allycode).matches();
     }
 
+
     /**
      * Gets the current DateTime.
      *
