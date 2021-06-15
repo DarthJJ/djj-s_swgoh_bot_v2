@@ -78,8 +78,10 @@ public final class CalculationHelper {
             return new double[]{0.6, 0.35, 0.05};
         } else if (gearReq == SwgohConstants.GEAR_LEVEL_13 && relicReq <= 5) {
             return new double[]{0.55, 0.30, 0.15};
+        } else if (gearReq == SwgohConstants.GEAR_LEVEL_13 && relicReq <= 7) {
+            return new double[]{0.5, 0.30, 0.2};
         } else if (gearReq == SwgohConstants.GEAR_LEVEL_13 && relicReq <= SwgohConstants.MAX_RELIC_TIER) {
-            return new double[]{0.5, 0.3, 0.2};
+            return new double[]{0.45, 0.25, 0.3};
         } else {
             return new double[]{0, 0, 0};
         }
