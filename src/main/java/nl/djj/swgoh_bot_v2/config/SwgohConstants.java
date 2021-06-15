@@ -70,13 +70,14 @@ public final class SwgohConstants {
      */
     public static final Map<Integer, Double> RELIC_SCALE = Map.ofEntries(
             entry(0, 0.0),
-            entry(1, 0.05),
-            entry(2, 0.1),
-            entry(3, 0.1),
-            entry(4, 0.15),
-            entry(5, 0.15),
-            entry(6, 0.2),
-            entry(7, 0.25)
+            entry(1, 0.02),
+            entry(2, 0.04),
+            entry(3, 0.06),
+            entry(4, 0.08),
+            entry(5, 0.1),
+            entry(6, 0.13),
+            entry(7, 0.22),
+            entry(8, 0.35)
     );
 
     /**
